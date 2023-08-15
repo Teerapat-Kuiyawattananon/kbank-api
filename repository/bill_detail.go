@@ -5,10 +5,10 @@ import (
 	"kapi/ent"
 	"kapi/ent/billdetail"
 	"log"
+	"time"
 
 	mBillDetail "kapi/model/bill_detail"
 )
-
 
 type billDetailRepository struct {
 	clientDB *ent.Client
@@ -20,29 +20,35 @@ func NewBillDetailRepository(DB *ent.Client) billDetailRepository {
 	}
 }
 
-func (repo billDetailRepository) CreateBillDetail(input mBillDetail.BillDetail) (error) {
+func (repo billDetailRepository) CreateBillDetail(input mBillDetail.BillDetailRequest) (*ent.BillDetail, error) {
 	billDetail, err := repo.clientDB.BillDetail.Create().
-					SetCustomerID(input.Customer_id).
-					SetTranAmount(input.TranAmount).
-					SetChannelCode(input.ChannelCode).
-					SetSenderBankCode(input.SenderBankCode).
-					SetCreatedAt(input.CreatedAt).
-					SetUpdatedAt(input.UpdatedAt).
-					SetStatus(input.Status).
-					Save(context.Background())
+		SetCustomerID(input.CustomerId).
+		SetTranAmount(input.TranAmount).
+		SetChannelCode(input.ChannelCode).
+		SetSenderBankCode(input.SenderBankCode).
+		SetCreatedAt(time.Now().UTC().Add(time.Hour * 7)).
+		SetUpdatedAt(time.Now().UTC().Add(time.Hour * 7)).
+		SetStatus(input.Status).
+		Save(context.Background())
 	if err != nil {
 		log.Fatal(err)
-		return err
+		return nil, err
 	}
 
 	log.Printf("Created BillDetail id: %d success", billDetail.ID)
-	return nil
+	return billDetail, nil
 }
 
 func (repo billDetailRepository) GetBillDetailByRef2(ref2_id int) *ent.BillDetail {
+	// Check database
+	if repo.clientDB.BillDetail.Query().
+		Where(billdetail.ID(ref2_id)).CountX(context.Background()) == 0 {
+		return nil
+	}
+
 	model, err := repo.clientDB.BillDetail.Query().
-					Where(billdetail.ID(ref2_id)).
-					Only(context.Background())
+		Where(billdetail.ID(ref2_id)).
+		Only(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}

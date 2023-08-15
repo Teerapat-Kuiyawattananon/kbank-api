@@ -131,6 +131,14 @@ func (bdu *BillDetailUpdate) SetBillsID(id int) *BillDetailUpdate {
 	return bdu
 }
 
+// SetNillableBillsID sets the "bills" edge to the Bill entity by ID if the given value is not nil.
+func (bdu *BillDetailUpdate) SetNillableBillsID(id *int) *BillDetailUpdate {
+	if id != nil {
+		bdu = bdu.SetBillsID(*id)
+	}
+	return bdu
+}
+
 // SetBills sets the "bills" edge to the Bill entity.
 func (bdu *BillDetailUpdate) SetBills(b *Bill) *BillDetailUpdate {
 	return bdu.SetBillsID(b.ID)
@@ -200,9 +208,6 @@ func (bdu *BillDetailUpdate) check() error {
 		if err := billdetail.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "BillDetail.status": %w`, err)}
 		}
-	}
-	if _, ok := bdu.mutation.BillsID(); bdu.mutation.BillsCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "BillDetail.bills"`)
 	}
 	return nil
 }
@@ -419,6 +424,14 @@ func (bduo *BillDetailUpdateOne) SetBillsID(id int) *BillDetailUpdateOne {
 	return bduo
 }
 
+// SetNillableBillsID sets the "bills" edge to the Bill entity by ID if the given value is not nil.
+func (bduo *BillDetailUpdateOne) SetNillableBillsID(id *int) *BillDetailUpdateOne {
+	if id != nil {
+		bduo = bduo.SetBillsID(*id)
+	}
+	return bduo
+}
+
 // SetBills sets the "bills" edge to the Bill entity.
 func (bduo *BillDetailUpdateOne) SetBills(b *Bill) *BillDetailUpdateOne {
 	return bduo.SetBillsID(b.ID)
@@ -501,9 +514,6 @@ func (bduo *BillDetailUpdateOne) check() error {
 		if err := billdetail.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "BillDetail.status": %w`, err)}
 		}
-	}
-	if _, ok := bduo.mutation.BillsID(); bduo.mutation.BillsCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "BillDetail.bills"`)
 	}
 	return nil
 }

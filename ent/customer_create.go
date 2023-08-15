@@ -92,6 +92,12 @@ func (cc *CustomerCreate) SetNillableCreatedAt(t *time.Time) *CustomerCreate {
 	return cc
 }
 
+// SetID sets the "id" field.
+func (cc *CustomerCreate) SetID(i int) *CustomerCreate {
+	cc.mutation.SetID(i)
+	return cc
+}
+
 // AddBillDetailIDs adds the "bill_details" edge to the BillDetail entity by IDs.
 func (cc *CustomerCreate) AddBillDetailIDs(ids ...int) *CustomerCreate {
 	cc.mutation.AddBillDetailIDs(ids...)
@@ -210,8 +216,10 @@ func (cc *CustomerCreate) sqlSave(ctx context.Context) (*Customer, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	cc.mutation.id = &_node.ID
 	cc.mutation.done = true
 	return _node, nil
@@ -222,6 +230,10 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 		_node = &Customer{config: cc.config}
 		_spec = sqlgraph.NewCreateSpec(customer.Table, sqlgraph.NewFieldSpec(customer.FieldID, field.TypeInt))
 	)
+	if id, ok := cc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := cc.mutation.FirstName(); ok {
 		_spec.SetField(customer.FieldFirstName, field.TypeString, value)
 		_node.FirstName = value
@@ -318,7 +330,7 @@ func (ccb *CustomerCreateBulk) Save(ctx context.Context) ([]*Customer, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

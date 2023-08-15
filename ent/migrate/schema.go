@@ -44,7 +44,7 @@ var (
 		{Name: "tran_amount", Type: field.TypeFloat64, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "bill_bill_detail", Type: field.TypeInt, Unique: true},
+		{Name: "bill_bill_detail", Type: field.TypeInt, Unique: true, Nullable: true},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 	}
 	// BillDetailsTable holds the schema information for the "bill_details" table.
@@ -57,7 +57,7 @@ var (
 				Symbol:     "bill_details_bills_bill_detail",
 				Columns:    []*schema.Column{BillDetailsColumns[7]},
 				RefColumns: []*schema.Column{BillsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "bill_details_customers_bill_details",

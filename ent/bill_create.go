@@ -63,6 +63,12 @@ func (bc *BillCreate) SetNillableRef2(i *int) *BillCreate {
 	return bc
 }
 
+// SetID sets the "id" field.
+func (bc *BillCreate) SetID(i int) *BillCreate {
+	bc.mutation.SetID(i)
+	return bc
+}
+
 // SetStoreID sets the "store" edge to the Store entity by ID.
 func (bc *BillCreate) SetStoreID(id int) *BillCreate {
 	bc.mutation.SetStoreID(id)
@@ -168,8 +174,10 @@ func (bc *BillCreate) sqlSave(ctx context.Context) (*Bill, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	bc.mutation.id = &_node.ID
 	bc.mutation.done = true
 	return _node, nil
@@ -180,6 +188,10 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 		_node = &Bill{config: bc.config}
 		_spec = sqlgraph.NewCreateSpec(bill.Table, sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt))
 	)
+	if id, ok := bc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := bc.mutation.Ref2(); ok {
 		_spec.SetField(bill.FieldRef2, field.TypeInt, value)
 		_node.Ref2 = value
@@ -277,7 +289,7 @@ func (bcb *BillCreateBulk) Save(ctx context.Context) ([]*Bill, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

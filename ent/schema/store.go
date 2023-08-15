@@ -14,6 +14,7 @@ type Store struct {
 // Fields of the Store.
 func (Store) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id"),
 		field.String("account_name").Default(""),
 		field.String("service_name").Default(""),
 	}

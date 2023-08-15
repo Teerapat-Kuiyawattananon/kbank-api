@@ -16,6 +16,7 @@ type Customer struct {
 // Fields of the Customer.
 func (Customer) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id"),
 		field.String("first_name").Default("Unknown"),
 		field.String("last_name").Default(""),
 		field.String("title_name").Default(""),

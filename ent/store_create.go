@@ -48,6 +48,12 @@ func (sc *StoreCreate) SetNillableServiceName(s *string) *StoreCreate {
 	return sc
 }
 
+// SetID sets the "id" field.
+func (sc *StoreCreate) SetID(i int) *StoreCreate {
+	sc.mutation.SetID(i)
+	return sc
+}
+
 // AddBillIDs adds the "bills" edge to the Bill entity by IDs.
 func (sc *StoreCreate) AddBillIDs(ids ...int) *StoreCreate {
 	sc.mutation.AddBillIDs(ids...)
@@ -130,8 +136,10 @@ func (sc *StoreCreate) sqlSave(ctx context.Context) (*Store, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	sc.mutation.id = &_node.ID
 	sc.mutation.done = true
 	return _node, nil
@@ -142,6 +150,10 @@ func (sc *StoreCreate) createSpec() (*Store, *sqlgraph.CreateSpec) {
 		_node = &Store{config: sc.config}
 		_spec = sqlgraph.NewCreateSpec(store.Table, sqlgraph.NewFieldSpec(store.FieldID, field.TypeInt))
 	)
+	if id, ok := sc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := sc.mutation.AccountName(); ok {
 		_spec.SetField(store.FieldAccountName, field.TypeString, value)
 		_node.AccountName = value
@@ -210,7 +222,7 @@ func (scb *StoreCreateBulk) Save(ctx context.Context) ([]*Store, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

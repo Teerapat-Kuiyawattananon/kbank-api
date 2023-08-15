@@ -17,27 +17,27 @@ func init() {
 	billdetailFields := schema.BillDetail{}.Fields()
 	_ = billdetailFields
 	// billdetailDescChannelCode is the schema descriptor for channel_code field.
-	billdetailDescChannelCode := billdetailFields[0].Descriptor()
+	billdetailDescChannelCode := billdetailFields[1].Descriptor()
 	// billdetail.DefaultChannelCode holds the default value on creation for the channel_code field.
 	billdetail.DefaultChannelCode = billdetailDescChannelCode.Default.(string)
 	// billdetailDescSenderBankCode is the schema descriptor for sender_bank_code field.
-	billdetailDescSenderBankCode := billdetailFields[1].Descriptor()
+	billdetailDescSenderBankCode := billdetailFields[2].Descriptor()
 	// billdetail.DefaultSenderBankCode holds the default value on creation for the sender_bank_code field.
 	billdetail.DefaultSenderBankCode = billdetailDescSenderBankCode.Default.(string)
 	// billdetailDescStatus is the schema descriptor for status field.
-	billdetailDescStatus := billdetailFields[2].Descriptor()
+	billdetailDescStatus := billdetailFields[3].Descriptor()
 	// billdetail.StatusValidator is a validator for the "status" field. It is called by the builders before save.
 	billdetail.StatusValidator = billdetailDescStatus.Validators[0].(func(string) error)
 	// billdetailDescTranAmount is the schema descriptor for tran_amount field.
-	billdetailDescTranAmount := billdetailFields[4].Descriptor()
+	billdetailDescTranAmount := billdetailFields[5].Descriptor()
 	// billdetail.DefaultTranAmount holds the default value on creation for the tran_amount field.
 	billdetail.DefaultTranAmount = billdetailDescTranAmount.Default.(float64)
 	// billdetailDescCreatedAt is the schema descriptor for created_at field.
-	billdetailDescCreatedAt := billdetailFields[5].Descriptor()
+	billdetailDescCreatedAt := billdetailFields[6].Descriptor()
 	// billdetail.DefaultCreatedAt holds the default value on creation for the created_at field.
 	billdetail.DefaultCreatedAt = billdetailDescCreatedAt.Default.(func() time.Time)
 	// billdetailDescUpdatedAt is the schema descriptor for updated_at field.
-	billdetailDescUpdatedAt := billdetailFields[6].Descriptor()
+	billdetailDescUpdatedAt := billdetailFields[7].Descriptor()
 	// billdetail.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	billdetail.DefaultUpdatedAt = billdetailDescUpdatedAt.Default.(func() time.Time)
 	// billdetail.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -45,33 +45,33 @@ func init() {
 	customerFields := schema.Customer{}.Fields()
 	_ = customerFields
 	// customerDescFirstName is the schema descriptor for first_name field.
-	customerDescFirstName := customerFields[0].Descriptor()
+	customerDescFirstName := customerFields[1].Descriptor()
 	// customer.DefaultFirstName holds the default value on creation for the first_name field.
 	customer.DefaultFirstName = customerDescFirstName.Default.(string)
 	// customerDescLastName is the schema descriptor for last_name field.
-	customerDescLastName := customerFields[1].Descriptor()
+	customerDescLastName := customerFields[2].Descriptor()
 	// customer.DefaultLastName holds the default value on creation for the last_name field.
 	customer.DefaultLastName = customerDescLastName.Default.(string)
 	// customerDescTitleName is the schema descriptor for title_name field.
-	customerDescTitleName := customerFields[2].Descriptor()
+	customerDescTitleName := customerFields[3].Descriptor()
 	// customer.DefaultTitleName holds the default value on creation for the title_name field.
 	customer.DefaultTitleName = customerDescTitleName.Default.(string)
 	// customerDescMobileNumber is the schema descriptor for mobile_number field.
-	customerDescMobileNumber := customerFields[3].Descriptor()
+	customerDescMobileNumber := customerFields[4].Descriptor()
 	// customer.DefaultMobileNumber holds the default value on creation for the mobile_number field.
 	customer.DefaultMobileNumber = customerDescMobileNumber.Default.(string)
 	// customerDescCreatedAt is the schema descriptor for created_at field.
-	customerDescCreatedAt := customerFields[4].Descriptor()
+	customerDescCreatedAt := customerFields[5].Descriptor()
 	// customer.DefaultCreatedAt holds the default value on creation for the created_at field.
 	customer.DefaultCreatedAt = customerDescCreatedAt.Default.(func() time.Time)
 	storeFields := schema.Store{}.Fields()
 	_ = storeFields
 	// storeDescAccountName is the schema descriptor for account_name field.
-	storeDescAccountName := storeFields[0].Descriptor()
+	storeDescAccountName := storeFields[1].Descriptor()
 	// store.DefaultAccountName holds the default value on creation for the account_name field.
 	store.DefaultAccountName = storeDescAccountName.Default.(string)
 	// storeDescServiceName is the schema descriptor for service_name field.
-	storeDescServiceName := storeFields[1].Descriptor()
+	storeDescServiceName := storeFields[2].Descriptor()
 	// store.DefaultServiceName holds the default value on creation for the service_name field.
 	store.DefaultServiceName = storeDescServiceName.Default.(string)
 }
