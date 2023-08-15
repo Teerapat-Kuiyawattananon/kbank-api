@@ -29,5 +29,8 @@ func main() {
 
 	e.POST("/api/billpayment/lookup", h.HandlerLookup)
 	e.POST("/api/billpayment/payment", h.HandlerPayment)
+
+	e.POST("/api/billpayment/create/bill", h.CreateBill)
+	e.POST("/api/billpayment/create/customer", h.CreateCustomer)
 	e.Start(":" + os.Getenv("PORT"))
 }

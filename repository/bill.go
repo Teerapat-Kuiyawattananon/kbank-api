@@ -9,10 +9,14 @@ import (
 	mBill "kapi/model/bill"
 )
 
-
 type billRepository struct {
 	clientDB *ent.Client
 }
+
+// type BillRepository interface {
+// 	CreateBill(input mBill.Bill) (error)
+// 	GetBillByRef1Ref2(ref1_id int, ref2_id int) (mBill.Bill)
+// }
 
 func NewBillRepository(DB *ent.Client) billRepository {
 	return billRepository{

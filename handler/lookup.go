@@ -1,8 +1,8 @@
 package handler
 
 import (
-	model "kapi/model/inquiry"
 	mBill "kapi/model/bill"
+	model "kapi/model/inquiry"
 	db "kapi/progresql"
 	repo "kapi/repository"
 	"strconv"
@@ -14,6 +14,16 @@ import (
 
 	"github.com/labstack/echo/v4"
 )
+
+// type InquiryHandler struct {
+// 	inquiryRequest model.InquiryRequest
+// 	inquiryResponse model.InquiryResponse
+// 	BillRepo repo.BillRepository
+// }
+
+// func NewInquiryHandler() *InquiryHandler {
+// 	return &InquiryHandler{}
+// }
 
 var (
 	inquiryRequest model.InquiryRequest
