@@ -1,0 +1,301 @@
+definitions:
+  inquiry.AdditionalFieldRequest:
+    properties:
+      billerFee:
+        type: string
+      dueDate:
+        type: string
+      fromProxyType:
+        type: string
+      fromProxyValue:
+        type: string
+      payerFee:
+        type: string
+      promptPayFlag:
+        type: string
+      rqAppId:
+        type: string
+      rtpReference:
+        type: string
+      senderAcctName:
+        type: string
+      senderTaxID:
+        type: string
+      settlementDate:
+        type: string
+      transferWithTax:
+        type: string
+      typeofSender:
+        type: string
+      typeofTaxIncome:
+        type: string
+      vat:
+        type: string
+      vatRates:
+        type: string
+      withholdingTax:
+        type: string
+      withholdingTaxConditions:
+        type: string
+      withholdingTaxRates:
+        type: string
+    type: object
+  inquiry.AdditionalFieldResponse:
+    properties:
+      dueDate:
+        type: string
+      payerFee:
+        type: string
+      receiverTaxID:
+        type: string
+      rsAppId:
+        type: string
+      rtpReference:
+        type: string
+      settlementDate:
+        type: string
+      toBillerAccountName:
+        type: string
+      toBillerServiceName:
+        type: string
+    type: object
+  inquiry.InquiryRequest:
+    properties:
+      additional:
+        $ref: '#/definitions/inquiry.AdditionalFieldRequest'
+      apiKey:
+        type: string
+      billerId:
+        type: string
+      billerType:
+        type: string
+      channelCode:
+        type: string
+      functionName:
+        type: string
+      language:
+        type: string
+      promptPayReferenceNumber:
+        type: string
+      reference1:
+        type: string
+      reference2:
+        type: string
+      reference3:
+        type: string
+      senderBankCode:
+        type: string
+      terminalNo:
+        type: string
+      tranAmount:
+        type: string
+      transactionDateTime:
+        type: string
+      transactionId:
+        type: string
+    type: object
+  inquiry.InquiryResponse:
+    properties:
+      additional:
+        $ref: '#/definitions/inquiry.AdditionalFieldResponse'
+      billerId:
+        type: string
+      billerTransactionId:
+        type: string
+      billerType:
+        type: string
+      functionName:
+        type: string
+      info1:
+        type: string
+      info2:
+        type: string
+      info3:
+        type: string
+      promptPayTransactionId:
+        type: string
+      reference1:
+        type: string
+      reference2:
+        type: string
+      reference3:
+        type: string
+      responseCode:
+        type: string
+      responseDescription:
+        type: string
+      terminalNo:
+        type: string
+      tranAmount:
+        type: string
+      transactionDateTime:
+        type: string
+      transactionId:
+        type: string
+      typeofReceiver:
+        type: string
+    type: object
+  payment.AdditionalFieldRequest:
+    properties:
+      customerFee:
+        type: string
+      dueDate:
+        type: string
+      fromProxyType:
+        type: string
+      fromProxyValue:
+        type: string
+      partnerFee:
+        type: string
+      promptPayFlag:
+        type: string
+      receiverTaxID:
+        type: string
+      rqAppId:
+        type: string
+      rtpReference:
+        type: string
+      senderAcctName:
+        type: string
+      senderReferenceNo:
+        type: string
+      senderTaxID:
+        type: string
+      settlementDate:
+        type: string
+      sponsorBankFee:
+        type: string
+      transferWithTax:
+        type: string
+      typeofReceiver:
+        type: string
+      typeofSender:
+        type: string
+      typeofTaxIncome:
+        type: string
+      vat:
+        type: string
+      vatRates:
+        type: string
+      withholdingTax:
+        type: string
+      withholdingTaxConditions:
+        type: string
+      withholdingTaxRates:
+        type: string
+    type: object
+  payment.AdditionalFieldResponse:
+    properties:
+      rsAppId:
+        type: string
+      settlementDate:
+        type: string
+    type: object
+  payment.PaymentRequest:
+    properties:
+      additional:
+        $ref: '#/definitions/payment.AdditionalFieldRequest'
+      apiKey:
+        type: string
+      billerId:
+        type: string
+      billerType:
+        type: string
+      channelCode:
+        type: string
+      functionName:
+        type: string
+      isRetry:
+        type: string
+      promptPayReferenceNumber:
+        type: string
+      reference1:
+        type: string
+      reference2:
+        type: string
+      reference3:
+        type: string
+      senderBankCode:
+        type: string
+      terminalNo:
+        type: string
+      tranAmount:
+        type: string
+      transactionDateTime:
+        type: string
+      transactionId:
+        type: string
+    type: object
+  payment.PaymentResponse:
+    properties:
+      additional:
+        $ref: '#/definitions/payment.AdditionalFieldResponse'
+      billerTransactionId:
+        type: string
+      functionName:
+        type: string
+      promptPayTransactionId:
+        type: string
+      responseCode:
+        type: string
+      responseDateTime:
+        type: string
+      responseDescription:
+        type: string
+      terminalNo:
+        type: string
+      transactionId:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/billpayment/lookup:
+    post:
+      consumes:
+      - '*/*'
+      description: Show inquiry response from inquiry request.
+      parameters:
+      - description: JSON request body for inquiry request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/inquiry.InquiryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/inquiry.InquiryResponse'
+            type: array
+      summary: Show inquiry response.
+      tags:
+      - Inquiry
+  /api/billpayment/payment:
+    post:
+      consumes:
+      - '*/*'
+      description: Show payment response after payment process.
+      parameters:
+      - description: JSON request body for payment request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/payment.PaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/payment.PaymentResponse'
+            type: array
+      summary: Show payment response.
+      tags:
+      - Payment
+swagger: "2.0"
