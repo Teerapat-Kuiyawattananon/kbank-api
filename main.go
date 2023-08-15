@@ -56,6 +56,8 @@ func main() {
 
 	e.POST("/api/billpayment/create/bill", h.CreateBill)
 	e.POST("/api/billpayment/create/customer", h.CreateCustomer)
+	e.POST("/api/billpayment/create/store", h.CreateStore)
+	e.POST("/api/billpayment/create/bill_detail", h.CreateBillDetail)
 
 
 	e.Start(":" + os.Getenv("PORT"))

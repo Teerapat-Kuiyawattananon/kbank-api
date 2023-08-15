@@ -2,6 +2,6 @@ package store
 
 type Store struct {
 	ID 			int
-	AccountName string
-	ServiceName string
+	AccountName string  `json:"account_name"`
+	ServiceName string  `json:"service_name"`
 }
