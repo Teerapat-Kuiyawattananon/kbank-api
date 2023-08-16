@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	model "kapi/model/payment"
+	model "kapi/model"
 	db "kapi/progresql"
 	repo "kapi/repository"
 	"time"
@@ -60,13 +60,25 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 	billDetailRepo := repo.NewBillDetailRepository(clientDB)
 
 	// string to int
-	ref2_id, _ := strconv.Atoi(input.Reference2)
+	ref2_id, err := strconv.Atoi(input.Reference2)
+	if err != nil {
+		return "0001", "Invalid Payment reference number"
+	}
+	tranAmount, err := strconv.ParseFloat(input.TranAmount, 64)
+	if err != nil {
+		return "0004", "Invalid payment amount"
+	}
 	bill := billDetailRepo.GetBillDetailByRef2(ref2_id)
 	// if (bill.Status == "waiting") {
 	// 	bill.Update().SetStatus("paid").ExecX(context.Background())
 	// 	return "0000", "Success"
 	// }
-
+	if (bill == nil) {
+		return "9001", "Unauthorized"
+	}
+	if (tranAmount != bill.TranAmount) {
+		return "0004", "Invalid payment amount"
+	}
 	if (bill.Status == "unavailable") {
 		return "1000", "Other Merchant Error"
 	}
@@ -76,6 +88,9 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 	}
 
 	// Waiting for payment
-	bill.Update().SetStatus("paid").ExecX(context.Background())
+	bill.Update().SetStatus("paid").
+					SetChannelCode(input.ChannelCode).
+					SetSenderBankCode(input.SenderBankCode).
+					ExecX(context.Background())
 	return "0000", "Success"
 }

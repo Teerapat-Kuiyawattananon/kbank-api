@@ -14,6 +14,7 @@ type Bill struct {
 // Fields of the Bill.
 func (Bill) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id"),
 		field.Int("biller_id").Optional(),
 		field.Int("ref_1").Optional(),
 		field.Int("ref_2").Optional(),

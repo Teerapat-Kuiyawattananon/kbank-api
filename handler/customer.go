@@ -9,9 +9,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var storeInput model.Store
-func HandlerCreateStore(c echo.Context) error {
-	if err := c.Bind(&storeInput) ; err != nil {
+var customerInput model.Customer
+func HandlerCreateCustomer(c echo.Context) error {
+	if err := c.Bind(&customerInput) ; err != nil {
 		log.Fatal(err)
 	}
 
@@ -20,9 +20,9 @@ func HandlerCreateStore(c echo.Context) error {
 		log.Fatal(err)
 	}
 	
-	storeRepo := repo.NewStoreRepository(clientDB)
+	cusRepo := repo.NewCustomerRepository(clientDB)
 
-	if err := storeRepo.CreateStore(storeInput) ; err != nil {
+	if err := cusRepo.CreateCustomer(customerInput) ; err != nil {
 		log.Fatal(err)
 	}
 

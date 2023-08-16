@@ -1,13 +1,11 @@
 package handler
 
 import (
-	mBill "kapi/model/bill"
-	model "kapi/model/inquiry"
+	model "kapi/model"
 	db "kapi/progresql"
 	repo "kapi/repository"
 	"strconv"
 
-	// db "kapi/progresql"
 	"log"
 	"net/http"
 	"time"
@@ -54,27 +52,38 @@ func HandlerLookup(c echo.Context) error {
 		BillerType: inquiryRequest.BillerType,
 		BillerId: inquiryRequest.BillerId,
 		TerminalNo: inquiryRequest.TerminalNo,
+		// PromptPayTransactionId: inquiryRequest.PromptPayReferenceNumber,
 		Reference1: inquiryRequest.Reference1,
 		Reference2: inquiryRequest.Reference2,
-		AdditionalFieldResponse: model.AdditionalFieldResponse{
+		AdditionalFieldResponse: model.InquiryAdditionalFieldResponse{
 			DueDate: "",
 		},
 	}
-	check := checkRef1Ref2(inquiryRequest)
-	if (!check) {
-		inquiryResponse.ResponseCode = "9001"
-		inquiryResponse.ResponseDescription = "Unauthorized"
+	checkCode, checkDes := checkRef1Ref2(inquiryRequest)
+	if (checkCode != "") {
+		inquiryResponse.ResponseCode = checkCode
+		inquiryResponse.ResponseDescription = checkDes
 		return c.JSON(http.StatusOK, inquiryResponse)
 	}
-
-	resCode, resDes := checkStatus(inquiryRequest)
+	resCode, resDes := checkTranAmount(inquiryRequest)
+	if (resCode != "") {
+		inquiryResponse.ResponseCode = resCode
+		inquiryResponse.ResponseDescription = resDes
+		return c.JSON(http.StatusOK, inquiryResponse)
+	}
+	resCode, resDes = checkStatus(inquiryRequest)
 	inquiryResponse.ResponseCode = resCode
 	inquiryResponse.ResponseDescription = resDes
+
+	if (inquiryRequest.BillerType == "BILLERID") {
+		inquiryResponse.TypeofReceiver = "C"
+		inquiryResponse.PromptPayTransactionId = inquiryRequest.PromptPayReferenceNumber
+	}
 
 	return c.JSON(http.StatusOK, inquiryResponse)
 }
 
-func checkRef1Ref2(input model.InquiryRequest) bool {
+func checkRef1Ref2(input model.InquiryRequest) (string, string) {
 	clientDB, err := db.InitDatabase()
 	if err != nil {
 		log.Fatal(err)
@@ -82,15 +91,21 @@ func checkRef1Ref2(input model.InquiryRequest) bool {
 	billRepo := repo.NewBillRepository(clientDB)
 
 	// strint to int
-	ref1_id, _ := strconv.Atoi(input.Reference1)
-	ref2_id, _ := strconv.Atoi(input.Reference2)
+	ref1_id, err := strconv.Atoi(input.Reference1)
+	if err != nil {
+		return "0001", "Invalid Payment reference number"
+	}
+	ref2_id, err := strconv.Atoi(input.Reference2)
+	if err != nil {
+		return "0001", "Invalid Payment reference number"
+	}
 	check := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
-	if (check == mBill.Bill{}) {
+	if (check == model.Bill{}) {
 		log.Println("false")
-		return false
+		return "9001", "Unauthorized"
 	}
 
-	return true
+	return "", ""
 }
 
 func checkStatus(input model.InquiryRequest) (string, string) {
@@ -111,5 +126,25 @@ func checkStatus(input model.InquiryRequest) (string, string) {
 		return "1000", "Other Merchant Error"
 	}
 	return "0000", "Success"
+}
+
+func checkTranAmount(input model.InquiryRequest) (string, string){
+	clientDB, err := db.InitDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+	billDetailRepo := repo.NewBillDetailRepository(clientDB)
+	ref2_id, _ := strconv.Atoi(input.Reference2)
+	bill := billDetailRepo.GetBillDetailByRef2(ref2_id)
+	tranAmount, err := strconv.ParseFloat(input.TranAmount, 64)
+	if err != nil {
+		return "0004", "Invalid payment amount"
+	}
+
+	if (tranAmount != bill.TranAmount) {
+		return "0004", "Invalid payment amount"
+	}
+	
+	return "", ""
 }
 

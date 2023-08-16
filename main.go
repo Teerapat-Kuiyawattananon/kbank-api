@@ -7,6 +7,7 @@ import (
 	"os"
 
 	h "kapi/handler"
+	db "kapi/progresql"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/joho/godotenv"
@@ -39,7 +40,7 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Start")
-
+	db.MockUpTestEX01()
 	e := echo.New()
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
@@ -53,11 +54,10 @@ func main() {
 
 	e.POST("/api/billpayment/lookup", h.HandlerLookup)
 	e.POST("/api/billpayment/payment", h.HandlerPayment)
-
-	e.POST("/api/billpayment/create/bill", h.CreateBill)
-	e.POST("/api/billpayment/create/customer", h.CreateCustomer)
-	e.POST("/api/billpayment/create/store", h.CreateStore)
-	e.POST("/api/billpayment/create/bill_detail", h.CreateBillDetail)
+	e.POST("/api/bill", h.HandlerCreateBillDetail)
+	e.POST("/api/customer", h.HandlerCreateCustomer)
+	e.POST("/api/store",h.HandlerCreateStore)
+	e.Start(":" + os.Getenv("PORT"))
 
 
 	e.Start(":" + os.Getenv("PORT"))

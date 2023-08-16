@@ -112,9 +112,23 @@ func (bdc *BillDetailCreate) SetNillableUpdatedAt(t *time.Time) *BillDetailCreat
 	return bdc
 }
 
+// SetID sets the "id" field.
+func (bdc *BillDetailCreate) SetID(i int) *BillDetailCreate {
+	bdc.mutation.SetID(i)
+	return bdc
+}
+
 // SetBillsID sets the "bills" edge to the Bill entity by ID.
 func (bdc *BillDetailCreate) SetBillsID(id int) *BillDetailCreate {
 	bdc.mutation.SetBillsID(id)
+	return bdc
+}
+
+// SetNillableBillsID sets the "bills" edge to the Bill entity by ID if the given value is not nil.
+func (bdc *BillDetailCreate) SetNillableBillsID(id *int) *BillDetailCreate {
+	if id != nil {
+		bdc = bdc.SetBillsID(*id)
+	}
 	return bdc
 }
 
@@ -210,9 +224,6 @@ func (bdc *BillDetailCreate) check() error {
 	if _, ok := bdc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "BillDetail.updated_at"`)}
 	}
-	if _, ok := bdc.mutation.BillsID(); !ok {
-		return &ValidationError{Name: "bills", err: errors.New(`ent: missing required edge "BillDetail.bills"`)}
-	}
 	return nil
 }
 
@@ -227,8 +238,10 @@ func (bdc *BillDetailCreate) sqlSave(ctx context.Context) (*BillDetail, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	bdc.mutation.id = &_node.ID
 	bdc.mutation.done = true
 	return _node, nil
@@ -239,6 +252,10 @@ func (bdc *BillDetailCreate) createSpec() (*BillDetail, *sqlgraph.CreateSpec) {
 		_node = &BillDetail{config: bdc.config}
 		_spec = sqlgraph.NewCreateSpec(billdetail.Table, sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt))
 	)
+	if id, ok := bdc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := bdc.mutation.ChannelCode(); ok {
 		_spec.SetField(billdetail.FieldChannelCode, field.TypeString, value)
 		_node.ChannelCode = value
@@ -341,7 +358,7 @@ func (bdcb *BillDetailCreateBulk) Save(ctx context.Context) ([]*BillDetail, erro
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

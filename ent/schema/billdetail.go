@@ -16,6 +16,7 @@ type BillDetail struct {
 // Fields of the BillDetail.
 func (BillDetail) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id"),
 		field.String("channel_code").
 			Default(""),
 		field.String("sender_bank_code").
@@ -39,8 +40,8 @@ func (BillDetail) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("bills", Bill.Type).
 			Ref("bill_detail").
-			Unique().
-			Required(),
+			Unique(),
+			// Required(),
 		
 		edge.From("customer", Customer.Type).
 			Ref("bill_details").

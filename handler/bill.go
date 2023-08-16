@@ -1,6 +1,7 @@
 package handler
 
 import (
+	
 	model "kapi/model"
 	db	"kapi/progresql"
 	repo "kapi/repository"
@@ -9,9 +10,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var storeInput model.Store
-func HandlerCreateStore(c echo.Context) error {
-	if err := c.Bind(&storeInput) ; err != nil {
+var input model.Bill
+func HandlerCreateBill(c echo.Context) error {
+	if err := c.Bind(&input) ; err != nil {
 		log.Fatal(err)
 	}
 
@@ -20,9 +21,9 @@ func HandlerCreateStore(c echo.Context) error {
 		log.Fatal(err)
 	}
 	
-	storeRepo := repo.NewStoreRepository(clientDB)
+	billRepo := repo.NewBillRepository(clientDB)
 
-	if err := storeRepo.CreateStore(storeInput) ; err != nil {
+	if err := billRepo.CreateBill(input) ; err != nil {
 		log.Fatal(err)
 	}
 
