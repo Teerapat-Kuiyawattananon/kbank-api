@@ -1,7 +1,7 @@
 package handler
 
 import (
-	mStore "kapi/model/store"
+	model "kapi/model"
 	db	"kapi/progresql"
 	repo "kapi/repository"
 	"log"
@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var storeInput mStore.Store
+var storeInput model.Store
 func HandlerCreateStore(c echo.Context) error {
 	if err := c.Bind(&storeInput) ; err != nil {
 		log.Fatal(err)

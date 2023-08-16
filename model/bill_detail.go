@@ -1,4 +1,4 @@
-package billdetail
+package model
 
 import "time"
 

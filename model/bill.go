@@ -1,4 +1,4 @@
-package bill
+package model
 
 type Bill struct {
 	ID int			`json:"id"`

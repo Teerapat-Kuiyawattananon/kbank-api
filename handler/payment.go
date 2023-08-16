@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	model "kapi/model/payment"
+	model "kapi/model"
 	db "kapi/progresql"
 	repo "kapi/repository"
 	"time"

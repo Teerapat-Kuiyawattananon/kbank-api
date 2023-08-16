@@ -2,7 +2,7 @@ package handler
 
 import (
 	// mStore "kapi/model/store"
-	mBill "kapi/model/bill"
+	model "kapi/model"
 	db	"kapi/progresql"
 	repo "kapi/repository"
 	"log"
@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var input mBill.Bill
+var input model.Bill
 func HandlerCreateBill(c echo.Context) error {
 	if err := c.Bind(&input) ; err != nil {
 		log.Fatal(err)

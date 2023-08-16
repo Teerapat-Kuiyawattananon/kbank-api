@@ -1,7 +1,7 @@
 package handler
 
 import (
-	mCustomer "kapi/model/customer"
+	model "kapi/model"
 	db	"kapi/progresql"
 	repo "kapi/repository"
 	"log"
@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var customerInput mCustomer.Customer
+var customerInput model.Customer
 func HandlerCreateCustomer(c echo.Context) error {
 	if err := c.Bind(&customerInput) ; err != nil {
 		log.Fatal(err)

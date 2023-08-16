@@ -6,7 +6,7 @@ import (
 	"kapi/ent/bill"
 	"log"
 
-	mBill "kapi/model/bill"
+	mBill "kapi/model"
 )
 
 

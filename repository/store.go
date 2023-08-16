@@ -5,7 +5,7 @@ import (
 	"kapi/ent"
 	"log"
 
-	mStore "kapi/model/store"
+	mStore "kapi/model"
 )
 
 

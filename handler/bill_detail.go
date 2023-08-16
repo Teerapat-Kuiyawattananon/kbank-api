@@ -1,8 +1,7 @@
 package handler
 
 import (
-	mBillDetail "kapi/model/bill_detail"
-	mBill "kapi/model/bill"
+	model "kapi/model"
 	db	"kapi/progresql"
 	repo "kapi/repository"
 	"log"
@@ -10,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var billInput mBillDetail.BillDetailRequest
+var billInput model.BillDetailRequest
 func HandlerCreateBillDetail(c echo.Context) error {
 	if err := c.Bind(&billInput) ; err != nil {
 		log.Fatal(err)
@@ -29,7 +28,7 @@ func HandlerCreateBillDetail(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	bill := mBill.Bill{
+	bill := model.Bill{
 		BillerId: billInput.BillerId,
 		Ref1: billDetail.CustomerID,
 		Ref2: billDetail.ID,

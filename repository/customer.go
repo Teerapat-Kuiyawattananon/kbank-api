@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	mCustomer "kapi/model/customer"
+	mCustomer "kapi/model"
 )
 
 

@@ -1,8 +1,7 @@
 package handler
 
 import (
-	model "kapi/model/inquiry"
-	mBill "kapi/model/bill"
+	model "kapi/model"
 	db "kapi/progresql"
 	repo "kapi/repository"
 	"strconv"
@@ -39,7 +38,7 @@ func HandlerLookup(c echo.Context) error {
 		// PromptPayTransactionId: inquiryRequest.PromptPayReferenceNumber,
 		Reference1: inquiryRequest.Reference1,
 		Reference2: inquiryRequest.Reference2,
-		AdditionalFieldResponse: model.AdditionalFieldResponse{
+		AdditionalFieldResponse: model.InquiryAdditionalFieldResponse{
 			DueDate: "",
 		},
 	}
@@ -84,7 +83,7 @@ func checkRef1Ref2(input model.InquiryRequest) (string, string) {
 		return "0001", "Invalid Payment reference number"
 	}
 	check := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
-	if (check == mBill.Bill{}) {
+	if (check == model.Bill{}) {
 		log.Println("false")
 		return "9001", "Unauthorized"
 	}

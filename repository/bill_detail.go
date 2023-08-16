@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	mBillDetail "kapi/model/bill_detail"
+	mBillDetail "kapi/model"
 )
 
 type billDetailRepository struct {

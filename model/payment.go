@@ -1,4 +1,4 @@
-package payment
+package model
 
 type PaymentRequest struct {
 	FunctionName 				string	`json:"functionName"`
@@ -16,10 +16,10 @@ type PaymentRequest struct {
 	Reference2					string	`json:"reference2"`
 	Reference3					string	`json:"reference3"`
 	ApiKey						string	`json:"apiKey"`
-	AdditionalFieldRequest		AdditionalFieldRequest	`json:"additional"`
+	AdditionalFieldRequest		PaymentAdditionalFieldRequest	`json:"additional"`
 }
 
-type AdditionalFieldRequest struct {
+type PaymentAdditionalFieldRequest struct {
 	CustomerFee			string	`json:"customerFee"`
 	PartnerFee			string	`json:"partnerFee"`
 	SponsorBankFee		string	`json:"sponsorBankFee"`
@@ -54,10 +54,10 @@ type PaymentResponse struct {
 	ResponseDescription		string	`json:"responseDescription"`
 	TerminalNo 				string	`json:"terminalNo"`
 	PromptPayTransactionId	string	`json:"promptPayTransactionId"`
-	AdditionalFieldResponse AdditionalFieldResponse `json:"additional"`
+	AdditionalFieldResponse PaymentAdditionalFieldResponse `json:"additional"`
 }
 
-type AdditionalFieldResponse struct {
+type PaymentAdditionalFieldResponse struct {
 	SettlementDate	string `json:"settlementDate"`
 	RsAppId			string `json:"rsAppId"`
 }
