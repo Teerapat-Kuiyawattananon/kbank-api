@@ -21,6 +21,7 @@ func NewBillDetailRepository(DB *ent.Client) billDetailRepository {
 }
 
 func (repo billDetailRepository) CreateBillDetail(input mBillDetail.BillDetail) (error) {
+	// create bill detail with id from bill.ref_2
 	billDetail, err := repo.clientDB.BillDetail.Create().
 					SetCustomerID(input.Customer_id).
 					SetTranAmount(input.TranAmount).
