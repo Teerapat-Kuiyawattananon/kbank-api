@@ -55,3 +55,13 @@ func (repo billDetailRepository) GetBillDetailByRef2(ref2_id int) *ent.BillDetai
 
 	return model
 }
+
+func (repo billDetailRepository) GetAllBills() ([]*ent.BillDetail, error) {
+	bills, err := repo.clientDB.BillDetail.Query().
+					All(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+
+	return bills, nil
+}

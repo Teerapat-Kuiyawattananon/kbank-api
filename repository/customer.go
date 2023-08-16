@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"kapi/ent"
+	"kapi/ent/customer"
 	"log"
 	"time"
 
@@ -20,7 +21,7 @@ func NewCustomerRepository(DB *ent.Client) customerRepository {
 	}
 }
 
-func (repo customerRepository) CreateCustomer(customer mCustomer.Customer) (error) {
+func (repo customerRepository) CreateCustomer(customer mCustomer.Customer) (*ent.Customer, error) {
 	cus, err := repo.clientDB.Customer.Create().
 					SetFirstName(customer.FirstName).
 					SetLastName(customer.LastName).
@@ -29,10 +30,30 @@ func (repo customerRepository) CreateCustomer(customer mCustomer.Customer) (erro
 					SetCreatedAt(time.Now().UTC().Add(time.Hour * 7)).
 					Save(context.Background())
 	if err != nil {
-		log.Fatal(err)
-		return err
+		log.Println(err)
 	}
 
 	log.Printf("Created Customer id: %d success", cus.ID)
-	return nil
+	return cus, nil
+}
+
+func (repo customerRepository) GetCustomerByID(id int) (*ent.Customer, error) {
+	cus, err := repo.clientDB.Customer.Query().
+					Where(customer.ID(id)).
+					Only(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+
+	return cus, nil
+}
+
+func (repo customerRepository) GetCustomers() ([]*ent.Customer, error) {
+	customers, err := repo.clientDB.Customer.Query().
+						All(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+
+	return customers, nil
 }

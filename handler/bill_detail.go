@@ -2,9 +2,10 @@ package handler
 
 import (
 	model "kapi/model"
-	db	"kapi/progresql"
+	db "kapi/progresql"
 	repo "kapi/repository"
 	"log"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -38,4 +39,33 @@ func HandlerCreateBillDetail(c echo.Context) error {
 	}
 
 	return nil
+}
+
+func HandlerGetAllBillDetails(c echo.Context) error {
+	var billDetails []model.BillDetail
+	clientDB, err := db.InitDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	billDetail := repo.NewBillDetailRepository(clientDB)
+	entBillDetails, err := billDetail.GetAllBills()
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, bill := range entBillDetails {
+		billDetails = append(billDetails, model.BillDetail{
+			ID: bill.ID,
+			ChannelCode: bill.ChannelCode,
+			SenderBankCode: bill.SenderBankCode,
+			Status: bill.Status,
+			CustomerId: bill.CustomerID,
+			TranAmount: bill.TranAmount,
+			CreatedAt: bill.CreatedAt,
+			UpdatedAt: bill.UpdatedAt,
+		})
+	}
+
+	return c.JSON(http.StatusOK, billDetails)
 }
