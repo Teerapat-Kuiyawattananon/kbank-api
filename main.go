@@ -36,6 +36,8 @@ func main() {
 	// -BILL
 	e.POST("/api/bills", h.HandlerCreateBill)
 	e.GET("/api/bills", h.HandlerGetAllBills)
+	e.PUT("/api/bills/:id", h.HandlerUpdateBill)
+
 	// -CUSTOMER
 	e.POST("/api/customers", h.HandlerCreateCustomer)
 	e.GET("/api/customers", h.HandlerGetCustomers)
@@ -44,5 +46,6 @@ func main() {
 	// -BILLER_ACCOUNT
 	e.POST("/api/billers",h.HandlerCreateBillerAccount)
 	e.GET("/api/billers", h.HandlerGetBillers)
+
 	e.Start(":" + os.Getenv("PORT"))
 }
