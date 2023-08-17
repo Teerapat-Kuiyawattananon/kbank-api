@@ -4,6 +4,7 @@ package bill
 
 import (
 	"kapi/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -59,14 +60,49 @@ func BillerID(v int) predicate.Bill {
 	return predicate.Bill(sql.FieldEQ(FieldBillerID, v))
 }
 
-// Ref1 applies equality check predicate on the "ref_1" field. It's identical to Ref1EQ.
-func Ref1(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldEQ(FieldRef1, v))
+// Reference1 applies equality check predicate on the "reference_1" field. It's identical to Reference1EQ.
+func Reference1(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldReference1, v))
 }
 
-// Ref2 applies equality check predicate on the "ref_2" field. It's identical to Ref2EQ.
-func Ref2(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldEQ(FieldRef2, v))
+// Reference2 applies equality check predicate on the "reference_2" field. It's identical to Reference2EQ.
+func Reference2(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldReference2, v))
+}
+
+// TransactionID applies equality check predicate on the "transaction_id" field. It's identical to TransactionIDEQ.
+func TransactionID(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldTransactionID, v))
+}
+
+// TranAmount applies equality check predicate on the "tran_amount" field. It's identical to TranAmountEQ.
+func TranAmount(v float64) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldTranAmount, v))
+}
+
+// ChannelCode applies equality check predicate on the "channel_code" field. It's identical to ChannelCodeEQ.
+func ChannelCode(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldChannelCode, v))
+}
+
+// SenderBankCode applies equality check predicate on the "sender_bank_code" field. It's identical to SenderBankCodeEQ.
+func SenderBankCode(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldSenderBankCode, v))
+}
+
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldStatus, v))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
 // BillerIDEQ applies the EQ predicate on the "biller_id" field.
@@ -99,101 +135,481 @@ func BillerIDNotNil() predicate.Bill {
 	return predicate.Bill(sql.FieldNotNull(FieldBillerID))
 }
 
-// Ref1EQ applies the EQ predicate on the "ref_1" field.
-func Ref1EQ(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldEQ(FieldRef1, v))
+// Reference1EQ applies the EQ predicate on the "reference_1" field.
+func Reference1EQ(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldReference1, v))
 }
 
-// Ref1NEQ applies the NEQ predicate on the "ref_1" field.
-func Ref1NEQ(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldNEQ(FieldRef1, v))
+// Reference1NEQ applies the NEQ predicate on the "reference_1" field.
+func Reference1NEQ(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldReference1, v))
 }
 
-// Ref1In applies the In predicate on the "ref_1" field.
-func Ref1In(vs ...int) predicate.Bill {
-	return predicate.Bill(sql.FieldIn(FieldRef1, vs...))
+// Reference1In applies the In predicate on the "reference_1" field.
+func Reference1In(vs ...int) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldReference1, vs...))
 }
 
-// Ref1NotIn applies the NotIn predicate on the "ref_1" field.
-func Ref1NotIn(vs ...int) predicate.Bill {
-	return predicate.Bill(sql.FieldNotIn(FieldRef1, vs...))
+// Reference1NotIn applies the NotIn predicate on the "reference_1" field.
+func Reference1NotIn(vs ...int) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldReference1, vs...))
 }
 
-// Ref1IsNil applies the IsNil predicate on the "ref_1" field.
-func Ref1IsNil() predicate.Bill {
-	return predicate.Bill(sql.FieldIsNull(FieldRef1))
+// Reference1IsNil applies the IsNil predicate on the "reference_1" field.
+func Reference1IsNil() predicate.Bill {
+	return predicate.Bill(sql.FieldIsNull(FieldReference1))
 }
 
-// Ref1NotNil applies the NotNil predicate on the "ref_1" field.
-func Ref1NotNil() predicate.Bill {
-	return predicate.Bill(sql.FieldNotNull(FieldRef1))
+// Reference1NotNil applies the NotNil predicate on the "reference_1" field.
+func Reference1NotNil() predicate.Bill {
+	return predicate.Bill(sql.FieldNotNull(FieldReference1))
 }
 
-// Ref2EQ applies the EQ predicate on the "ref_2" field.
-func Ref2EQ(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldEQ(FieldRef2, v))
+// Reference2EQ applies the EQ predicate on the "reference_2" field.
+func Reference2EQ(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldReference2, v))
 }
 
-// Ref2NEQ applies the NEQ predicate on the "ref_2" field.
-func Ref2NEQ(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldNEQ(FieldRef2, v))
+// Reference2NEQ applies the NEQ predicate on the "reference_2" field.
+func Reference2NEQ(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldReference2, v))
 }
 
-// Ref2In applies the In predicate on the "ref_2" field.
-func Ref2In(vs ...int) predicate.Bill {
-	return predicate.Bill(sql.FieldIn(FieldRef2, vs...))
+// Reference2In applies the In predicate on the "reference_2" field.
+func Reference2In(vs ...int) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldReference2, vs...))
 }
 
-// Ref2NotIn applies the NotIn predicate on the "ref_2" field.
-func Ref2NotIn(vs ...int) predicate.Bill {
-	return predicate.Bill(sql.FieldNotIn(FieldRef2, vs...))
+// Reference2NotIn applies the NotIn predicate on the "reference_2" field.
+func Reference2NotIn(vs ...int) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldReference2, vs...))
 }
 
-// Ref2GT applies the GT predicate on the "ref_2" field.
-func Ref2GT(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldGT(FieldRef2, v))
+// Reference2GT applies the GT predicate on the "reference_2" field.
+func Reference2GT(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldReference2, v))
 }
 
-// Ref2GTE applies the GTE predicate on the "ref_2" field.
-func Ref2GTE(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldGTE(FieldRef2, v))
+// Reference2GTE applies the GTE predicate on the "reference_2" field.
+func Reference2GTE(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldReference2, v))
 }
 
-// Ref2LT applies the LT predicate on the "ref_2" field.
-func Ref2LT(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldLT(FieldRef2, v))
+// Reference2LT applies the LT predicate on the "reference_2" field.
+func Reference2LT(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldReference2, v))
 }
 
-// Ref2LTE applies the LTE predicate on the "ref_2" field.
-func Ref2LTE(v int) predicate.Bill {
-	return predicate.Bill(sql.FieldLTE(FieldRef2, v))
+// Reference2LTE applies the LTE predicate on the "reference_2" field.
+func Reference2LTE(v int) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldReference2, v))
 }
 
-// Ref2IsNil applies the IsNil predicate on the "ref_2" field.
-func Ref2IsNil() predicate.Bill {
-	return predicate.Bill(sql.FieldIsNull(FieldRef2))
+// Reference2IsNil applies the IsNil predicate on the "reference_2" field.
+func Reference2IsNil() predicate.Bill {
+	return predicate.Bill(sql.FieldIsNull(FieldReference2))
 }
 
-// Ref2NotNil applies the NotNil predicate on the "ref_2" field.
-func Ref2NotNil() predicate.Bill {
-	return predicate.Bill(sql.FieldNotNull(FieldRef2))
+// Reference2NotNil applies the NotNil predicate on the "reference_2" field.
+func Reference2NotNil() predicate.Bill {
+	return predicate.Bill(sql.FieldNotNull(FieldReference2))
 }
 
-// HasStore applies the HasEdge predicate on the "store" edge.
-func HasStore() predicate.Bill {
+// TransactionIDEQ applies the EQ predicate on the "transaction_id" field.
+func TransactionIDEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldTransactionID, v))
+}
+
+// TransactionIDNEQ applies the NEQ predicate on the "transaction_id" field.
+func TransactionIDNEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldTransactionID, v))
+}
+
+// TransactionIDIn applies the In predicate on the "transaction_id" field.
+func TransactionIDIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldTransactionID, vs...))
+}
+
+// TransactionIDNotIn applies the NotIn predicate on the "transaction_id" field.
+func TransactionIDNotIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldTransactionID, vs...))
+}
+
+// TransactionIDGT applies the GT predicate on the "transaction_id" field.
+func TransactionIDGT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldTransactionID, v))
+}
+
+// TransactionIDGTE applies the GTE predicate on the "transaction_id" field.
+func TransactionIDGTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldTransactionID, v))
+}
+
+// TransactionIDLT applies the LT predicate on the "transaction_id" field.
+func TransactionIDLT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldTransactionID, v))
+}
+
+// TransactionIDLTE applies the LTE predicate on the "transaction_id" field.
+func TransactionIDLTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldTransactionID, v))
+}
+
+// TransactionIDContains applies the Contains predicate on the "transaction_id" field.
+func TransactionIDContains(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContains(FieldTransactionID, v))
+}
+
+// TransactionIDHasPrefix applies the HasPrefix predicate on the "transaction_id" field.
+func TransactionIDHasPrefix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasPrefix(FieldTransactionID, v))
+}
+
+// TransactionIDHasSuffix applies the HasSuffix predicate on the "transaction_id" field.
+func TransactionIDHasSuffix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasSuffix(FieldTransactionID, v))
+}
+
+// TransactionIDEqualFold applies the EqualFold predicate on the "transaction_id" field.
+func TransactionIDEqualFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEqualFold(FieldTransactionID, v))
+}
+
+// TransactionIDContainsFold applies the ContainsFold predicate on the "transaction_id" field.
+func TransactionIDContainsFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContainsFold(FieldTransactionID, v))
+}
+
+// TranAmountEQ applies the EQ predicate on the "tran_amount" field.
+func TranAmountEQ(v float64) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldTranAmount, v))
+}
+
+// TranAmountNEQ applies the NEQ predicate on the "tran_amount" field.
+func TranAmountNEQ(v float64) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldTranAmount, v))
+}
+
+// TranAmountIn applies the In predicate on the "tran_amount" field.
+func TranAmountIn(vs ...float64) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldTranAmount, vs...))
+}
+
+// TranAmountNotIn applies the NotIn predicate on the "tran_amount" field.
+func TranAmountNotIn(vs ...float64) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldTranAmount, vs...))
+}
+
+// TranAmountGT applies the GT predicate on the "tran_amount" field.
+func TranAmountGT(v float64) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldTranAmount, v))
+}
+
+// TranAmountGTE applies the GTE predicate on the "tran_amount" field.
+func TranAmountGTE(v float64) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldTranAmount, v))
+}
+
+// TranAmountLT applies the LT predicate on the "tran_amount" field.
+func TranAmountLT(v float64) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldTranAmount, v))
+}
+
+// TranAmountLTE applies the LTE predicate on the "tran_amount" field.
+func TranAmountLTE(v float64) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldTranAmount, v))
+}
+
+// ChannelCodeEQ applies the EQ predicate on the "channel_code" field.
+func ChannelCodeEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldChannelCode, v))
+}
+
+// ChannelCodeNEQ applies the NEQ predicate on the "channel_code" field.
+func ChannelCodeNEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldChannelCode, v))
+}
+
+// ChannelCodeIn applies the In predicate on the "channel_code" field.
+func ChannelCodeIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldChannelCode, vs...))
+}
+
+// ChannelCodeNotIn applies the NotIn predicate on the "channel_code" field.
+func ChannelCodeNotIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldChannelCode, vs...))
+}
+
+// ChannelCodeGT applies the GT predicate on the "channel_code" field.
+func ChannelCodeGT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldChannelCode, v))
+}
+
+// ChannelCodeGTE applies the GTE predicate on the "channel_code" field.
+func ChannelCodeGTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldChannelCode, v))
+}
+
+// ChannelCodeLT applies the LT predicate on the "channel_code" field.
+func ChannelCodeLT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldChannelCode, v))
+}
+
+// ChannelCodeLTE applies the LTE predicate on the "channel_code" field.
+func ChannelCodeLTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldChannelCode, v))
+}
+
+// ChannelCodeContains applies the Contains predicate on the "channel_code" field.
+func ChannelCodeContains(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContains(FieldChannelCode, v))
+}
+
+// ChannelCodeHasPrefix applies the HasPrefix predicate on the "channel_code" field.
+func ChannelCodeHasPrefix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasPrefix(FieldChannelCode, v))
+}
+
+// ChannelCodeHasSuffix applies the HasSuffix predicate on the "channel_code" field.
+func ChannelCodeHasSuffix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasSuffix(FieldChannelCode, v))
+}
+
+// ChannelCodeEqualFold applies the EqualFold predicate on the "channel_code" field.
+func ChannelCodeEqualFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEqualFold(FieldChannelCode, v))
+}
+
+// ChannelCodeContainsFold applies the ContainsFold predicate on the "channel_code" field.
+func ChannelCodeContainsFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContainsFold(FieldChannelCode, v))
+}
+
+// SenderBankCodeEQ applies the EQ predicate on the "sender_bank_code" field.
+func SenderBankCodeEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeNEQ applies the NEQ predicate on the "sender_bank_code" field.
+func SenderBankCodeNEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeIn applies the In predicate on the "sender_bank_code" field.
+func SenderBankCodeIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldSenderBankCode, vs...))
+}
+
+// SenderBankCodeNotIn applies the NotIn predicate on the "sender_bank_code" field.
+func SenderBankCodeNotIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldSenderBankCode, vs...))
+}
+
+// SenderBankCodeGT applies the GT predicate on the "sender_bank_code" field.
+func SenderBankCodeGT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeGTE applies the GTE predicate on the "sender_bank_code" field.
+func SenderBankCodeGTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeLT applies the LT predicate on the "sender_bank_code" field.
+func SenderBankCodeLT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeLTE applies the LTE predicate on the "sender_bank_code" field.
+func SenderBankCodeLTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeContains applies the Contains predicate on the "sender_bank_code" field.
+func SenderBankCodeContains(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContains(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeHasPrefix applies the HasPrefix predicate on the "sender_bank_code" field.
+func SenderBankCodeHasPrefix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasPrefix(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeHasSuffix applies the HasSuffix predicate on the "sender_bank_code" field.
+func SenderBankCodeHasSuffix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasSuffix(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeEqualFold applies the EqualFold predicate on the "sender_bank_code" field.
+func SenderBankCodeEqualFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEqualFold(FieldSenderBankCode, v))
+}
+
+// SenderBankCodeContainsFold applies the ContainsFold predicate on the "sender_bank_code" field.
+func SenderBankCodeContainsFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContainsFold(FieldSenderBankCode, v))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...string) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusGT applies the GT predicate on the "status" field.
+func StatusGT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldStatus, v))
+}
+
+// StatusGTE applies the GTE predicate on the "status" field.
+func StatusGTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldStatus, v))
+}
+
+// StatusLT applies the LT predicate on the "status" field.
+func StatusLT(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldStatus, v))
+}
+
+// StatusLTE applies the LTE predicate on the "status" field.
+func StatusLTE(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldStatus, v))
+}
+
+// StatusContains applies the Contains predicate on the "status" field.
+func StatusContains(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContains(FieldStatus, v))
+}
+
+// StatusHasPrefix applies the HasPrefix predicate on the "status" field.
+func StatusHasPrefix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasPrefix(FieldStatus, v))
+}
+
+// StatusHasSuffix applies the HasSuffix predicate on the "status" field.
+func StatusHasSuffix(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldHasSuffix(FieldStatus, v))
+}
+
+// StatusEqualFold applies the EqualFold predicate on the "status" field.
+func StatusEqualFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldEqualFold(FieldStatus, v))
+}
+
+// StatusContainsFold applies the ContainsFold predicate on the "status" field.
+func StatusContainsFold(v string) predicate.Bill {
+	return predicate.Bill(sql.FieldContainsFold(FieldStatus, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Bill {
+	return predicate.Bill(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// HasBillerAccount applies the HasEdge predicate on the "biller_account" edge.
+func HasBillerAccount() predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, StoreTable, StoreColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, BillerAccountTable, BillerAccountColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasStoreWith applies the HasEdge predicate on the "store" edge with a given conditions (other predicates).
-func HasStoreWith(preds ...predicate.Store) predicate.Bill {
+// HasBillerAccountWith applies the HasEdge predicate on the "biller_account" edge with a given conditions (other predicates).
+func HasBillerAccountWith(preds ...predicate.Biller_account) predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {
-		step := newStoreStep()
+		step := newBillerAccountStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -202,44 +618,21 @@ func HasStoreWith(preds ...predicate.Store) predicate.Bill {
 	})
 }
 
-// HasCustomers applies the HasEdge predicate on the "customers" edge.
-func HasCustomers() predicate.Bill {
+// HasCustomer applies the HasEdge predicate on the "customer" edge.
+func HasCustomer() predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, CustomersTable, CustomersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, CustomerTable, CustomerColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasCustomersWith applies the HasEdge predicate on the "customers" edge with a given conditions (other predicates).
-func HasCustomersWith(preds ...predicate.Customer) predicate.Bill {
+// HasCustomerWith applies the HasEdge predicate on the "customer" edge with a given conditions (other predicates).
+func HasCustomerWith(preds ...predicate.Customer) predicate.Bill {
 	return predicate.Bill(func(s *sql.Selector) {
-		step := newCustomersStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasBillDetail applies the HasEdge predicate on the "bill_detail" edge.
-func HasBillDetail() predicate.Bill {
-	return predicate.Bill(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, BillDetailTable, BillDetailColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasBillDetailWith applies the HasEdge predicate on the "bill_detail" edge with a given conditions (other predicates).
-func HasBillDetailWith(preds ...predicate.BillDetail) predicate.Bill {
-	return predicate.Bill(func(s *sql.Selector) {
-		step := newBillDetailStep()
+		step := newCustomerStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

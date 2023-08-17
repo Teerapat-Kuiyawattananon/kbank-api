@@ -5,10 +5,10 @@ package ent
 import (
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
-	"kapi/ent/store"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -21,10 +21,24 @@ type Bill struct {
 	ID int `json:"id,omitempty"`
 	// BillerID holds the value of the "biller_id" field.
 	BillerID int `json:"biller_id,omitempty"`
-	// Ref1 holds the value of the "ref_1" field.
-	Ref1 int `json:"ref_1,omitempty"`
-	// Ref2 holds the value of the "ref_2" field.
-	Ref2 int `json:"ref_2,omitempty"`
+	// Reference1 holds the value of the "reference_1" field.
+	Reference1 int `json:"reference_1,omitempty"`
+	// Reference2 holds the value of the "reference_2" field.
+	Reference2 int `json:"reference_2,omitempty"`
+	// TransactionID holds the value of the "transaction_id" field.
+	TransactionID string `json:"transaction_id,omitempty"`
+	// TranAmount holds the value of the "tran_amount" field.
+	TranAmount float64 `json:"tran_amount,omitempty"`
+	// ChannelCode holds the value of the "channel_code" field.
+	ChannelCode string `json:"channel_code,omitempty"`
+	// SenderBankCode holds the value of the "sender_bank_code" field.
+	SenderBankCode string `json:"sender_bank_code,omitempty"`
+	// Status holds the value of the "status" field.
+	Status string `json:"status,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BillQuery when eager-loading is set.
 	Edges        BillEdges `json:"edges"`
@@ -33,54 +47,39 @@ type Bill struct {
 
 // BillEdges holds the relations/edges for other nodes in the graph.
 type BillEdges struct {
-	// Store holds the value of the store edge.
-	Store *Store `json:"store,omitempty"`
-	// Customers holds the value of the customers edge.
-	Customers *Customer `json:"customers,omitempty"`
-	// BillDetail holds the value of the bill_detail edge.
-	BillDetail *BillDetail `json:"bill_detail,omitempty"`
+	// BillerAccount holds the value of the biller_account edge.
+	BillerAccount *Biller_account `json:"biller_account,omitempty"`
+	// Customer holds the value of the customer edge.
+	Customer *Customer `json:"customer,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [2]bool
 }
 
-// StoreOrErr returns the Store value or an error if the edge
+// BillerAccountOrErr returns the BillerAccount value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e BillEdges) StoreOrErr() (*Store, error) {
+func (e BillEdges) BillerAccountOrErr() (*Biller_account, error) {
 	if e.loadedTypes[0] {
-		if e.Store == nil {
+		if e.BillerAccount == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: store.Label}
+			return nil, &NotFoundError{label: biller_account.Label}
 		}
-		return e.Store, nil
+		return e.BillerAccount, nil
 	}
-	return nil, &NotLoadedError{edge: "store"}
+	return nil, &NotLoadedError{edge: "biller_account"}
 }
 
-// CustomersOrErr returns the Customers value or an error if the edge
+// CustomerOrErr returns the Customer value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e BillEdges) CustomersOrErr() (*Customer, error) {
+func (e BillEdges) CustomerOrErr() (*Customer, error) {
 	if e.loadedTypes[1] {
-		if e.Customers == nil {
+		if e.Customer == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: customer.Label}
 		}
-		return e.Customers, nil
+		return e.Customer, nil
 	}
-	return nil, &NotLoadedError{edge: "customers"}
-}
-
-// BillDetailOrErr returns the BillDetail value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e BillEdges) BillDetailOrErr() (*BillDetail, error) {
-	if e.loadedTypes[2] {
-		if e.BillDetail == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: billdetail.Label}
-		}
-		return e.BillDetail, nil
-	}
-	return nil, &NotLoadedError{edge: "bill_detail"}
+	return nil, &NotLoadedError{edge: "customer"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -88,8 +87,14 @@ func (*Bill) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case bill.FieldID, bill.FieldBillerID, bill.FieldRef1, bill.FieldRef2:
+		case bill.FieldTranAmount:
+			values[i] = new(sql.NullFloat64)
+		case bill.FieldID, bill.FieldBillerID, bill.FieldReference1, bill.FieldReference2:
 			values[i] = new(sql.NullInt64)
+		case bill.FieldTransactionID, bill.FieldChannelCode, bill.FieldSenderBankCode, bill.FieldStatus:
+			values[i] = new(sql.NullString)
+		case bill.FieldCreatedAt, bill.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -117,17 +122,59 @@ func (b *Bill) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				b.BillerID = int(value.Int64)
 			}
-		case bill.FieldRef1:
+		case bill.FieldReference1:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field ref_1", values[i])
+				return fmt.Errorf("unexpected type %T for field reference_1", values[i])
 			} else if value.Valid {
-				b.Ref1 = int(value.Int64)
+				b.Reference1 = int(value.Int64)
 			}
-		case bill.FieldRef2:
+		case bill.FieldReference2:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field ref_2", values[i])
+				return fmt.Errorf("unexpected type %T for field reference_2", values[i])
 			} else if value.Valid {
-				b.Ref2 = int(value.Int64)
+				b.Reference2 = int(value.Int64)
+			}
+		case bill.FieldTransactionID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field transaction_id", values[i])
+			} else if value.Valid {
+				b.TransactionID = value.String
+			}
+		case bill.FieldTranAmount:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field tran_amount", values[i])
+			} else if value.Valid {
+				b.TranAmount = value.Float64
+			}
+		case bill.FieldChannelCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field channel_code", values[i])
+			} else if value.Valid {
+				b.ChannelCode = value.String
+			}
+		case bill.FieldSenderBankCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field sender_bank_code", values[i])
+			} else if value.Valid {
+				b.SenderBankCode = value.String
+			}
+		case bill.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				b.Status = value.String
+			}
+		case bill.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				b.CreatedAt = value.Time
+			}
+		case bill.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				b.UpdatedAt = value.Time
 			}
 		default:
 			b.selectValues.Set(columns[i], values[i])
@@ -142,19 +189,14 @@ func (b *Bill) Value(name string) (ent.Value, error) {
 	return b.selectValues.Get(name)
 }
 
-// QueryStore queries the "store" edge of the Bill entity.
-func (b *Bill) QueryStore() *StoreQuery {
-	return NewBillClient(b.config).QueryStore(b)
+// QueryBillerAccount queries the "biller_account" edge of the Bill entity.
+func (b *Bill) QueryBillerAccount() *BillerAccountQuery {
+	return NewBillClient(b.config).QueryBillerAccount(b)
 }
 
-// QueryCustomers queries the "customers" edge of the Bill entity.
-func (b *Bill) QueryCustomers() *CustomerQuery {
-	return NewBillClient(b.config).QueryCustomers(b)
-}
-
-// QueryBillDetail queries the "bill_detail" edge of the Bill entity.
-func (b *Bill) QueryBillDetail() *BillDetailQuery {
-	return NewBillClient(b.config).QueryBillDetail(b)
+// QueryCustomer queries the "customer" edge of the Bill entity.
+func (b *Bill) QueryCustomer() *CustomerQuery {
+	return NewBillClient(b.config).QueryCustomer(b)
 }
 
 // Update returns a builder for updating this Bill.
@@ -183,11 +225,32 @@ func (b *Bill) String() string {
 	builder.WriteString("biller_id=")
 	builder.WriteString(fmt.Sprintf("%v", b.BillerID))
 	builder.WriteString(", ")
-	builder.WriteString("ref_1=")
-	builder.WriteString(fmt.Sprintf("%v", b.Ref1))
+	builder.WriteString("reference_1=")
+	builder.WriteString(fmt.Sprintf("%v", b.Reference1))
 	builder.WriteString(", ")
-	builder.WriteString("ref_2=")
-	builder.WriteString(fmt.Sprintf("%v", b.Ref2))
+	builder.WriteString("reference_2=")
+	builder.WriteString(fmt.Sprintf("%v", b.Reference2))
+	builder.WriteString(", ")
+	builder.WriteString("transaction_id=")
+	builder.WriteString(b.TransactionID)
+	builder.WriteString(", ")
+	builder.WriteString("tran_amount=")
+	builder.WriteString(fmt.Sprintf("%v", b.TranAmount))
+	builder.WriteString(", ")
+	builder.WriteString("channel_code=")
+	builder.WriteString(b.ChannelCode)
+	builder.WriteString(", ")
+	builder.WriteString("sender_bank_code=")
+	builder.WriteString(b.SenderBankCode)
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(b.Status)
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(b.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(b.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

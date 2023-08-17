@@ -20,16 +20,16 @@ func (f BillFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BillMutation", m)
 }
 
-// The BillDetailFunc type is an adapter to allow the use of ordinary
-// function as BillDetail mutator.
-type BillDetailFunc func(context.Context, *ent.BillDetailMutation) (ent.Value, error)
+// The Biller_accountFunc type is an adapter to allow the use of ordinary
+// function as Biller_account mutator.
+type Biller_accountFunc func(context.Context, *ent.BillerAccountMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f BillDetailFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.BillDetailMutation); ok {
+func (f Biller_accountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BillerAccountMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BillDetailMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BillerAccountMutation", m)
 }
 
 // The CustomerFunc type is an adapter to allow the use of ordinary
@@ -42,18 +42,6 @@ func (f CustomerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CustomerMutation", m)
-}
-
-// The StoreFunc type is an adapter to allow the use of ordinary
-// function as Store mutator.
-type StoreFunc func(context.Context, *ent.StoreMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f StoreFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.StoreMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StoreMutation", m)
 }
 
 // Condition is a hook condition function.

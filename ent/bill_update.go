@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
 	"kapi/ent/predicate"
-	"kapi/ent/store"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -50,108 +50,178 @@ func (bu *BillUpdate) ClearBillerID() *BillUpdate {
 	return bu
 }
 
-// SetRef1 sets the "ref_1" field.
-func (bu *BillUpdate) SetRef1(i int) *BillUpdate {
-	bu.mutation.SetRef1(i)
+// SetReference1 sets the "reference_1" field.
+func (bu *BillUpdate) SetReference1(i int) *BillUpdate {
+	bu.mutation.SetReference1(i)
 	return bu
 }
 
-// SetNillableRef1 sets the "ref_1" field if the given value is not nil.
-func (bu *BillUpdate) SetNillableRef1(i *int) *BillUpdate {
+// SetNillableReference1 sets the "reference_1" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableReference1(i *int) *BillUpdate {
 	if i != nil {
-		bu.SetRef1(*i)
+		bu.SetReference1(*i)
 	}
 	return bu
 }
 
-// ClearRef1 clears the value of the "ref_1" field.
-func (bu *BillUpdate) ClearRef1() *BillUpdate {
-	bu.mutation.ClearRef1()
+// ClearReference1 clears the value of the "reference_1" field.
+func (bu *BillUpdate) ClearReference1() *BillUpdate {
+	bu.mutation.ClearReference1()
 	return bu
 }
 
-// SetRef2 sets the "ref_2" field.
-func (bu *BillUpdate) SetRef2(i int) *BillUpdate {
-	bu.mutation.ResetRef2()
-	bu.mutation.SetRef2(i)
+// SetReference2 sets the "reference_2" field.
+func (bu *BillUpdate) SetReference2(i int) *BillUpdate {
+	bu.mutation.ResetReference2()
+	bu.mutation.SetReference2(i)
 	return bu
 }
 
-// SetNillableRef2 sets the "ref_2" field if the given value is not nil.
-func (bu *BillUpdate) SetNillableRef2(i *int) *BillUpdate {
+// SetNillableReference2 sets the "reference_2" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableReference2(i *int) *BillUpdate {
 	if i != nil {
-		bu.SetRef2(*i)
+		bu.SetReference2(*i)
 	}
 	return bu
 }
 
-// AddRef2 adds i to the "ref_2" field.
-func (bu *BillUpdate) AddRef2(i int) *BillUpdate {
-	bu.mutation.AddRef2(i)
+// AddReference2 adds i to the "reference_2" field.
+func (bu *BillUpdate) AddReference2(i int) *BillUpdate {
+	bu.mutation.AddReference2(i)
 	return bu
 }
 
-// ClearRef2 clears the value of the "ref_2" field.
-func (bu *BillUpdate) ClearRef2() *BillUpdate {
-	bu.mutation.ClearRef2()
+// ClearReference2 clears the value of the "reference_2" field.
+func (bu *BillUpdate) ClearReference2() *BillUpdate {
+	bu.mutation.ClearReference2()
 	return bu
 }
 
-// SetStoreID sets the "store" edge to the Store entity by ID.
-func (bu *BillUpdate) SetStoreID(id int) *BillUpdate {
-	bu.mutation.SetStoreID(id)
+// SetTransactionID sets the "transaction_id" field.
+func (bu *BillUpdate) SetTransactionID(s string) *BillUpdate {
+	bu.mutation.SetTransactionID(s)
 	return bu
 }
 
-// SetNillableStoreID sets the "store" edge to the Store entity by ID if the given value is not nil.
-func (bu *BillUpdate) SetNillableStoreID(id *int) *BillUpdate {
+// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableTransactionID(s *string) *BillUpdate {
+	if s != nil {
+		bu.SetTransactionID(*s)
+	}
+	return bu
+}
+
+// SetTranAmount sets the "tran_amount" field.
+func (bu *BillUpdate) SetTranAmount(f float64) *BillUpdate {
+	bu.mutation.ResetTranAmount()
+	bu.mutation.SetTranAmount(f)
+	return bu
+}
+
+// SetNillableTranAmount sets the "tran_amount" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableTranAmount(f *float64) *BillUpdate {
+	if f != nil {
+		bu.SetTranAmount(*f)
+	}
+	return bu
+}
+
+// AddTranAmount adds f to the "tran_amount" field.
+func (bu *BillUpdate) AddTranAmount(f float64) *BillUpdate {
+	bu.mutation.AddTranAmount(f)
+	return bu
+}
+
+// SetChannelCode sets the "channel_code" field.
+func (bu *BillUpdate) SetChannelCode(s string) *BillUpdate {
+	bu.mutation.SetChannelCode(s)
+	return bu
+}
+
+// SetNillableChannelCode sets the "channel_code" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableChannelCode(s *string) *BillUpdate {
+	if s != nil {
+		bu.SetChannelCode(*s)
+	}
+	return bu
+}
+
+// SetSenderBankCode sets the "sender_bank_code" field.
+func (bu *BillUpdate) SetSenderBankCode(s string) *BillUpdate {
+	bu.mutation.SetSenderBankCode(s)
+	return bu
+}
+
+// SetNillableSenderBankCode sets the "sender_bank_code" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableSenderBankCode(s *string) *BillUpdate {
+	if s != nil {
+		bu.SetSenderBankCode(*s)
+	}
+	return bu
+}
+
+// SetStatus sets the "status" field.
+func (bu *BillUpdate) SetStatus(s string) *BillUpdate {
+	bu.mutation.SetStatus(s)
+	return bu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (bu *BillUpdate) SetCreatedAt(t time.Time) *BillUpdate {
+	bu.mutation.SetCreatedAt(t)
+	return bu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (bu *BillUpdate) SetNillableCreatedAt(t *time.Time) *BillUpdate {
+	if t != nil {
+		bu.SetCreatedAt(*t)
+	}
+	return bu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (bu *BillUpdate) SetUpdatedAt(t time.Time) *BillUpdate {
+	bu.mutation.SetUpdatedAt(t)
+	return bu
+}
+
+// SetBillerAccountID sets the "biller_account" edge to the Biller_account entity by ID.
+func (bu *BillUpdate) SetBillerAccountID(id int) *BillUpdate {
+	bu.mutation.SetBillerAccountID(id)
+	return bu
+}
+
+// SetNillableBillerAccountID sets the "biller_account" edge to the Biller_account entity by ID if the given value is not nil.
+func (bu *BillUpdate) SetNillableBillerAccountID(id *int) *BillUpdate {
 	if id != nil {
-		bu = bu.SetStoreID(*id)
+		bu = bu.SetBillerAccountID(*id)
 	}
 	return bu
 }
 
-// SetStore sets the "store" edge to the Store entity.
-func (bu *BillUpdate) SetStore(s *Store) *BillUpdate {
-	return bu.SetStoreID(s.ID)
+// SetBillerAccount sets the "biller_account" edge to the Biller_account entity.
+func (bu *BillUpdate) SetBillerAccount(b *Biller_account) *BillUpdate {
+	return bu.SetBillerAccountID(b.ID)
 }
 
-// SetCustomersID sets the "customers" edge to the Customer entity by ID.
-func (bu *BillUpdate) SetCustomersID(id int) *BillUpdate {
-	bu.mutation.SetCustomersID(id)
+// SetCustomerID sets the "customer" edge to the Customer entity by ID.
+func (bu *BillUpdate) SetCustomerID(id int) *BillUpdate {
+	bu.mutation.SetCustomerID(id)
 	return bu
 }
 
-// SetNillableCustomersID sets the "customers" edge to the Customer entity by ID if the given value is not nil.
-func (bu *BillUpdate) SetNillableCustomersID(id *int) *BillUpdate {
+// SetNillableCustomerID sets the "customer" edge to the Customer entity by ID if the given value is not nil.
+func (bu *BillUpdate) SetNillableCustomerID(id *int) *BillUpdate {
 	if id != nil {
-		bu = bu.SetCustomersID(*id)
+		bu = bu.SetCustomerID(*id)
 	}
 	return bu
 }
 
-// SetCustomers sets the "customers" edge to the Customer entity.
-func (bu *BillUpdate) SetCustomers(c *Customer) *BillUpdate {
-	return bu.SetCustomersID(c.ID)
-}
-
-// SetBillDetailID sets the "bill_detail" edge to the BillDetail entity by ID.
-func (bu *BillUpdate) SetBillDetailID(id int) *BillUpdate {
-	bu.mutation.SetBillDetailID(id)
-	return bu
-}
-
-// SetNillableBillDetailID sets the "bill_detail" edge to the BillDetail entity by ID if the given value is not nil.
-func (bu *BillUpdate) SetNillableBillDetailID(id *int) *BillUpdate {
-	if id != nil {
-		bu = bu.SetBillDetailID(*id)
-	}
-	return bu
-}
-
-// SetBillDetail sets the "bill_detail" edge to the BillDetail entity.
-func (bu *BillUpdate) SetBillDetail(b *BillDetail) *BillUpdate {
-	return bu.SetBillDetailID(b.ID)
+// SetCustomer sets the "customer" edge to the Customer entity.
+func (bu *BillUpdate) SetCustomer(c *Customer) *BillUpdate {
+	return bu.SetCustomerID(c.ID)
 }
 
 // Mutation returns the BillMutation object of the builder.
@@ -159,26 +229,21 @@ func (bu *BillUpdate) Mutation() *BillMutation {
 	return bu.mutation
 }
 
-// ClearStore clears the "store" edge to the Store entity.
-func (bu *BillUpdate) ClearStore() *BillUpdate {
-	bu.mutation.ClearStore()
+// ClearBillerAccount clears the "biller_account" edge to the Biller_account entity.
+func (bu *BillUpdate) ClearBillerAccount() *BillUpdate {
+	bu.mutation.ClearBillerAccount()
 	return bu
 }
 
-// ClearCustomers clears the "customers" edge to the Customer entity.
-func (bu *BillUpdate) ClearCustomers() *BillUpdate {
-	bu.mutation.ClearCustomers()
-	return bu
-}
-
-// ClearBillDetail clears the "bill_detail" edge to the BillDetail entity.
-func (bu *BillUpdate) ClearBillDetail() *BillUpdate {
-	bu.mutation.ClearBillDetail()
+// ClearCustomer clears the "customer" edge to the Customer entity.
+func (bu *BillUpdate) ClearCustomer() *BillUpdate {
+	bu.mutation.ClearCustomer()
 	return bu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (bu *BillUpdate) Save(ctx context.Context) (int, error) {
+	bu.defaults()
 	return withHooks(ctx, bu.sqlSave, bu.mutation, bu.hooks)
 }
 
@@ -204,7 +269,28 @@ func (bu *BillUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (bu *BillUpdate) defaults() {
+	if _, ok := bu.mutation.UpdatedAt(); !ok {
+		v := bill.UpdateDefaultUpdatedAt()
+		bu.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (bu *BillUpdate) check() error {
+	if v, ok := bu.mutation.Status(); ok {
+		if err := bill.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Bill.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := bu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(bill.Table, bill.Columns, sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt))
 	if ps := bu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -213,37 +299,61 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := bu.mutation.Ref2(); ok {
-		_spec.SetField(bill.FieldRef2, field.TypeInt, value)
+	if value, ok := bu.mutation.Reference2(); ok {
+		_spec.SetField(bill.FieldReference2, field.TypeInt, value)
 	}
-	if value, ok := bu.mutation.AddedRef2(); ok {
-		_spec.AddField(bill.FieldRef2, field.TypeInt, value)
+	if value, ok := bu.mutation.AddedReference2(); ok {
+		_spec.AddField(bill.FieldReference2, field.TypeInt, value)
 	}
-	if bu.mutation.Ref2Cleared() {
-		_spec.ClearField(bill.FieldRef2, field.TypeInt)
+	if bu.mutation.Reference2Cleared() {
+		_spec.ClearField(bill.FieldReference2, field.TypeInt)
 	}
-	if bu.mutation.StoreCleared() {
+	if value, ok := bu.mutation.TransactionID(); ok {
+		_spec.SetField(bill.FieldTransactionID, field.TypeString, value)
+	}
+	if value, ok := bu.mutation.TranAmount(); ok {
+		_spec.SetField(bill.FieldTranAmount, field.TypeFloat64, value)
+	}
+	if value, ok := bu.mutation.AddedTranAmount(); ok {
+		_spec.AddField(bill.FieldTranAmount, field.TypeFloat64, value)
+	}
+	if value, ok := bu.mutation.ChannelCode(); ok {
+		_spec.SetField(bill.FieldChannelCode, field.TypeString, value)
+	}
+	if value, ok := bu.mutation.SenderBankCode(); ok {
+		_spec.SetField(bill.FieldSenderBankCode, field.TypeString, value)
+	}
+	if value, ok := bu.mutation.Status(); ok {
+		_spec.SetField(bill.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := bu.mutation.CreatedAt(); ok {
+		_spec.SetField(bill.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := bu.mutation.UpdatedAt(); ok {
+		_spec.SetField(bill.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if bu.mutation.BillerAccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.StoreTable,
-			Columns: []string{bill.StoreColumn},
+			Table:   bill.BillerAccountTable,
+			Columns: []string{bill.BillerAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(store.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(biller_account.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := bu.mutation.StoreIDs(); len(nodes) > 0 {
+	if nodes := bu.mutation.BillerAccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.StoreTable,
-			Columns: []string{bill.StoreColumn},
+			Table:   bill.BillerAccountTable,
+			Columns: []string{bill.BillerAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(store.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(biller_account.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -251,12 +361,12 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if bu.mutation.CustomersCleared() {
+	if bu.mutation.CustomerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.CustomersTable,
-			Columns: []string{bill.CustomersColumn},
+			Table:   bill.CustomerTable,
+			Columns: []string{bill.CustomerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(customer.FieldID, field.TypeInt),
@@ -264,44 +374,15 @@ func (bu *BillUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := bu.mutation.CustomersIDs(); len(nodes) > 0 {
+	if nodes := bu.mutation.CustomerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.CustomersTable,
-			Columns: []string{bill.CustomersColumn},
+			Table:   bill.CustomerTable,
+			Columns: []string{bill.CustomerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(customer.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if bu.mutation.BillDetailCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   bill.BillDetailTable,
-			Columns: []string{bill.BillDetailColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := bu.mutation.BillDetailIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   bill.BillDetailTable,
-			Columns: []string{bill.BillDetailColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -349,108 +430,178 @@ func (buo *BillUpdateOne) ClearBillerID() *BillUpdateOne {
 	return buo
 }
 
-// SetRef1 sets the "ref_1" field.
-func (buo *BillUpdateOne) SetRef1(i int) *BillUpdateOne {
-	buo.mutation.SetRef1(i)
+// SetReference1 sets the "reference_1" field.
+func (buo *BillUpdateOne) SetReference1(i int) *BillUpdateOne {
+	buo.mutation.SetReference1(i)
 	return buo
 }
 
-// SetNillableRef1 sets the "ref_1" field if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableRef1(i *int) *BillUpdateOne {
+// SetNillableReference1 sets the "reference_1" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableReference1(i *int) *BillUpdateOne {
 	if i != nil {
-		buo.SetRef1(*i)
+		buo.SetReference1(*i)
 	}
 	return buo
 }
 
-// ClearRef1 clears the value of the "ref_1" field.
-func (buo *BillUpdateOne) ClearRef1() *BillUpdateOne {
-	buo.mutation.ClearRef1()
+// ClearReference1 clears the value of the "reference_1" field.
+func (buo *BillUpdateOne) ClearReference1() *BillUpdateOne {
+	buo.mutation.ClearReference1()
 	return buo
 }
 
-// SetRef2 sets the "ref_2" field.
-func (buo *BillUpdateOne) SetRef2(i int) *BillUpdateOne {
-	buo.mutation.ResetRef2()
-	buo.mutation.SetRef2(i)
+// SetReference2 sets the "reference_2" field.
+func (buo *BillUpdateOne) SetReference2(i int) *BillUpdateOne {
+	buo.mutation.ResetReference2()
+	buo.mutation.SetReference2(i)
 	return buo
 }
 
-// SetNillableRef2 sets the "ref_2" field if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableRef2(i *int) *BillUpdateOne {
+// SetNillableReference2 sets the "reference_2" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableReference2(i *int) *BillUpdateOne {
 	if i != nil {
-		buo.SetRef2(*i)
+		buo.SetReference2(*i)
 	}
 	return buo
 }
 
-// AddRef2 adds i to the "ref_2" field.
-func (buo *BillUpdateOne) AddRef2(i int) *BillUpdateOne {
-	buo.mutation.AddRef2(i)
+// AddReference2 adds i to the "reference_2" field.
+func (buo *BillUpdateOne) AddReference2(i int) *BillUpdateOne {
+	buo.mutation.AddReference2(i)
 	return buo
 }
 
-// ClearRef2 clears the value of the "ref_2" field.
-func (buo *BillUpdateOne) ClearRef2() *BillUpdateOne {
-	buo.mutation.ClearRef2()
+// ClearReference2 clears the value of the "reference_2" field.
+func (buo *BillUpdateOne) ClearReference2() *BillUpdateOne {
+	buo.mutation.ClearReference2()
 	return buo
 }
 
-// SetStoreID sets the "store" edge to the Store entity by ID.
-func (buo *BillUpdateOne) SetStoreID(id int) *BillUpdateOne {
-	buo.mutation.SetStoreID(id)
+// SetTransactionID sets the "transaction_id" field.
+func (buo *BillUpdateOne) SetTransactionID(s string) *BillUpdateOne {
+	buo.mutation.SetTransactionID(s)
 	return buo
 }
 
-// SetNillableStoreID sets the "store" edge to the Store entity by ID if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableStoreID(id *int) *BillUpdateOne {
+// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableTransactionID(s *string) *BillUpdateOne {
+	if s != nil {
+		buo.SetTransactionID(*s)
+	}
+	return buo
+}
+
+// SetTranAmount sets the "tran_amount" field.
+func (buo *BillUpdateOne) SetTranAmount(f float64) *BillUpdateOne {
+	buo.mutation.ResetTranAmount()
+	buo.mutation.SetTranAmount(f)
+	return buo
+}
+
+// SetNillableTranAmount sets the "tran_amount" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableTranAmount(f *float64) *BillUpdateOne {
+	if f != nil {
+		buo.SetTranAmount(*f)
+	}
+	return buo
+}
+
+// AddTranAmount adds f to the "tran_amount" field.
+func (buo *BillUpdateOne) AddTranAmount(f float64) *BillUpdateOne {
+	buo.mutation.AddTranAmount(f)
+	return buo
+}
+
+// SetChannelCode sets the "channel_code" field.
+func (buo *BillUpdateOne) SetChannelCode(s string) *BillUpdateOne {
+	buo.mutation.SetChannelCode(s)
+	return buo
+}
+
+// SetNillableChannelCode sets the "channel_code" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableChannelCode(s *string) *BillUpdateOne {
+	if s != nil {
+		buo.SetChannelCode(*s)
+	}
+	return buo
+}
+
+// SetSenderBankCode sets the "sender_bank_code" field.
+func (buo *BillUpdateOne) SetSenderBankCode(s string) *BillUpdateOne {
+	buo.mutation.SetSenderBankCode(s)
+	return buo
+}
+
+// SetNillableSenderBankCode sets the "sender_bank_code" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableSenderBankCode(s *string) *BillUpdateOne {
+	if s != nil {
+		buo.SetSenderBankCode(*s)
+	}
+	return buo
+}
+
+// SetStatus sets the "status" field.
+func (buo *BillUpdateOne) SetStatus(s string) *BillUpdateOne {
+	buo.mutation.SetStatus(s)
+	return buo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (buo *BillUpdateOne) SetCreatedAt(t time.Time) *BillUpdateOne {
+	buo.mutation.SetCreatedAt(t)
+	return buo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableCreatedAt(t *time.Time) *BillUpdateOne {
+	if t != nil {
+		buo.SetCreatedAt(*t)
+	}
+	return buo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (buo *BillUpdateOne) SetUpdatedAt(t time.Time) *BillUpdateOne {
+	buo.mutation.SetUpdatedAt(t)
+	return buo
+}
+
+// SetBillerAccountID sets the "biller_account" edge to the Biller_account entity by ID.
+func (buo *BillUpdateOne) SetBillerAccountID(id int) *BillUpdateOne {
+	buo.mutation.SetBillerAccountID(id)
+	return buo
+}
+
+// SetNillableBillerAccountID sets the "biller_account" edge to the Biller_account entity by ID if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableBillerAccountID(id *int) *BillUpdateOne {
 	if id != nil {
-		buo = buo.SetStoreID(*id)
+		buo = buo.SetBillerAccountID(*id)
 	}
 	return buo
 }
 
-// SetStore sets the "store" edge to the Store entity.
-func (buo *BillUpdateOne) SetStore(s *Store) *BillUpdateOne {
-	return buo.SetStoreID(s.ID)
+// SetBillerAccount sets the "biller_account" edge to the Biller_account entity.
+func (buo *BillUpdateOne) SetBillerAccount(b *Biller_account) *BillUpdateOne {
+	return buo.SetBillerAccountID(b.ID)
 }
 
-// SetCustomersID sets the "customers" edge to the Customer entity by ID.
-func (buo *BillUpdateOne) SetCustomersID(id int) *BillUpdateOne {
-	buo.mutation.SetCustomersID(id)
+// SetCustomerID sets the "customer" edge to the Customer entity by ID.
+func (buo *BillUpdateOne) SetCustomerID(id int) *BillUpdateOne {
+	buo.mutation.SetCustomerID(id)
 	return buo
 }
 
-// SetNillableCustomersID sets the "customers" edge to the Customer entity by ID if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableCustomersID(id *int) *BillUpdateOne {
+// SetNillableCustomerID sets the "customer" edge to the Customer entity by ID if the given value is not nil.
+func (buo *BillUpdateOne) SetNillableCustomerID(id *int) *BillUpdateOne {
 	if id != nil {
-		buo = buo.SetCustomersID(*id)
+		buo = buo.SetCustomerID(*id)
 	}
 	return buo
 }
 
-// SetCustomers sets the "customers" edge to the Customer entity.
-func (buo *BillUpdateOne) SetCustomers(c *Customer) *BillUpdateOne {
-	return buo.SetCustomersID(c.ID)
-}
-
-// SetBillDetailID sets the "bill_detail" edge to the BillDetail entity by ID.
-func (buo *BillUpdateOne) SetBillDetailID(id int) *BillUpdateOne {
-	buo.mutation.SetBillDetailID(id)
-	return buo
-}
-
-// SetNillableBillDetailID sets the "bill_detail" edge to the BillDetail entity by ID if the given value is not nil.
-func (buo *BillUpdateOne) SetNillableBillDetailID(id *int) *BillUpdateOne {
-	if id != nil {
-		buo = buo.SetBillDetailID(*id)
-	}
-	return buo
-}
-
-// SetBillDetail sets the "bill_detail" edge to the BillDetail entity.
-func (buo *BillUpdateOne) SetBillDetail(b *BillDetail) *BillUpdateOne {
-	return buo.SetBillDetailID(b.ID)
+// SetCustomer sets the "customer" edge to the Customer entity.
+func (buo *BillUpdateOne) SetCustomer(c *Customer) *BillUpdateOne {
+	return buo.SetCustomerID(c.ID)
 }
 
 // Mutation returns the BillMutation object of the builder.
@@ -458,21 +609,15 @@ func (buo *BillUpdateOne) Mutation() *BillMutation {
 	return buo.mutation
 }
 
-// ClearStore clears the "store" edge to the Store entity.
-func (buo *BillUpdateOne) ClearStore() *BillUpdateOne {
-	buo.mutation.ClearStore()
+// ClearBillerAccount clears the "biller_account" edge to the Biller_account entity.
+func (buo *BillUpdateOne) ClearBillerAccount() *BillUpdateOne {
+	buo.mutation.ClearBillerAccount()
 	return buo
 }
 
-// ClearCustomers clears the "customers" edge to the Customer entity.
-func (buo *BillUpdateOne) ClearCustomers() *BillUpdateOne {
-	buo.mutation.ClearCustomers()
-	return buo
-}
-
-// ClearBillDetail clears the "bill_detail" edge to the BillDetail entity.
-func (buo *BillUpdateOne) ClearBillDetail() *BillUpdateOne {
-	buo.mutation.ClearBillDetail()
+// ClearCustomer clears the "customer" edge to the Customer entity.
+func (buo *BillUpdateOne) ClearCustomer() *BillUpdateOne {
+	buo.mutation.ClearCustomer()
 	return buo
 }
 
@@ -491,6 +636,7 @@ func (buo *BillUpdateOne) Select(field string, fields ...string) *BillUpdateOne 
 
 // Save executes the query and returns the updated Bill entity.
 func (buo *BillUpdateOne) Save(ctx context.Context) (*Bill, error) {
+	buo.defaults()
 	return withHooks(ctx, buo.sqlSave, buo.mutation, buo.hooks)
 }
 
@@ -516,7 +662,28 @@ func (buo *BillUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (buo *BillUpdateOne) defaults() {
+	if _, ok := buo.mutation.UpdatedAt(); !ok {
+		v := bill.UpdateDefaultUpdatedAt()
+		buo.mutation.SetUpdatedAt(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (buo *BillUpdateOne) check() error {
+	if v, ok := buo.mutation.Status(); ok {
+		if err := bill.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Bill.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) {
+	if err := buo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(bill.Table, bill.Columns, sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt))
 	id, ok := buo.mutation.ID()
 	if !ok {
@@ -542,37 +709,61 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 			}
 		}
 	}
-	if value, ok := buo.mutation.Ref2(); ok {
-		_spec.SetField(bill.FieldRef2, field.TypeInt, value)
+	if value, ok := buo.mutation.Reference2(); ok {
+		_spec.SetField(bill.FieldReference2, field.TypeInt, value)
 	}
-	if value, ok := buo.mutation.AddedRef2(); ok {
-		_spec.AddField(bill.FieldRef2, field.TypeInt, value)
+	if value, ok := buo.mutation.AddedReference2(); ok {
+		_spec.AddField(bill.FieldReference2, field.TypeInt, value)
 	}
-	if buo.mutation.Ref2Cleared() {
-		_spec.ClearField(bill.FieldRef2, field.TypeInt)
+	if buo.mutation.Reference2Cleared() {
+		_spec.ClearField(bill.FieldReference2, field.TypeInt)
 	}
-	if buo.mutation.StoreCleared() {
+	if value, ok := buo.mutation.TransactionID(); ok {
+		_spec.SetField(bill.FieldTransactionID, field.TypeString, value)
+	}
+	if value, ok := buo.mutation.TranAmount(); ok {
+		_spec.SetField(bill.FieldTranAmount, field.TypeFloat64, value)
+	}
+	if value, ok := buo.mutation.AddedTranAmount(); ok {
+		_spec.AddField(bill.FieldTranAmount, field.TypeFloat64, value)
+	}
+	if value, ok := buo.mutation.ChannelCode(); ok {
+		_spec.SetField(bill.FieldChannelCode, field.TypeString, value)
+	}
+	if value, ok := buo.mutation.SenderBankCode(); ok {
+		_spec.SetField(bill.FieldSenderBankCode, field.TypeString, value)
+	}
+	if value, ok := buo.mutation.Status(); ok {
+		_spec.SetField(bill.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := buo.mutation.CreatedAt(); ok {
+		_spec.SetField(bill.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := buo.mutation.UpdatedAt(); ok {
+		_spec.SetField(bill.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if buo.mutation.BillerAccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.StoreTable,
-			Columns: []string{bill.StoreColumn},
+			Table:   bill.BillerAccountTable,
+			Columns: []string{bill.BillerAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(store.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(biller_account.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := buo.mutation.StoreIDs(); len(nodes) > 0 {
+	if nodes := buo.mutation.BillerAccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.StoreTable,
-			Columns: []string{bill.StoreColumn},
+			Table:   bill.BillerAccountTable,
+			Columns: []string{bill.BillerAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(store.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(biller_account.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -580,12 +771,12 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if buo.mutation.CustomersCleared() {
+	if buo.mutation.CustomerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.CustomersTable,
-			Columns: []string{bill.CustomersColumn},
+			Table:   bill.CustomerTable,
+			Columns: []string{bill.CustomerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(customer.FieldID, field.TypeInt),
@@ -593,44 +784,15 @@ func (buo *BillUpdateOne) sqlSave(ctx context.Context) (_node *Bill, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := buo.mutation.CustomersIDs(); len(nodes) > 0 {
+	if nodes := buo.mutation.CustomerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.CustomersTable,
-			Columns: []string{bill.CustomersColumn},
+			Table:   bill.CustomerTable,
+			Columns: []string{bill.CustomerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(customer.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if buo.mutation.BillDetailCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   bill.BillDetailTable,
-			Columns: []string{bill.BillDetailColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := buo.mutation.BillDetailIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   bill.BillDetailTable,
-			Columns: []string{bill.BillDetailColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -7,7 +7,6 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
 	"kapi/ent/customer"
 	"kapi/ent/predicate"
 	"math"
@@ -20,12 +19,11 @@ import (
 // CustomerQuery is the builder for querying Customer entities.
 type CustomerQuery struct {
 	config
-	ctx             *QueryContext
-	order           []customer.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Customer
-	withBillDetails *BillDetailQuery
-	withBills       *BillQuery
+	ctx        *QueryContext
+	order      []customer.OrderOption
+	inters     []Interceptor
+	predicates []predicate.Customer
+	withBills  *BillQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -60,28 +58,6 @@ func (cq *CustomerQuery) Unique(unique bool) *CustomerQuery {
 func (cq *CustomerQuery) Order(o ...customer.OrderOption) *CustomerQuery {
 	cq.order = append(cq.order, o...)
 	return cq
-}
-
-// QueryBillDetails chains the current query on the "bill_details" edge.
-func (cq *CustomerQuery) QueryBillDetails() *BillDetailQuery {
-	query := (&BillDetailClient{config: cq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := cq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := cq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(customer.Table, customer.FieldID, selector),
-			sqlgraph.To(billdetail.Table, billdetail.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, customer.BillDetailsTable, customer.BillDetailsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // QueryBills chains the current query on the "bills" edge.
@@ -293,28 +269,16 @@ func (cq *CustomerQuery) Clone() *CustomerQuery {
 		return nil
 	}
 	return &CustomerQuery{
-		config:          cq.config,
-		ctx:             cq.ctx.Clone(),
-		order:           append([]customer.OrderOption{}, cq.order...),
-		inters:          append([]Interceptor{}, cq.inters...),
-		predicates:      append([]predicate.Customer{}, cq.predicates...),
-		withBillDetails: cq.withBillDetails.Clone(),
-		withBills:       cq.withBills.Clone(),
+		config:     cq.config,
+		ctx:        cq.ctx.Clone(),
+		order:      append([]customer.OrderOption{}, cq.order...),
+		inters:     append([]Interceptor{}, cq.inters...),
+		predicates: append([]predicate.Customer{}, cq.predicates...),
+		withBills:  cq.withBills.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
 		path: cq.path,
 	}
-}
-
-// WithBillDetails tells the query-builder to eager-load the nodes that are connected to
-// the "bill_details" edge. The optional arguments are used to configure the query builder of the edge.
-func (cq *CustomerQuery) WithBillDetails(opts ...func(*BillDetailQuery)) *CustomerQuery {
-	query := (&BillDetailClient{config: cq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	cq.withBillDetails = query
-	return cq
 }
 
 // WithBills tells the query-builder to eager-load the nodes that are connected to
@@ -406,8 +370,7 @@ func (cq *CustomerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cus
 	var (
 		nodes       = []*Customer{}
 		_spec       = cq.querySpec()
-		loadedTypes = [2]bool{
-			cq.withBillDetails != nil,
+		loadedTypes = [1]bool{
 			cq.withBills != nil,
 		}
 	)
@@ -429,13 +392,6 @@ func (cq *CustomerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cus
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := cq.withBillDetails; query != nil {
-		if err := cq.loadBillDetails(ctx, query, nodes,
-			func(n *Customer) { n.Edges.BillDetails = []*BillDetail{} },
-			func(n *Customer, e *BillDetail) { n.Edges.BillDetails = append(n.Edges.BillDetails, e) }); err != nil {
-			return nil, err
-		}
-	}
 	if query := cq.withBills; query != nil {
 		if err := cq.loadBills(ctx, query, nodes,
 			func(n *Customer) { n.Edges.Bills = []*Bill{} },
@@ -446,37 +402,6 @@ func (cq *CustomerQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cus
 	return nodes, nil
 }
 
-func (cq *CustomerQuery) loadBillDetails(ctx context.Context, query *BillDetailQuery, nodes []*Customer, init func(*Customer), assign func(*Customer, *BillDetail)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Customer)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(billdetail.FieldCustomerID)
-	}
-	query.Where(predicate.BillDetail(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(customer.BillDetailsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.CustomerID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "customer_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
 func (cq *CustomerQuery) loadBills(ctx context.Context, query *BillQuery, nodes []*Customer, init func(*Customer), assign func(*Customer, *Bill)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*Customer)
@@ -488,7 +413,7 @@ func (cq *CustomerQuery) loadBills(ctx context.Context, query *BillQuery, nodes 
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(bill.FieldRef1)
+		query.ctx.AppendFieldOnce(bill.FieldReference1)
 	}
 	query.Where(predicate.Bill(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(customer.BillsColumn), fks...))
@@ -498,10 +423,10 @@ func (cq *CustomerQuery) loadBills(ctx context.Context, query *BillQuery, nodes 
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.Ref1
+		fk := n.Reference1
 		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "ref_1" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "reference_1" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

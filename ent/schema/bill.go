@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -16,25 +18,40 @@ func (Bill) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
 		field.Int("biller_id").Optional(),
-		field.Int("ref_1").Optional(),
-		field.Int("ref_2").Optional(),
+		field.Int("reference_1").Optional(),
+		field.Int("reference_2").Optional(),
+		field.String("transaction_id").
+			Default(""),
+		field.Float("tran_amount").
+			Default(0.00),
+		field.String("channel_code").
+			Default(""),
+		field.String("sender_bank_code").
+			Default(""),
+		field.String("status").
+			NotEmpty(),
+		field.Time("created_at").
+			Default(time.Now),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 
 // Edges of the Bill.
 func (Bill) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("store", Store.Type).
+		edge.From("biller_account", Biller_account.Type).
 			Ref("bills").
 			Field("biller_id").
 			Unique(),
 
-		edge.From("customers", Customer.Type).
+		edge.From("customer", Customer.Type).
 			Ref("bills").
-			Field("ref_1").
+			Field("reference_1").
 			Unique(),
 
-		edge.To("bill_detail", BillDetail.Type).
-			Unique(),
+		// edge.To("bill_detail", BillDetail.Type).
+		// 	Unique(),
 	}
 }

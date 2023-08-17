@@ -34,7 +34,6 @@ import (
 
 //go:generate swag init -g docs\docs.go
 
-
 func main() {
 	if err := godotenv.Load(".env") ; err != nil {
 		log.Fatal(err)
@@ -52,13 +51,23 @@ func main() {
 		})
 	})
 
+	// Kbank API (bill-payment-service)
 	e.POST("/api/billpayment/lookup", h.HandlerLookup)
 	e.POST("/api/billpayment/payment", h.HandlerPayment)
-	e.POST("/api/bill", h.HandlerCreateBillDetail)
-	e.POST("/api/customer", h.HandlerCreateCustomer)
-	e.POST("/api/store",h.HandlerCreateStore)
-	e.Start(":" + os.Getenv("PORT"))
 
+	// Store API
 
+	// -BILL
+	e.POST("/api/bills", h.HandlerCreateBill)
+	e.GET("/api/bills", h.HandlerGetAllBills)
+	
+	// -CUSTOMER
+	e.POST("/api/customers", h.HandlerCreateCustomer)
+	e.GET("/api/customers", h.HandlerGetCustomers)
+	e.GET("/api/customers/:id", h.HandlerGetCustomerByID)
+
+	// -BILLER_ACCOUNT
+	e.POST("/api/billers",h.HandlerCreateBillerAccount)
+	e.GET("/api/billers", h.HandlerGetBillers)
 	e.Start(":" + os.Getenv("PORT"))
 }

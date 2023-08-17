@@ -14,12 +14,10 @@ type Tx struct {
 	config
 	// Bill is the client for interacting with the Bill builders.
 	Bill *BillClient
-	// BillDetail is the client for interacting with the BillDetail builders.
-	BillDetail *BillDetailClient
+	// Biller_account is the client for interacting with the Biller_account builders.
+	Biller_account *BillerAccountClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
-	// Store is the client for interacting with the Store builders.
-	Store *StoreClient
 
 	// lazily loaded.
 	client     *Client
@@ -152,9 +150,8 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Bill = NewBillClient(tx.config)
-	tx.BillDetail = NewBillDetailClient(tx.config)
+	tx.Biller_account = NewBillerAccountClient(tx.config)
 	tx.Customer = NewCustomerClient(tx.config)
-	tx.Store = NewStoreClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

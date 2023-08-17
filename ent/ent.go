@@ -7,9 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
-	"kapi/ent/store"
 	"reflect"
 	"sync"
 
@@ -76,10 +75,9 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			bill.Table:       bill.ValidColumn,
-			billdetail.Table: billdetail.ValidColumn,
-			customer.Table:   customer.ValidColumn,
-			store.Table:      store.ValidColumn,
+			bill.Table:           bill.ValidColumn,
+			biller_account.Table: biller_account.ValidColumn,
+			customer.Table:       customer.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

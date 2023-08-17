@@ -7,10 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
 	"kapi/ent/predicate"
-	"kapi/ent/store"
 	"sync"
 	"time"
 
@@ -27,30 +26,35 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeBill       = "Bill"
-	TypeBillDetail = "BillDetail"
-	TypeCustomer   = "Customer"
-	TypeStore      = "Store"
+	TypeBill          = "Bill"
+	TypeBillerAccount = "Biller_account"
+	TypeCustomer      = "Customer"
 )
 
 // BillMutation represents an operation that mutates the Bill nodes in the graph.
 type BillMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *int
-	ref_2              *int
-	addref_2           *int
-	clearedFields      map[string]struct{}
-	store              *int
-	clearedstore       bool
-	customers          *int
-	clearedcustomers   bool
-	bill_detail        *int
-	clearedbill_detail bool
-	done               bool
-	oldValue           func(context.Context) (*Bill, error)
-	predicates         []predicate.Bill
+	op                    Op
+	typ                   string
+	id                    *int
+	reference_2           *int
+	addreference_2        *int
+	transaction_id        *string
+	tran_amount           *float64
+	addtran_amount        *float64
+	channel_code          *string
+	sender_bank_code      *string
+	status                *string
+	created_at            *time.Time
+	updated_at            *time.Time
+	clearedFields         map[string]struct{}
+	biller_account        *int
+	clearedbiller_account bool
+	customer              *int
+	clearedcustomer       bool
+	done                  bool
+	oldValue              func(context.Context) (*Bill, error)
+	predicates            []predicate.Bill
 }
 
 var _ ent.Mutation = (*BillMutation)(nil)
@@ -159,12 +163,12 @@ func (m *BillMutation) IDs(ctx context.Context) ([]int, error) {
 
 // SetBillerID sets the "biller_id" field.
 func (m *BillMutation) SetBillerID(i int) {
-	m.store = &i
+	m.biller_account = &i
 }
 
 // BillerID returns the value of the "biller_id" field in the mutation.
 func (m *BillMutation) BillerID() (r int, exists bool) {
-	v := m.store
+	v := m.biller_account
 	if v == nil {
 		return
 	}
@@ -190,7 +194,7 @@ func (m *BillMutation) OldBillerID(ctx context.Context) (v int, err error) {
 
 // ClearBillerID clears the value of the "biller_id" field.
 func (m *BillMutation) ClearBillerID() {
-	m.store = nil
+	m.biller_account = nil
 	m.clearedFields[bill.FieldBillerID] = struct{}{}
 }
 
@@ -202,244 +206,477 @@ func (m *BillMutation) BillerIDCleared() bool {
 
 // ResetBillerID resets all changes to the "biller_id" field.
 func (m *BillMutation) ResetBillerID() {
-	m.store = nil
+	m.biller_account = nil
 	delete(m.clearedFields, bill.FieldBillerID)
 }
 
-// SetRef1 sets the "ref_1" field.
-func (m *BillMutation) SetRef1(i int) {
-	m.customers = &i
+// SetReference1 sets the "reference_1" field.
+func (m *BillMutation) SetReference1(i int) {
+	m.customer = &i
 }
 
-// Ref1 returns the value of the "ref_1" field in the mutation.
-func (m *BillMutation) Ref1() (r int, exists bool) {
-	v := m.customers
+// Reference1 returns the value of the "reference_1" field in the mutation.
+func (m *BillMutation) Reference1() (r int, exists bool) {
+	v := m.customer
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldRef1 returns the old "ref_1" field's value of the Bill entity.
+// OldReference1 returns the old "reference_1" field's value of the Bill entity.
 // If the Bill object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillMutation) OldRef1(ctx context.Context) (v int, err error) {
+func (m *BillMutation) OldReference1(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRef1 is only allowed on UpdateOne operations")
+		return v, errors.New("OldReference1 is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRef1 requires an ID field in the mutation")
+		return v, errors.New("OldReference1 requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRef1: %w", err)
+		return v, fmt.Errorf("querying old value for OldReference1: %w", err)
 	}
-	return oldValue.Ref1, nil
+	return oldValue.Reference1, nil
 }
 
-// ClearRef1 clears the value of the "ref_1" field.
-func (m *BillMutation) ClearRef1() {
-	m.customers = nil
-	m.clearedFields[bill.FieldRef1] = struct{}{}
+// ClearReference1 clears the value of the "reference_1" field.
+func (m *BillMutation) ClearReference1() {
+	m.customer = nil
+	m.clearedFields[bill.FieldReference1] = struct{}{}
 }
 
-// Ref1Cleared returns if the "ref_1" field was cleared in this mutation.
-func (m *BillMutation) Ref1Cleared() bool {
-	_, ok := m.clearedFields[bill.FieldRef1]
+// Reference1Cleared returns if the "reference_1" field was cleared in this mutation.
+func (m *BillMutation) Reference1Cleared() bool {
+	_, ok := m.clearedFields[bill.FieldReference1]
 	return ok
 }
 
-// ResetRef1 resets all changes to the "ref_1" field.
-func (m *BillMutation) ResetRef1() {
-	m.customers = nil
-	delete(m.clearedFields, bill.FieldRef1)
+// ResetReference1 resets all changes to the "reference_1" field.
+func (m *BillMutation) ResetReference1() {
+	m.customer = nil
+	delete(m.clearedFields, bill.FieldReference1)
 }
 
-// SetRef2 sets the "ref_2" field.
-func (m *BillMutation) SetRef2(i int) {
-	m.ref_2 = &i
-	m.addref_2 = nil
+// SetReference2 sets the "reference_2" field.
+func (m *BillMutation) SetReference2(i int) {
+	m.reference_2 = &i
+	m.addreference_2 = nil
 }
 
-// Ref2 returns the value of the "ref_2" field in the mutation.
-func (m *BillMutation) Ref2() (r int, exists bool) {
-	v := m.ref_2
+// Reference2 returns the value of the "reference_2" field in the mutation.
+func (m *BillMutation) Reference2() (r int, exists bool) {
+	v := m.reference_2
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldRef2 returns the old "ref_2" field's value of the Bill entity.
+// OldReference2 returns the old "reference_2" field's value of the Bill entity.
 // If the Bill object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillMutation) OldRef2(ctx context.Context) (v int, err error) {
+func (m *BillMutation) OldReference2(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRef2 is only allowed on UpdateOne operations")
+		return v, errors.New("OldReference2 is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRef2 requires an ID field in the mutation")
+		return v, errors.New("OldReference2 requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRef2: %w", err)
+		return v, fmt.Errorf("querying old value for OldReference2: %w", err)
 	}
-	return oldValue.Ref2, nil
+	return oldValue.Reference2, nil
 }
 
-// AddRef2 adds i to the "ref_2" field.
-func (m *BillMutation) AddRef2(i int) {
-	if m.addref_2 != nil {
-		*m.addref_2 += i
+// AddReference2 adds i to the "reference_2" field.
+func (m *BillMutation) AddReference2(i int) {
+	if m.addreference_2 != nil {
+		*m.addreference_2 += i
 	} else {
-		m.addref_2 = &i
+		m.addreference_2 = &i
 	}
 }
 
-// AddedRef2 returns the value that was added to the "ref_2" field in this mutation.
-func (m *BillMutation) AddedRef2() (r int, exists bool) {
-	v := m.addref_2
+// AddedReference2 returns the value that was added to the "reference_2" field in this mutation.
+func (m *BillMutation) AddedReference2() (r int, exists bool) {
+	v := m.addreference_2
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearRef2 clears the value of the "ref_2" field.
-func (m *BillMutation) ClearRef2() {
-	m.ref_2 = nil
-	m.addref_2 = nil
-	m.clearedFields[bill.FieldRef2] = struct{}{}
+// ClearReference2 clears the value of the "reference_2" field.
+func (m *BillMutation) ClearReference2() {
+	m.reference_2 = nil
+	m.addreference_2 = nil
+	m.clearedFields[bill.FieldReference2] = struct{}{}
 }
 
-// Ref2Cleared returns if the "ref_2" field was cleared in this mutation.
-func (m *BillMutation) Ref2Cleared() bool {
-	_, ok := m.clearedFields[bill.FieldRef2]
+// Reference2Cleared returns if the "reference_2" field was cleared in this mutation.
+func (m *BillMutation) Reference2Cleared() bool {
+	_, ok := m.clearedFields[bill.FieldReference2]
 	return ok
 }
 
-// ResetRef2 resets all changes to the "ref_2" field.
-func (m *BillMutation) ResetRef2() {
-	m.ref_2 = nil
-	m.addref_2 = nil
-	delete(m.clearedFields, bill.FieldRef2)
+// ResetReference2 resets all changes to the "reference_2" field.
+func (m *BillMutation) ResetReference2() {
+	m.reference_2 = nil
+	m.addreference_2 = nil
+	delete(m.clearedFields, bill.FieldReference2)
 }
 
-// SetStoreID sets the "store" edge to the Store entity by id.
-func (m *BillMutation) SetStoreID(id int) {
-	m.store = &id
+// SetTransactionID sets the "transaction_id" field.
+func (m *BillMutation) SetTransactionID(s string) {
+	m.transaction_id = &s
 }
 
-// ClearStore clears the "store" edge to the Store entity.
-func (m *BillMutation) ClearStore() {
-	m.clearedstore = true
+// TransactionID returns the value of the "transaction_id" field in the mutation.
+func (m *BillMutation) TransactionID() (r string, exists bool) {
+	v := m.transaction_id
+	if v == nil {
+		return
+	}
+	return *v, true
 }
 
-// StoreCleared reports if the "store" edge to the Store entity was cleared.
-func (m *BillMutation) StoreCleared() bool {
-	return m.BillerIDCleared() || m.clearedstore
+// OldTransactionID returns the old "transaction_id" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldTransactionID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTransactionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTransactionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTransactionID: %w", err)
+	}
+	return oldValue.TransactionID, nil
 }
 
-// StoreID returns the "store" edge ID in the mutation.
-func (m *BillMutation) StoreID() (id int, exists bool) {
-	if m.store != nil {
-		return *m.store, true
+// ResetTransactionID resets all changes to the "transaction_id" field.
+func (m *BillMutation) ResetTransactionID() {
+	m.transaction_id = nil
+}
+
+// SetTranAmount sets the "tran_amount" field.
+func (m *BillMutation) SetTranAmount(f float64) {
+	m.tran_amount = &f
+	m.addtran_amount = nil
+}
+
+// TranAmount returns the value of the "tran_amount" field in the mutation.
+func (m *BillMutation) TranAmount() (r float64, exists bool) {
+	v := m.tran_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTranAmount returns the old "tran_amount" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldTranAmount(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTranAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTranAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTranAmount: %w", err)
+	}
+	return oldValue.TranAmount, nil
+}
+
+// AddTranAmount adds f to the "tran_amount" field.
+func (m *BillMutation) AddTranAmount(f float64) {
+	if m.addtran_amount != nil {
+		*m.addtran_amount += f
+	} else {
+		m.addtran_amount = &f
+	}
+}
+
+// AddedTranAmount returns the value that was added to the "tran_amount" field in this mutation.
+func (m *BillMutation) AddedTranAmount() (r float64, exists bool) {
+	v := m.addtran_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTranAmount resets all changes to the "tran_amount" field.
+func (m *BillMutation) ResetTranAmount() {
+	m.tran_amount = nil
+	m.addtran_amount = nil
+}
+
+// SetChannelCode sets the "channel_code" field.
+func (m *BillMutation) SetChannelCode(s string) {
+	m.channel_code = &s
+}
+
+// ChannelCode returns the value of the "channel_code" field in the mutation.
+func (m *BillMutation) ChannelCode() (r string, exists bool) {
+	v := m.channel_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChannelCode returns the old "channel_code" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldChannelCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChannelCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChannelCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChannelCode: %w", err)
+	}
+	return oldValue.ChannelCode, nil
+}
+
+// ResetChannelCode resets all changes to the "channel_code" field.
+func (m *BillMutation) ResetChannelCode() {
+	m.channel_code = nil
+}
+
+// SetSenderBankCode sets the "sender_bank_code" field.
+func (m *BillMutation) SetSenderBankCode(s string) {
+	m.sender_bank_code = &s
+}
+
+// SenderBankCode returns the value of the "sender_bank_code" field in the mutation.
+func (m *BillMutation) SenderBankCode() (r string, exists bool) {
+	v := m.sender_bank_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSenderBankCode returns the old "sender_bank_code" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldSenderBankCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSenderBankCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSenderBankCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSenderBankCode: %w", err)
+	}
+	return oldValue.SenderBankCode, nil
+}
+
+// ResetSenderBankCode resets all changes to the "sender_bank_code" field.
+func (m *BillMutation) ResetSenderBankCode() {
+	m.sender_bank_code = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *BillMutation) SetStatus(s string) {
+	m.status = &s
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *BillMutation) Status() (r string, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldStatus(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *BillMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *BillMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *BillMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *BillMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *BillMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *BillMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Bill entity.
+// If the Bill object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BillMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *BillMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetBillerAccountID sets the "biller_account" edge to the Biller_account entity by id.
+func (m *BillMutation) SetBillerAccountID(id int) {
+	m.biller_account = &id
+}
+
+// ClearBillerAccount clears the "biller_account" edge to the Biller_account entity.
+func (m *BillMutation) ClearBillerAccount() {
+	m.clearedbiller_account = true
+}
+
+// BillerAccountCleared reports if the "biller_account" edge to the Biller_account entity was cleared.
+func (m *BillMutation) BillerAccountCleared() bool {
+	return m.BillerIDCleared() || m.clearedbiller_account
+}
+
+// BillerAccountID returns the "biller_account" edge ID in the mutation.
+func (m *BillMutation) BillerAccountID() (id int, exists bool) {
+	if m.biller_account != nil {
+		return *m.biller_account, true
 	}
 	return
 }
 
-// StoreIDs returns the "store" edge IDs in the mutation.
+// BillerAccountIDs returns the "biller_account" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// StoreID instead. It exists only for internal usage by the builders.
-func (m *BillMutation) StoreIDs() (ids []int) {
-	if id := m.store; id != nil {
+// BillerAccountID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) BillerAccountIDs() (ids []int) {
+	if id := m.biller_account; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetStore resets all changes to the "store" edge.
-func (m *BillMutation) ResetStore() {
-	m.store = nil
-	m.clearedstore = false
+// ResetBillerAccount resets all changes to the "biller_account" edge.
+func (m *BillMutation) ResetBillerAccount() {
+	m.biller_account = nil
+	m.clearedbiller_account = false
 }
 
-// SetCustomersID sets the "customers" edge to the Customer entity by id.
-func (m *BillMutation) SetCustomersID(id int) {
-	m.customers = &id
+// SetCustomerID sets the "customer" edge to the Customer entity by id.
+func (m *BillMutation) SetCustomerID(id int) {
+	m.customer = &id
 }
 
-// ClearCustomers clears the "customers" edge to the Customer entity.
-func (m *BillMutation) ClearCustomers() {
-	m.clearedcustomers = true
+// ClearCustomer clears the "customer" edge to the Customer entity.
+func (m *BillMutation) ClearCustomer() {
+	m.clearedcustomer = true
 }
 
-// CustomersCleared reports if the "customers" edge to the Customer entity was cleared.
-func (m *BillMutation) CustomersCleared() bool {
-	return m.Ref1Cleared() || m.clearedcustomers
+// CustomerCleared reports if the "customer" edge to the Customer entity was cleared.
+func (m *BillMutation) CustomerCleared() bool {
+	return m.Reference1Cleared() || m.clearedcustomer
 }
 
-// CustomersID returns the "customers" edge ID in the mutation.
-func (m *BillMutation) CustomersID() (id int, exists bool) {
-	if m.customers != nil {
-		return *m.customers, true
+// CustomerID returns the "customer" edge ID in the mutation.
+func (m *BillMutation) CustomerID() (id int, exists bool) {
+	if m.customer != nil {
+		return *m.customer, true
 	}
 	return
 }
 
-// CustomersIDs returns the "customers" edge IDs in the mutation.
+// CustomerIDs returns the "customer" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// CustomersID instead. It exists only for internal usage by the builders.
-func (m *BillMutation) CustomersIDs() (ids []int) {
-	if id := m.customers; id != nil {
+// CustomerID instead. It exists only for internal usage by the builders.
+func (m *BillMutation) CustomerIDs() (ids []int) {
+	if id := m.customer; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetCustomers resets all changes to the "customers" edge.
-func (m *BillMutation) ResetCustomers() {
-	m.customers = nil
-	m.clearedcustomers = false
-}
-
-// SetBillDetailID sets the "bill_detail" edge to the BillDetail entity by id.
-func (m *BillMutation) SetBillDetailID(id int) {
-	m.bill_detail = &id
-}
-
-// ClearBillDetail clears the "bill_detail" edge to the BillDetail entity.
-func (m *BillMutation) ClearBillDetail() {
-	m.clearedbill_detail = true
-}
-
-// BillDetailCleared reports if the "bill_detail" edge to the BillDetail entity was cleared.
-func (m *BillMutation) BillDetailCleared() bool {
-	return m.clearedbill_detail
-}
-
-// BillDetailID returns the "bill_detail" edge ID in the mutation.
-func (m *BillMutation) BillDetailID() (id int, exists bool) {
-	if m.bill_detail != nil {
-		return *m.bill_detail, true
-	}
-	return
-}
-
-// BillDetailIDs returns the "bill_detail" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// BillDetailID instead. It exists only for internal usage by the builders.
-func (m *BillMutation) BillDetailIDs() (ids []int) {
-	if id := m.bill_detail; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetBillDetail resets all changes to the "bill_detail" edge.
-func (m *BillMutation) ResetBillDetail() {
-	m.bill_detail = nil
-	m.clearedbill_detail = false
+// ResetCustomer resets all changes to the "customer" edge.
+func (m *BillMutation) ResetCustomer() {
+	m.customer = nil
+	m.clearedcustomer = false
 }
 
 // Where appends a list predicates to the BillMutation builder.
@@ -476,15 +713,36 @@ func (m *BillMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BillMutation) Fields() []string {
-	fields := make([]string, 0, 3)
-	if m.store != nil {
+	fields := make([]string, 0, 10)
+	if m.biller_account != nil {
 		fields = append(fields, bill.FieldBillerID)
 	}
-	if m.customers != nil {
-		fields = append(fields, bill.FieldRef1)
+	if m.customer != nil {
+		fields = append(fields, bill.FieldReference1)
 	}
-	if m.ref_2 != nil {
-		fields = append(fields, bill.FieldRef2)
+	if m.reference_2 != nil {
+		fields = append(fields, bill.FieldReference2)
+	}
+	if m.transaction_id != nil {
+		fields = append(fields, bill.FieldTransactionID)
+	}
+	if m.tran_amount != nil {
+		fields = append(fields, bill.FieldTranAmount)
+	}
+	if m.channel_code != nil {
+		fields = append(fields, bill.FieldChannelCode)
+	}
+	if m.sender_bank_code != nil {
+		fields = append(fields, bill.FieldSenderBankCode)
+	}
+	if m.status != nil {
+		fields = append(fields, bill.FieldStatus)
+	}
+	if m.created_at != nil {
+		fields = append(fields, bill.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, bill.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -496,10 +754,24 @@ func (m *BillMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case bill.FieldBillerID:
 		return m.BillerID()
-	case bill.FieldRef1:
-		return m.Ref1()
-	case bill.FieldRef2:
-		return m.Ref2()
+	case bill.FieldReference1:
+		return m.Reference1()
+	case bill.FieldReference2:
+		return m.Reference2()
+	case bill.FieldTransactionID:
+		return m.TransactionID()
+	case bill.FieldTranAmount:
+		return m.TranAmount()
+	case bill.FieldChannelCode:
+		return m.ChannelCode()
+	case bill.FieldSenderBankCode:
+		return m.SenderBankCode()
+	case bill.FieldStatus:
+		return m.Status()
+	case bill.FieldCreatedAt:
+		return m.CreatedAt()
+	case bill.FieldUpdatedAt:
+		return m.UpdatedAt()
 	}
 	return nil, false
 }
@@ -511,10 +783,24 @@ func (m *BillMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case bill.FieldBillerID:
 		return m.OldBillerID(ctx)
-	case bill.FieldRef1:
-		return m.OldRef1(ctx)
-	case bill.FieldRef2:
-		return m.OldRef2(ctx)
+	case bill.FieldReference1:
+		return m.OldReference1(ctx)
+	case bill.FieldReference2:
+		return m.OldReference2(ctx)
+	case bill.FieldTransactionID:
+		return m.OldTransactionID(ctx)
+	case bill.FieldTranAmount:
+		return m.OldTranAmount(ctx)
+	case bill.FieldChannelCode:
+		return m.OldChannelCode(ctx)
+	case bill.FieldSenderBankCode:
+		return m.OldSenderBankCode(ctx)
+	case bill.FieldStatus:
+		return m.OldStatus(ctx)
+	case bill.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case bill.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Bill field %s", name)
 }
@@ -531,19 +817,68 @@ func (m *BillMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBillerID(v)
 		return nil
-	case bill.FieldRef1:
+	case bill.FieldReference1:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetRef1(v)
+		m.SetReference1(v)
 		return nil
-	case bill.FieldRef2:
+	case bill.FieldReference2:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetRef2(v)
+		m.SetReference2(v)
+		return nil
+	case bill.FieldTransactionID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTransactionID(v)
+		return nil
+	case bill.FieldTranAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTranAmount(v)
+		return nil
+	case bill.FieldChannelCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChannelCode(v)
+		return nil
+	case bill.FieldSenderBankCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSenderBankCode(v)
+		return nil
+	case bill.FieldStatus:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case bill.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case bill.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Bill field %s", name)
@@ -553,8 +888,11 @@ func (m *BillMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *BillMutation) AddedFields() []string {
 	var fields []string
-	if m.addref_2 != nil {
-		fields = append(fields, bill.FieldRef2)
+	if m.addreference_2 != nil {
+		fields = append(fields, bill.FieldReference2)
+	}
+	if m.addtran_amount != nil {
+		fields = append(fields, bill.FieldTranAmount)
 	}
 	return fields
 }
@@ -564,8 +902,10 @@ func (m *BillMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *BillMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case bill.FieldRef2:
-		return m.AddedRef2()
+	case bill.FieldReference2:
+		return m.AddedReference2()
+	case bill.FieldTranAmount:
+		return m.AddedTranAmount()
 	}
 	return nil, false
 }
@@ -575,12 +915,19 @@ func (m *BillMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *BillMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case bill.FieldRef2:
+	case bill.FieldReference2:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddRef2(v)
+		m.AddReference2(v)
+		return nil
+	case bill.FieldTranAmount:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTranAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Bill numeric field %s", name)
@@ -593,11 +940,11 @@ func (m *BillMutation) ClearedFields() []string {
 	if m.FieldCleared(bill.FieldBillerID) {
 		fields = append(fields, bill.FieldBillerID)
 	}
-	if m.FieldCleared(bill.FieldRef1) {
-		fields = append(fields, bill.FieldRef1)
+	if m.FieldCleared(bill.FieldReference1) {
+		fields = append(fields, bill.FieldReference1)
 	}
-	if m.FieldCleared(bill.FieldRef2) {
-		fields = append(fields, bill.FieldRef2)
+	if m.FieldCleared(bill.FieldReference2) {
+		fields = append(fields, bill.FieldReference2)
 	}
 	return fields
 }
@@ -616,11 +963,11 @@ func (m *BillMutation) ClearField(name string) error {
 	case bill.FieldBillerID:
 		m.ClearBillerID()
 		return nil
-	case bill.FieldRef1:
-		m.ClearRef1()
+	case bill.FieldReference1:
+		m.ClearReference1()
 		return nil
-	case bill.FieldRef2:
-		m.ClearRef2()
+	case bill.FieldReference2:
+		m.ClearReference2()
 		return nil
 	}
 	return fmt.Errorf("unknown Bill nullable field %s", name)
@@ -633,11 +980,32 @@ func (m *BillMutation) ResetField(name string) error {
 	case bill.FieldBillerID:
 		m.ResetBillerID()
 		return nil
-	case bill.FieldRef1:
-		m.ResetRef1()
+	case bill.FieldReference1:
+		m.ResetReference1()
 		return nil
-	case bill.FieldRef2:
-		m.ResetRef2()
+	case bill.FieldReference2:
+		m.ResetReference2()
+		return nil
+	case bill.FieldTransactionID:
+		m.ResetTransactionID()
+		return nil
+	case bill.FieldTranAmount:
+		m.ResetTranAmount()
+		return nil
+	case bill.FieldChannelCode:
+		m.ResetChannelCode()
+		return nil
+	case bill.FieldSenderBankCode:
+		m.ResetSenderBankCode()
+		return nil
+	case bill.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case bill.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case bill.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Bill field %s", name)
@@ -645,15 +1013,12 @@ func (m *BillMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *BillMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.store != nil {
-		edges = append(edges, bill.EdgeStore)
+	edges := make([]string, 0, 2)
+	if m.biller_account != nil {
+		edges = append(edges, bill.EdgeBillerAccount)
 	}
-	if m.customers != nil {
-		edges = append(edges, bill.EdgeCustomers)
-	}
-	if m.bill_detail != nil {
-		edges = append(edges, bill.EdgeBillDetail)
+	if m.customer != nil {
+		edges = append(edges, bill.EdgeCustomer)
 	}
 	return edges
 }
@@ -662,16 +1027,12 @@ func (m *BillMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *BillMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case bill.EdgeStore:
-		if id := m.store; id != nil {
+	case bill.EdgeBillerAccount:
+		if id := m.biller_account; id != nil {
 			return []ent.Value{*id}
 		}
-	case bill.EdgeCustomers:
-		if id := m.customers; id != nil {
-			return []ent.Value{*id}
-		}
-	case bill.EdgeBillDetail:
-		if id := m.bill_detail; id != nil {
+	case bill.EdgeCustomer:
+		if id := m.customer; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -680,7 +1041,7 @@ func (m *BillMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *BillMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -692,15 +1053,12 @@ func (m *BillMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *BillMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
-	if m.clearedstore {
-		edges = append(edges, bill.EdgeStore)
+	edges := make([]string, 0, 2)
+	if m.clearedbiller_account {
+		edges = append(edges, bill.EdgeBillerAccount)
 	}
-	if m.clearedcustomers {
-		edges = append(edges, bill.EdgeCustomers)
-	}
-	if m.clearedbill_detail {
-		edges = append(edges, bill.EdgeBillDetail)
+	if m.clearedcustomer {
+		edges = append(edges, bill.EdgeCustomer)
 	}
 	return edges
 }
@@ -709,12 +1067,10 @@ func (m *BillMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *BillMutation) EdgeCleared(name string) bool {
 	switch name {
-	case bill.EdgeStore:
-		return m.clearedstore
-	case bill.EdgeCustomers:
-		return m.clearedcustomers
-	case bill.EdgeBillDetail:
-		return m.clearedbill_detail
+	case bill.EdgeBillerAccount:
+		return m.clearedbiller_account
+	case bill.EdgeCustomer:
+		return m.clearedcustomer
 	}
 	return false
 }
@@ -723,14 +1079,11 @@ func (m *BillMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *BillMutation) ClearEdge(name string) error {
 	switch name {
-	case bill.EdgeStore:
-		m.ClearStore()
+	case bill.EdgeBillerAccount:
+		m.ClearBillerAccount()
 		return nil
-	case bill.EdgeCustomers:
-		m.ClearCustomers()
-		return nil
-	case bill.EdgeBillDetail:
-		m.ClearBillDetail()
+	case bill.EdgeCustomer:
+		m.ClearCustomer()
 		return nil
 	}
 	return fmt.Errorf("unknown Bill unique edge %s", name)
@@ -740,53 +1093,44 @@ func (m *BillMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *BillMutation) ResetEdge(name string) error {
 	switch name {
-	case bill.EdgeStore:
-		m.ResetStore()
+	case bill.EdgeBillerAccount:
+		m.ResetBillerAccount()
 		return nil
-	case bill.EdgeCustomers:
-		m.ResetCustomers()
-		return nil
-	case bill.EdgeBillDetail:
-		m.ResetBillDetail()
+	case bill.EdgeCustomer:
+		m.ResetCustomer()
 		return nil
 	}
 	return fmt.Errorf("unknown Bill edge %s", name)
 }
 
-// BillDetailMutation represents an operation that mutates the BillDetail nodes in the graph.
-type BillDetailMutation struct {
+// BillerAccountMutation represents an operation that mutates the Biller_account nodes in the graph.
+type BillerAccountMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	channel_code     *string
-	sender_bank_code *string
-	status           *string
-	tran_amount      *float64
-	addtran_amount   *float64
-	created_at       *time.Time
-	updated_at       *time.Time
-	clearedFields    map[string]struct{}
-	bills            *int
-	clearedbills     bool
-	customer         *int
-	clearedcustomer  bool
-	done             bool
-	oldValue         func(context.Context) (*BillDetail, error)
-	predicates       []predicate.BillDetail
+	op            Op
+	typ           string
+	id            *int
+	name          *string
+	service_name  *string
+	clearedFields map[string]struct{}
+	bills         map[int]struct{}
+	removedbills  map[int]struct{}
+	clearedbills  bool
+	done          bool
+	oldValue      func(context.Context) (*Biller_account, error)
+	predicates    []predicate.Biller_account
 }
 
-var _ ent.Mutation = (*BillDetailMutation)(nil)
+var _ ent.Mutation = (*BillerAccountMutation)(nil)
 
-// billdetailOption allows management of the mutation configuration using functional options.
-type billdetailOption func(*BillDetailMutation)
+// billerAccountOption allows management of the mutation configuration using functional options.
+type billerAccountOption func(*BillerAccountMutation)
 
-// newBillDetailMutation creates new mutation for the BillDetail entity.
-func newBillDetailMutation(c config, op Op, opts ...billdetailOption) *BillDetailMutation {
-	m := &BillDetailMutation{
+// newBillerAccountMutation creates new mutation for the Biller_account entity.
+func newBillerAccountMutation(c config, op Op, opts ...billerAccountOption) *BillerAccountMutation {
+	m := &BillerAccountMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeBillDetail,
+		typ:           TypeBillerAccount,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -795,20 +1139,20 @@ func newBillDetailMutation(c config, op Op, opts ...billdetailOption) *BillDetai
 	return m
 }
 
-// withBillDetailID sets the ID field of the mutation.
-func withBillDetailID(id int) billdetailOption {
-	return func(m *BillDetailMutation) {
+// withBiller_accountID sets the ID field of the mutation.
+func withBiller_accountID(id int) billerAccountOption {
+	return func(m *BillerAccountMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *BillDetail
+			value *Biller_account
 		)
-		m.oldValue = func(ctx context.Context) (*BillDetail, error) {
+		m.oldValue = func(ctx context.Context) (*Biller_account, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().BillDetail.Get(ctx, id)
+					value, err = m.Client().Biller_account.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -817,10 +1161,10 @@ func withBillDetailID(id int) billdetailOption {
 	}
 }
 
-// withBillDetail sets the old BillDetail of the mutation.
-func withBillDetail(node *BillDetail) billdetailOption {
-	return func(m *BillDetailMutation) {
-		m.oldValue = func(context.Context) (*BillDetail, error) {
+// withBiller_account sets the old Biller_account of the mutation.
+func withBiller_account(node *Biller_account) billerAccountOption {
+	return func(m *BillerAccountMutation) {
+		m.oldValue = func(context.Context) (*Biller_account, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -829,7 +1173,7 @@ func withBillDetail(node *BillDetail) billdetailOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m BillDetailMutation) Client() *Client {
+func (m BillerAccountMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -837,7 +1181,7 @@ func (m BillDetailMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m BillDetailMutation) Tx() (*Tx, error) {
+func (m BillerAccountMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -847,14 +1191,14 @@ func (m BillDetailMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of BillDetail entities.
-func (m *BillDetailMutation) SetID(id int) {
+// operation is only accepted on creation of Biller_account entities.
+func (m *BillerAccountMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *BillDetailMutation) ID() (id int, exists bool) {
+func (m *BillerAccountMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -865,7 +1209,7 @@ func (m *BillDetailMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *BillDetailMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *BillerAccountMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -874,371 +1218,147 @@ func (m *BillDetailMutation) IDs(ctx context.Context) ([]int, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().BillDetail.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().Biller_account.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
-// SetChannelCode sets the "channel_code" field.
-func (m *BillDetailMutation) SetChannelCode(s string) {
-	m.channel_code = &s
+// SetName sets the "name" field.
+func (m *BillerAccountMutation) SetName(s string) {
+	m.name = &s
 }
 
-// ChannelCode returns the value of the "channel_code" field in the mutation.
-func (m *BillDetailMutation) ChannelCode() (r string, exists bool) {
-	v := m.channel_code
+// Name returns the value of the "name" field in the mutation.
+func (m *BillerAccountMutation) Name() (r string, exists bool) {
+	v := m.name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldChannelCode returns the old "channel_code" field's value of the BillDetail entity.
-// If the BillDetail object wasn't provided to the builder, the object is fetched from the database.
+// OldName returns the old "name" field's value of the Biller_account entity.
+// If the Biller_account object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillDetailMutation) OldChannelCode(ctx context.Context) (v string, err error) {
+func (m *BillerAccountMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannelCode is only allowed on UpdateOne operations")
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannelCode requires an ID field in the mutation")
+		return v, errors.New("OldName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannelCode: %w", err)
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
 	}
-	return oldValue.ChannelCode, nil
+	return oldValue.Name, nil
 }
 
-// ResetChannelCode resets all changes to the "channel_code" field.
-func (m *BillDetailMutation) ResetChannelCode() {
-	m.channel_code = nil
+// ResetName resets all changes to the "name" field.
+func (m *BillerAccountMutation) ResetName() {
+	m.name = nil
 }
 
-// SetSenderBankCode sets the "sender_bank_code" field.
-func (m *BillDetailMutation) SetSenderBankCode(s string) {
-	m.sender_bank_code = &s
+// SetServiceName sets the "service_name" field.
+func (m *BillerAccountMutation) SetServiceName(s string) {
+	m.service_name = &s
 }
 
-// SenderBankCode returns the value of the "sender_bank_code" field in the mutation.
-func (m *BillDetailMutation) SenderBankCode() (r string, exists bool) {
-	v := m.sender_bank_code
+// ServiceName returns the value of the "service_name" field in the mutation.
+func (m *BillerAccountMutation) ServiceName() (r string, exists bool) {
+	v := m.service_name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSenderBankCode returns the old "sender_bank_code" field's value of the BillDetail entity.
-// If the BillDetail object wasn't provided to the builder, the object is fetched from the database.
+// OldServiceName returns the old "service_name" field's value of the Biller_account entity.
+// If the Biller_account object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillDetailMutation) OldSenderBankCode(ctx context.Context) (v string, err error) {
+func (m *BillerAccountMutation) OldServiceName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSenderBankCode is only allowed on UpdateOne operations")
+		return v, errors.New("OldServiceName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSenderBankCode requires an ID field in the mutation")
+		return v, errors.New("OldServiceName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSenderBankCode: %w", err)
+		return v, fmt.Errorf("querying old value for OldServiceName: %w", err)
 	}
-	return oldValue.SenderBankCode, nil
+	return oldValue.ServiceName, nil
 }
 
-// ResetSenderBankCode resets all changes to the "sender_bank_code" field.
-func (m *BillDetailMutation) ResetSenderBankCode() {
-	m.sender_bank_code = nil
+// ResetServiceName resets all changes to the "service_name" field.
+func (m *BillerAccountMutation) ResetServiceName() {
+	m.service_name = nil
 }
 
-// SetStatus sets the "status" field.
-func (m *BillDetailMutation) SetStatus(s string) {
-	m.status = &s
-}
-
-// Status returns the value of the "status" field in the mutation.
-func (m *BillDetailMutation) Status() (r string, exists bool) {
-	v := m.status
-	if v == nil {
-		return
+// AddBillIDs adds the "bills" edge to the Bill entity by ids.
+func (m *BillerAccountMutation) AddBillIDs(ids ...int) {
+	if m.bills == nil {
+		m.bills = make(map[int]struct{})
 	}
-	return *v, true
-}
-
-// OldStatus returns the old "status" field's value of the BillDetail entity.
-// If the BillDetail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillDetailMutation) OldStatus(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	for i := range ids {
+		m.bills[ids[i]] = struct{}{}
 	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStatus requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
-	}
-	return oldValue.Status, nil
-}
-
-// ResetStatus resets all changes to the "status" field.
-func (m *BillDetailMutation) ResetStatus() {
-	m.status = nil
-}
-
-// SetCustomerID sets the "customer_id" field.
-func (m *BillDetailMutation) SetCustomerID(i int) {
-	m.customer = &i
-}
-
-// CustomerID returns the value of the "customer_id" field in the mutation.
-func (m *BillDetailMutation) CustomerID() (r int, exists bool) {
-	v := m.customer
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCustomerID returns the old "customer_id" field's value of the BillDetail entity.
-// If the BillDetail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillDetailMutation) OldCustomerID(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCustomerID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCustomerID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCustomerID: %w", err)
-	}
-	return oldValue.CustomerID, nil
-}
-
-// ClearCustomerID clears the value of the "customer_id" field.
-func (m *BillDetailMutation) ClearCustomerID() {
-	m.customer = nil
-	m.clearedFields[billdetail.FieldCustomerID] = struct{}{}
-}
-
-// CustomerIDCleared returns if the "customer_id" field was cleared in this mutation.
-func (m *BillDetailMutation) CustomerIDCleared() bool {
-	_, ok := m.clearedFields[billdetail.FieldCustomerID]
-	return ok
-}
-
-// ResetCustomerID resets all changes to the "customer_id" field.
-func (m *BillDetailMutation) ResetCustomerID() {
-	m.customer = nil
-	delete(m.clearedFields, billdetail.FieldCustomerID)
-}
-
-// SetTranAmount sets the "tran_amount" field.
-func (m *BillDetailMutation) SetTranAmount(f float64) {
-	m.tran_amount = &f
-	m.addtran_amount = nil
-}
-
-// TranAmount returns the value of the "tran_amount" field in the mutation.
-func (m *BillDetailMutation) TranAmount() (r float64, exists bool) {
-	v := m.tran_amount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTranAmount returns the old "tran_amount" field's value of the BillDetail entity.
-// If the BillDetail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillDetailMutation) OldTranAmount(ctx context.Context) (v float64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTranAmount is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTranAmount requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTranAmount: %w", err)
-	}
-	return oldValue.TranAmount, nil
-}
-
-// AddTranAmount adds f to the "tran_amount" field.
-func (m *BillDetailMutation) AddTranAmount(f float64) {
-	if m.addtran_amount != nil {
-		*m.addtran_amount += f
-	} else {
-		m.addtran_amount = &f
-	}
-}
-
-// AddedTranAmount returns the value that was added to the "tran_amount" field in this mutation.
-func (m *BillDetailMutation) AddedTranAmount() (r float64, exists bool) {
-	v := m.addtran_amount
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetTranAmount resets all changes to the "tran_amount" field.
-func (m *BillDetailMutation) ResetTranAmount() {
-	m.tran_amount = nil
-	m.addtran_amount = nil
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *BillDetailMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *BillDetailMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the BillDetail entity.
-// If the BillDetail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillDetailMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *BillDetailMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *BillDetailMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *BillDetailMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the BillDetail entity.
-// If the BillDetail object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BillDetailMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *BillDetailMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-}
-
-// SetBillsID sets the "bills" edge to the Bill entity by id.
-func (m *BillDetailMutation) SetBillsID(id int) {
-	m.bills = &id
 }
 
 // ClearBills clears the "bills" edge to the Bill entity.
-func (m *BillDetailMutation) ClearBills() {
+func (m *BillerAccountMutation) ClearBills() {
 	m.clearedbills = true
 }
 
 // BillsCleared reports if the "bills" edge to the Bill entity was cleared.
-func (m *BillDetailMutation) BillsCleared() bool {
+func (m *BillerAccountMutation) BillsCleared() bool {
 	return m.clearedbills
 }
 
-// BillsID returns the "bills" edge ID in the mutation.
-func (m *BillDetailMutation) BillsID() (id int, exists bool) {
-	if m.bills != nil {
-		return *m.bills, true
+// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
+func (m *BillerAccountMutation) RemoveBillIDs(ids ...int) {
+	if m.removedbills == nil {
+		m.removedbills = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.bills, ids[i])
+		m.removedbills[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
+func (m *BillerAccountMutation) RemovedBillsIDs() (ids []int) {
+	for id := range m.removedbills {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // BillsIDs returns the "bills" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// BillsID instead. It exists only for internal usage by the builders.
-func (m *BillDetailMutation) BillsIDs() (ids []int) {
-	if id := m.bills; id != nil {
-		ids = append(ids, *id)
+func (m *BillerAccountMutation) BillsIDs() (ids []int) {
+	for id := range m.bills {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // ResetBills resets all changes to the "bills" edge.
-func (m *BillDetailMutation) ResetBills() {
+func (m *BillerAccountMutation) ResetBills() {
 	m.bills = nil
 	m.clearedbills = false
+	m.removedbills = nil
 }
 
-// ClearCustomer clears the "customer" edge to the Customer entity.
-func (m *BillDetailMutation) ClearCustomer() {
-	m.clearedcustomer = true
-}
-
-// CustomerCleared reports if the "customer" edge to the Customer entity was cleared.
-func (m *BillDetailMutation) CustomerCleared() bool {
-	return m.CustomerIDCleared() || m.clearedcustomer
-}
-
-// CustomerIDs returns the "customer" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// CustomerID instead. It exists only for internal usage by the builders.
-func (m *BillDetailMutation) CustomerIDs() (ids []int) {
-	if id := m.customer; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetCustomer resets all changes to the "customer" edge.
-func (m *BillDetailMutation) ResetCustomer() {
-	m.customer = nil
-	m.clearedcustomer = false
-}
-
-// Where appends a list predicates to the BillDetailMutation builder.
-func (m *BillDetailMutation) Where(ps ...predicate.BillDetail) {
+// Where appends a list predicates to the BillerAccountMutation builder.
+func (m *BillerAccountMutation) Where(ps ...predicate.Biller_account) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the BillDetailMutation builder. Using this method,
+// WhereP appends storage-level predicates to the BillerAccountMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *BillDetailMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.BillDetail, len(ps))
+func (m *BillerAccountMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Biller_account, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -1246,45 +1366,30 @@ func (m *BillDetailMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *BillDetailMutation) Op() Op {
+func (m *BillerAccountMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *BillDetailMutation) SetOp(op Op) {
+func (m *BillerAccountMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (BillDetail).
-func (m *BillDetailMutation) Type() string {
+// Type returns the node type of this mutation (Biller_account).
+func (m *BillerAccountMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *BillDetailMutation) Fields() []string {
-	fields := make([]string, 0, 7)
-	if m.channel_code != nil {
-		fields = append(fields, billdetail.FieldChannelCode)
+func (m *BillerAccountMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.name != nil {
+		fields = append(fields, biller_account.FieldName)
 	}
-	if m.sender_bank_code != nil {
-		fields = append(fields, billdetail.FieldSenderBankCode)
-	}
-	if m.status != nil {
-		fields = append(fields, billdetail.FieldStatus)
-	}
-	if m.customer != nil {
-		fields = append(fields, billdetail.FieldCustomerID)
-	}
-	if m.tran_amount != nil {
-		fields = append(fields, billdetail.FieldTranAmount)
-	}
-	if m.created_at != nil {
-		fields = append(fields, billdetail.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, billdetail.FieldUpdatedAt)
+	if m.service_name != nil {
+		fields = append(fields, biller_account.FieldServiceName)
 	}
 	return fields
 }
@@ -1292,22 +1397,12 @@ func (m *BillDetailMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *BillDetailMutation) Field(name string) (ent.Value, bool) {
+func (m *BillerAccountMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case billdetail.FieldChannelCode:
-		return m.ChannelCode()
-	case billdetail.FieldSenderBankCode:
-		return m.SenderBankCode()
-	case billdetail.FieldStatus:
-		return m.Status()
-	case billdetail.FieldCustomerID:
-		return m.CustomerID()
-	case billdetail.FieldTranAmount:
-		return m.TranAmount()
-	case billdetail.FieldCreatedAt:
-		return m.CreatedAt()
-	case billdetail.FieldUpdatedAt:
-		return m.UpdatedAt()
+	case biller_account.FieldName:
+		return m.Name()
+	case biller_account.FieldServiceName:
+		return m.ServiceName()
 	}
 	return nil, false
 }
@@ -1315,291 +1410,196 @@ func (m *BillDetailMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *BillDetailMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *BillerAccountMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case billdetail.FieldChannelCode:
-		return m.OldChannelCode(ctx)
-	case billdetail.FieldSenderBankCode:
-		return m.OldSenderBankCode(ctx)
-	case billdetail.FieldStatus:
-		return m.OldStatus(ctx)
-	case billdetail.FieldCustomerID:
-		return m.OldCustomerID(ctx)
-	case billdetail.FieldTranAmount:
-		return m.OldTranAmount(ctx)
-	case billdetail.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case billdetail.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
+	case biller_account.FieldName:
+		return m.OldName(ctx)
+	case biller_account.FieldServiceName:
+		return m.OldServiceName(ctx)
 	}
-	return nil, fmt.Errorf("unknown BillDetail field %s", name)
+	return nil, fmt.Errorf("unknown Biller_account field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *BillDetailMutation) SetField(name string, value ent.Value) error {
+func (m *BillerAccountMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case billdetail.FieldChannelCode:
+	case biller_account.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetChannelCode(v)
+		m.SetName(v)
 		return nil
-	case billdetail.FieldSenderBankCode:
+	case biller_account.FieldServiceName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSenderBankCode(v)
-		return nil
-	case billdetail.FieldStatus:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStatus(v)
-		return nil
-	case billdetail.FieldCustomerID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCustomerID(v)
-		return nil
-	case billdetail.FieldTranAmount:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTranAmount(v)
-		return nil
-	case billdetail.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case billdetail.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
+		m.SetServiceName(v)
 		return nil
 	}
-	return fmt.Errorf("unknown BillDetail field %s", name)
+	return fmt.Errorf("unknown Biller_account field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *BillDetailMutation) AddedFields() []string {
-	var fields []string
-	if m.addtran_amount != nil {
-		fields = append(fields, billdetail.FieldTranAmount)
-	}
-	return fields
+func (m *BillerAccountMutation) AddedFields() []string {
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *BillDetailMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case billdetail.FieldTranAmount:
-		return m.AddedTranAmount()
-	}
+func (m *BillerAccountMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *BillDetailMutation) AddField(name string, value ent.Value) error {
+func (m *BillerAccountMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case billdetail.FieldTranAmount:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTranAmount(v)
-		return nil
 	}
-	return fmt.Errorf("unknown BillDetail numeric field %s", name)
+	return fmt.Errorf("unknown Biller_account numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *BillDetailMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(billdetail.FieldCustomerID) {
-		fields = append(fields, billdetail.FieldCustomerID)
-	}
-	return fields
+func (m *BillerAccountMutation) ClearedFields() []string {
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *BillDetailMutation) FieldCleared(name string) bool {
+func (m *BillerAccountMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *BillDetailMutation) ClearField(name string) error {
-	switch name {
-	case billdetail.FieldCustomerID:
-		m.ClearCustomerID()
-		return nil
-	}
-	return fmt.Errorf("unknown BillDetail nullable field %s", name)
+func (m *BillerAccountMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Biller_account nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *BillDetailMutation) ResetField(name string) error {
+func (m *BillerAccountMutation) ResetField(name string) error {
 	switch name {
-	case billdetail.FieldChannelCode:
-		m.ResetChannelCode()
+	case biller_account.FieldName:
+		m.ResetName()
 		return nil
-	case billdetail.FieldSenderBankCode:
-		m.ResetSenderBankCode()
-		return nil
-	case billdetail.FieldStatus:
-		m.ResetStatus()
-		return nil
-	case billdetail.FieldCustomerID:
-		m.ResetCustomerID()
-		return nil
-	case billdetail.FieldTranAmount:
-		m.ResetTranAmount()
-		return nil
-	case billdetail.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case billdetail.FieldUpdatedAt:
-		m.ResetUpdatedAt()
+	case biller_account.FieldServiceName:
+		m.ResetServiceName()
 		return nil
 	}
-	return fmt.Errorf("unknown BillDetail field %s", name)
+	return fmt.Errorf("unknown Biller_account field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *BillDetailMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+func (m *BillerAccountMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
 	if m.bills != nil {
-		edges = append(edges, billdetail.EdgeBills)
-	}
-	if m.customer != nil {
-		edges = append(edges, billdetail.EdgeCustomer)
+		edges = append(edges, biller_account.EdgeBills)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *BillDetailMutation) AddedIDs(name string) []ent.Value {
+func (m *BillerAccountMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case billdetail.EdgeBills:
-		if id := m.bills; id != nil {
-			return []ent.Value{*id}
+	case biller_account.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.bills))
+		for id := range m.bills {
+			ids = append(ids, id)
 		}
-	case billdetail.EdgeCustomer:
-		if id := m.customer; id != nil {
-			return []ent.Value{*id}
-		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *BillDetailMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+func (m *BillerAccountMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedbills != nil {
+		edges = append(edges, biller_account.EdgeBills)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *BillDetailMutation) RemovedIDs(name string) []ent.Value {
+func (m *BillerAccountMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case biller_account.EdgeBills:
+		ids := make([]ent.Value, 0, len(m.removedbills))
+		for id := range m.removedbills {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *BillDetailMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+func (m *BillerAccountMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
 	if m.clearedbills {
-		edges = append(edges, billdetail.EdgeBills)
-	}
-	if m.clearedcustomer {
-		edges = append(edges, billdetail.EdgeCustomer)
+		edges = append(edges, biller_account.EdgeBills)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *BillDetailMutation) EdgeCleared(name string) bool {
+func (m *BillerAccountMutation) EdgeCleared(name string) bool {
 	switch name {
-	case billdetail.EdgeBills:
+	case biller_account.EdgeBills:
 		return m.clearedbills
-	case billdetail.EdgeCustomer:
-		return m.clearedcustomer
 	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *BillDetailMutation) ClearEdge(name string) error {
+func (m *BillerAccountMutation) ClearEdge(name string) error {
 	switch name {
-	case billdetail.EdgeBills:
-		m.ClearBills()
-		return nil
-	case billdetail.EdgeCustomer:
-		m.ClearCustomer()
-		return nil
 	}
-	return fmt.Errorf("unknown BillDetail unique edge %s", name)
+	return fmt.Errorf("unknown Biller_account unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *BillDetailMutation) ResetEdge(name string) error {
+func (m *BillerAccountMutation) ResetEdge(name string) error {
 	switch name {
-	case billdetail.EdgeBills:
+	case biller_account.EdgeBills:
 		m.ResetBills()
 		return nil
-	case billdetail.EdgeCustomer:
-		m.ResetCustomer()
-		return nil
 	}
-	return fmt.Errorf("unknown BillDetail edge %s", name)
+	return fmt.Errorf("unknown Biller_account edge %s", name)
 }
 
 // CustomerMutation represents an operation that mutates the Customer nodes in the graph.
 type CustomerMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	first_name          *string
-	last_name           *string
-	title_name          *string
-	mobile_number       *string
-	created_at          *time.Time
-	clearedFields       map[string]struct{}
-	bill_details        map[int]struct{}
-	removedbill_details map[int]struct{}
-	clearedbill_details bool
-	bills               map[int]struct{}
-	removedbills        map[int]struct{}
-	clearedbills        bool
-	done                bool
-	oldValue            func(context.Context) (*Customer, error)
-	predicates          []predicate.Customer
+	op            Op
+	typ           string
+	id            *int
+	first_name    *string
+	last_name     *string
+	title_name    *string
+	mobile_number *string
+	created_at    *time.Time
+	clearedFields map[string]struct{}
+	bills         map[int]struct{}
+	removedbills  map[int]struct{}
+	clearedbills  bool
+	done          bool
+	oldValue      func(context.Context) (*Customer, error)
+	predicates    []predicate.Customer
 }
 
 var _ ent.Mutation = (*CustomerMutation)(nil)
@@ -1886,60 +1886,6 @@ func (m *CustomerMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// AddBillDetailIDs adds the "bill_details" edge to the BillDetail entity by ids.
-func (m *CustomerMutation) AddBillDetailIDs(ids ...int) {
-	if m.bill_details == nil {
-		m.bill_details = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.bill_details[ids[i]] = struct{}{}
-	}
-}
-
-// ClearBillDetails clears the "bill_details" edge to the BillDetail entity.
-func (m *CustomerMutation) ClearBillDetails() {
-	m.clearedbill_details = true
-}
-
-// BillDetailsCleared reports if the "bill_details" edge to the BillDetail entity was cleared.
-func (m *CustomerMutation) BillDetailsCleared() bool {
-	return m.clearedbill_details
-}
-
-// RemoveBillDetailIDs removes the "bill_details" edge to the BillDetail entity by IDs.
-func (m *CustomerMutation) RemoveBillDetailIDs(ids ...int) {
-	if m.removedbill_details == nil {
-		m.removedbill_details = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.bill_details, ids[i])
-		m.removedbill_details[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedBillDetails returns the removed IDs of the "bill_details" edge to the BillDetail entity.
-func (m *CustomerMutation) RemovedBillDetailsIDs() (ids []int) {
-	for id := range m.removedbill_details {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// BillDetailsIDs returns the "bill_details" edge IDs in the mutation.
-func (m *CustomerMutation) BillDetailsIDs() (ids []int) {
-	for id := range m.bill_details {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetBillDetails resets all changes to the "bill_details" edge.
-func (m *CustomerMutation) ResetBillDetails() {
-	m.bill_details = nil
-	m.clearedbill_details = false
-	m.removedbill_details = nil
-}
-
 // AddBillIDs adds the "bills" edge to the Bill entity by ids.
 func (m *CustomerMutation) AddBillIDs(ids ...int) {
 	if m.bills == nil {
@@ -2195,10 +2141,7 @@ func (m *CustomerMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CustomerMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.bill_details != nil {
-		edges = append(edges, customer.EdgeBillDetails)
-	}
+	edges := make([]string, 0, 1)
 	if m.bills != nil {
 		edges = append(edges, customer.EdgeBills)
 	}
@@ -2209,12 +2152,6 @@ func (m *CustomerMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *CustomerMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case customer.EdgeBillDetails:
-		ids := make([]ent.Value, 0, len(m.bill_details))
-		for id := range m.bill_details {
-			ids = append(ids, id)
-		}
-		return ids
 	case customer.EdgeBills:
 		ids := make([]ent.Value, 0, len(m.bills))
 		for id := range m.bills {
@@ -2227,10 +2164,7 @@ func (m *CustomerMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CustomerMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removedbill_details != nil {
-		edges = append(edges, customer.EdgeBillDetails)
-	}
+	edges := make([]string, 0, 1)
 	if m.removedbills != nil {
 		edges = append(edges, customer.EdgeBills)
 	}
@@ -2241,12 +2175,6 @@ func (m *CustomerMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *CustomerMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case customer.EdgeBillDetails:
-		ids := make([]ent.Value, 0, len(m.removedbill_details))
-		for id := range m.removedbill_details {
-			ids = append(ids, id)
-		}
-		return ids
 	case customer.EdgeBills:
 		ids := make([]ent.Value, 0, len(m.removedbills))
 		for id := range m.removedbills {
@@ -2259,10 +2187,7 @@ func (m *CustomerMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CustomerMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedbill_details {
-		edges = append(edges, customer.EdgeBillDetails)
-	}
+	edges := make([]string, 0, 1)
 	if m.clearedbills {
 		edges = append(edges, customer.EdgeBills)
 	}
@@ -2273,8 +2198,6 @@ func (m *CustomerMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *CustomerMutation) EdgeCleared(name string) bool {
 	switch name {
-	case customer.EdgeBillDetails:
-		return m.clearedbill_details
 	case customer.EdgeBills:
 		return m.clearedbills
 	}
@@ -2293,491 +2216,9 @@ func (m *CustomerMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *CustomerMutation) ResetEdge(name string) error {
 	switch name {
-	case customer.EdgeBillDetails:
-		m.ResetBillDetails()
-		return nil
 	case customer.EdgeBills:
 		m.ResetBills()
 		return nil
 	}
 	return fmt.Errorf("unknown Customer edge %s", name)
-}
-
-// StoreMutation represents an operation that mutates the Store nodes in the graph.
-type StoreMutation struct {
-	config
-	op            Op
-	typ           string
-	id            *int
-	account_name  *string
-	service_name  *string
-	clearedFields map[string]struct{}
-	bills         map[int]struct{}
-	removedbills  map[int]struct{}
-	clearedbills  bool
-	done          bool
-	oldValue      func(context.Context) (*Store, error)
-	predicates    []predicate.Store
-}
-
-var _ ent.Mutation = (*StoreMutation)(nil)
-
-// storeOption allows management of the mutation configuration using functional options.
-type storeOption func(*StoreMutation)
-
-// newStoreMutation creates new mutation for the Store entity.
-func newStoreMutation(c config, op Op, opts ...storeOption) *StoreMutation {
-	m := &StoreMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeStore,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withStoreID sets the ID field of the mutation.
-func withStoreID(id int) storeOption {
-	return func(m *StoreMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Store
-		)
-		m.oldValue = func(ctx context.Context) (*Store, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Store.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withStore sets the old Store of the mutation.
-func withStore(node *Store) storeOption {
-	return func(m *StoreMutation) {
-		m.oldValue = func(context.Context) (*Store, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m StoreMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m StoreMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Store entities.
-func (m *StoreMutation) SetID(id int) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *StoreMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *StoreMutation) IDs(ctx context.Context) ([]int, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []int{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Store.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetAccountName sets the "account_name" field.
-func (m *StoreMutation) SetAccountName(s string) {
-	m.account_name = &s
-}
-
-// AccountName returns the value of the "account_name" field in the mutation.
-func (m *StoreMutation) AccountName() (r string, exists bool) {
-	v := m.account_name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAccountName returns the old "account_name" field's value of the Store entity.
-// If the Store object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StoreMutation) OldAccountName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAccountName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAccountName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAccountName: %w", err)
-	}
-	return oldValue.AccountName, nil
-}
-
-// ResetAccountName resets all changes to the "account_name" field.
-func (m *StoreMutation) ResetAccountName() {
-	m.account_name = nil
-}
-
-// SetServiceName sets the "service_name" field.
-func (m *StoreMutation) SetServiceName(s string) {
-	m.service_name = &s
-}
-
-// ServiceName returns the value of the "service_name" field in the mutation.
-func (m *StoreMutation) ServiceName() (r string, exists bool) {
-	v := m.service_name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldServiceName returns the old "service_name" field's value of the Store entity.
-// If the Store object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StoreMutation) OldServiceName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldServiceName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldServiceName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldServiceName: %w", err)
-	}
-	return oldValue.ServiceName, nil
-}
-
-// ResetServiceName resets all changes to the "service_name" field.
-func (m *StoreMutation) ResetServiceName() {
-	m.service_name = nil
-}
-
-// AddBillIDs adds the "bills" edge to the Bill entity by ids.
-func (m *StoreMutation) AddBillIDs(ids ...int) {
-	if m.bills == nil {
-		m.bills = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.bills[ids[i]] = struct{}{}
-	}
-}
-
-// ClearBills clears the "bills" edge to the Bill entity.
-func (m *StoreMutation) ClearBills() {
-	m.clearedbills = true
-}
-
-// BillsCleared reports if the "bills" edge to the Bill entity was cleared.
-func (m *StoreMutation) BillsCleared() bool {
-	return m.clearedbills
-}
-
-// RemoveBillIDs removes the "bills" edge to the Bill entity by IDs.
-func (m *StoreMutation) RemoveBillIDs(ids ...int) {
-	if m.removedbills == nil {
-		m.removedbills = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.bills, ids[i])
-		m.removedbills[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedBills returns the removed IDs of the "bills" edge to the Bill entity.
-func (m *StoreMutation) RemovedBillsIDs() (ids []int) {
-	for id := range m.removedbills {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// BillsIDs returns the "bills" edge IDs in the mutation.
-func (m *StoreMutation) BillsIDs() (ids []int) {
-	for id := range m.bills {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetBills resets all changes to the "bills" edge.
-func (m *StoreMutation) ResetBills() {
-	m.bills = nil
-	m.clearedbills = false
-	m.removedbills = nil
-}
-
-// Where appends a list predicates to the StoreMutation builder.
-func (m *StoreMutation) Where(ps ...predicate.Store) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the StoreMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *StoreMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.Store, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *StoreMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *StoreMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (Store).
-func (m *StoreMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *StoreMutation) Fields() []string {
-	fields := make([]string, 0, 2)
-	if m.account_name != nil {
-		fields = append(fields, store.FieldAccountName)
-	}
-	if m.service_name != nil {
-		fields = append(fields, store.FieldServiceName)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *StoreMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case store.FieldAccountName:
-		return m.AccountName()
-	case store.FieldServiceName:
-		return m.ServiceName()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *StoreMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case store.FieldAccountName:
-		return m.OldAccountName(ctx)
-	case store.FieldServiceName:
-		return m.OldServiceName(ctx)
-	}
-	return nil, fmt.Errorf("unknown Store field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *StoreMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case store.FieldAccountName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAccountName(v)
-		return nil
-	case store.FieldServiceName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetServiceName(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Store field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *StoreMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *StoreMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *StoreMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown Store numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *StoreMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *StoreMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *StoreMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown Store nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *StoreMutation) ResetField(name string) error {
-	switch name {
-	case store.FieldAccountName:
-		m.ResetAccountName()
-		return nil
-	case store.FieldServiceName:
-		m.ResetServiceName()
-		return nil
-	}
-	return fmt.Errorf("unknown Store field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *StoreMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.bills != nil {
-		edges = append(edges, store.EdgeBills)
-	}
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *StoreMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case store.EdgeBills:
-		ids := make([]ent.Value, 0, len(m.bills))
-		for id := range m.bills {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *StoreMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.removedbills != nil {
-		edges = append(edges, store.EdgeBills)
-	}
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *StoreMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case store.EdgeBills:
-		ids := make([]ent.Value, 0, len(m.removedbills))
-		for id := range m.removedbills {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *StoreMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedbills {
-		edges = append(edges, store.EdgeBills)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *StoreMutation) EdgeCleared(name string) bool {
-	switch name {
-	case store.EdgeBills:
-		return m.clearedbills
-	}
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *StoreMutation) ClearEdge(name string) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown Store unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *StoreMutation) ResetEdge(name string) error {
-	switch name {
-	case store.EdgeBills:
-		m.ResetBills()
-		return nil
-	}
-	return fmt.Errorf("unknown Store edge %s", name)
 }
