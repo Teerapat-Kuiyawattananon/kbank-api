@@ -16,6 +16,67 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/billers": {
+            "get": {
+                "description": "Show all biller_account.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Billers"
+                ],
+                "summary": "Show all biller_account.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BillAccount"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new biller_account, it's for store.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Billers"
+                ],
+                "summary": "Create new biller_account.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.BillAccount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BillAccount"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/billpayment/lookup": {
             "post": {
                 "description": "Show inquiry response from inquiry request.",
@@ -36,7 +97,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/inquiry.InquiryRequest"
+                            "$ref": "#/definitions/model.InquiryRequest"
                         }
                     }
                 ],
@@ -46,7 +107,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/inquiry.InquiryResponse"
+                                "$ref": "#/definitions/model.InquiryResponse"
                             }
                         }
                     }
@@ -73,7 +134,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/payment.PaymentRequest"
+                            "$ref": "#/definitions/model.PaymentRequest"
                         }
                     }
                 ],
@@ -83,7 +144,166 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/payment.PaymentResponse"
+                                "$ref": "#/definitions/model.PaymentResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bills": {
+            "get": {
+                "description": "show all bill in system.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bills"
+                ],
+                "summary": "Show all bill.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Bill"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new bill detail.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bills"
+                ],
+                "summary": "Create new bill.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Bill"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Bill"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers": {
+            "get": {
+                "description": "Show all customer in system.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Show all customer.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Customer"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new customer that use bill.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Create new customer.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Customer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/:id": {
+            "get": {
+                "description": "Show all customer in system by.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Show all customer by ID.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Customer"
                             }
                         }
                     }
@@ -92,7 +312,82 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "inquiry.AdditionalFieldRequest": {
+        "model.Bill": {
+            "type": "object",
+            "properties": {
+                "billerId": {
+                    "type": "integer"
+                },
+                "channelCode": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reference1": {
+                    "type": "integer"
+                },
+                "reference2": {
+                    "type": "integer"
+                },
+                "senderBankCode": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tranAmount": {
+                    "type": "number"
+                },
+                "trasactionId": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BillAccount": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "service_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Customer": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "mobileNumber": {
+                    "type": "string"
+                },
+                "titleName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.InquiryAdditionalFieldRequest": {
             "type": "object",
             "properties": {
                 "billerFee": {
@@ -154,7 +449,7 @@ const docTemplate = `{
                 }
             }
         },
-        "inquiry.AdditionalFieldResponse": {
+        "model.InquiryAdditionalFieldResponse": {
             "type": "object",
             "properties": {
                 "dueDate": {
@@ -183,11 +478,11 @@ const docTemplate = `{
                 }
             }
         },
-        "inquiry.InquiryRequest": {
+        "model.InquiryRequest": {
             "type": "object",
             "properties": {
                 "additional": {
-                    "$ref": "#/definitions/inquiry.AdditionalFieldRequest"
+                    "$ref": "#/definitions/model.InquiryAdditionalFieldRequest"
                 },
                 "apiKey": {
                     "type": "string"
@@ -236,11 +531,11 @@ const docTemplate = `{
                 }
             }
         },
-        "inquiry.InquiryResponse": {
+        "model.InquiryResponse": {
             "type": "object",
             "properties": {
                 "additional": {
-                    "$ref": "#/definitions/inquiry.AdditionalFieldResponse"
+                    "$ref": "#/definitions/model.InquiryAdditionalFieldResponse"
                 },
                 "billerId": {
                     "type": "string"
@@ -298,7 +593,7 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.AdditionalFieldRequest": {
+        "model.PaymentAdditionalFieldRequest": {
             "type": "object",
             "properties": {
                 "customerFee": {
@@ -372,7 +667,7 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.AdditionalFieldResponse": {
+        "model.PaymentAdditionalFieldResponse": {
             "type": "object",
             "properties": {
                 "rsAppId": {
@@ -383,11 +678,11 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.PaymentRequest": {
+        "model.PaymentRequest": {
             "type": "object",
             "properties": {
                 "additional": {
-                    "$ref": "#/definitions/payment.AdditionalFieldRequest"
+                    "$ref": "#/definitions/model.PaymentAdditionalFieldRequest"
                 },
                 "apiKey": {
                     "type": "string"
@@ -436,11 +731,11 @@ const docTemplate = `{
                 }
             }
         },
-        "payment.PaymentResponse": {
+        "model.PaymentResponse": {
             "type": "object",
             "properties": {
                 "additional": {
-                    "$ref": "#/definitions/payment.AdditionalFieldResponse"
+                    "$ref": "#/definitions/model.PaymentAdditionalFieldResponse"
                 },
                 "billerTransactionId": {
                     "type": "string"

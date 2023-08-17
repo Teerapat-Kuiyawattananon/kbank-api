@@ -21,6 +21,14 @@ var (
 
 )
 
+// @Summary 	Show inquiry response.
+// @Description Show inquiry response from inquiry request.
+// @Tags 		Inquiry
+// @Accept 		*/*
+// @Produce 	json
+// @Param body 	body model.InquiryRequest true "JSON request body for inquiry request"
+// @Success 	200 {array} model.InquiryResponse "Success"
+// @Router 		/api/billpayment/lookup [post]
 func HandlerLookup(c echo.Context) error {
 	if err := c.Bind(&inquiryRequest) ; err != nil {
 		log.Fatal(err)

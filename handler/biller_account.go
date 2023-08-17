@@ -11,6 +11,15 @@ import (
 )
 
 var billAccountInput model.BillAccount
+
+// @Summary 	Create new biller_account.
+// @Description Create new biller_account, it's for store.
+// @Tags 		Billers
+// @Accept 		*/*
+// @Produce 	json
+// @Param body 	body model.BillAccount true "JSON request body for payment request"
+// @Success 	201 {array} model.BillAccount "Success"
+// @Router 		/api/billers [post]
 func HandlerCreateBillerAccount(c echo.Context) error {
 	if err := c.Bind(&billAccountInput) ; err != nil {
 		log.Fatal(err)
@@ -37,6 +46,13 @@ func HandlerCreateBillerAccount(c echo.Context) error {
 	return c.JSON(http.StatusCreated, billerAccountRes)
 }
 
+// @Summary 	Show all biller_account.
+// @Description Show all biller_account.
+// @Tags 		Billers
+// @Accept 		*/*
+// @Produce 	json
+// @Success 	200 {array} model.BillAccount "Success"
+// @Router 		/api/billers [get]
 func HandlerGetBillers(c echo.Context) error {
 	var stores []model.BillAccount
 	clientDB, err := db.InitDatabase()

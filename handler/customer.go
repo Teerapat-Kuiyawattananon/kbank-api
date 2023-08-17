@@ -13,6 +13,14 @@ import (
 
 var customerInput model.Customer
 
+// @Summary 	Create new customer.
+// @Description Create new customer that use bill.
+// @Tags 		Customers
+// @Accept 		*/*
+// @Produce 	json
+// @Param body 	body model.Customer true "JSON request body for payment request"
+// @Success 	201 {array} model.Customer "Success"
+// @Router 		/api/customers [post]
 func HandlerCreateCustomer(c echo.Context) error {
 	if err := c.Bind(&customerInput); err != nil {
 		log.Fatal(err)
@@ -40,6 +48,13 @@ func HandlerCreateCustomer(c echo.Context) error {
 	return c.JSON(http.StatusCreated, customer)
 }
 
+// @Summary 	Show all customer.
+// @Description Show all customer in system.
+// @Tags 		Customers
+// @Accept 		*/*
+// @Produce 	json
+// @Success 	200 {array} model.Customer "Success"
+// @Router 		/api/customers [get]
 func HandlerGetCustomers(c echo.Context) error {
 	var customers []model.Customer
 	clientDB, err := db.InitDatabase()
@@ -67,6 +82,14 @@ func HandlerGetCustomers(c echo.Context) error {
 	return c.JSON(http.StatusOK, customers)
 }
 
+// @Summary 	Show all customer by ID.
+// @Description Show all customer in system by.
+// @Tags 		Customers
+// @Accept 		*/*
+// @Produce 	json
+// @Param body 	body model.Customer true "JSON request body for payment request"
+// @Success 	200 {array} model.Customer "Success"
+// @Router 		/api/customers/:id [get]
 func HandlerGetCustomerByID(c echo.Context) error {
 	var customer model.Customer
 	clientDB, err := db.InitDatabase()
