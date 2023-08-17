@@ -48,9 +48,13 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 		log.Fatal(err)
 	}
 
-	billDetailRepo := repo.NewBillDetailRepository(clientDB)
+	billRepo := repo.NewBillRepository(clientDB)
 
 	// string to int
+	ref1_id, err := strconv.Atoi(input.Reference1)
+	if err != nil {
+		return "0001", "Invalid Payment reference number"
+	}
 	ref2_id, err := strconv.Atoi(input.Reference2)
 	if err != nil {
 		return "0001", "Invalid Payment reference number"
@@ -59,11 +63,21 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 	if err != nil {
 		return "0004", "Invalid payment amount"
 	}
-	bill := billDetailRepo.GetBillDetailByRef2(ref2_id)
+	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
 	// if (bill.Status == "waiting") {
 	// 	bill.Update().SetStatus("paid").ExecX(context.Background())
 	// 	return "0000", "Success"
 	// }
+	defer func () {
+		bill.Update().SetTransactionID(paymentRequest.TransactionId).
+				SetUpdatedAt(func () time.Time {
+					strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
+					t, _ := time.Parse(time.RFC3339, strTime)
+					return t
+				}()).
+				ExecX(context.Background())
+	}()
+
 	if (bill == nil) {
 		return "9001", "Unauthorized"
 	}
@@ -74,14 +88,23 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 		return "1000", "Other Merchant Error"
 	}
 
-	if (bill.Status == "paid") {
+	if (bill.Status == "already_paid") {
 		return "0002", "Already paid"
 	}
-
+	// defer func () {
+	// 	log.Println("defer")
+	// 	bill.Update().SetTransactionID("paymentRequest.TransactionId").ExecX(context.Background())
+	// }()
+	
 	// Waiting for payment
-	bill.Update().SetStatus("paid").
+	bill.Update().SetStatus("already_paid").
 					SetChannelCode(input.ChannelCode).
 					SetSenderBankCode(input.SenderBankCode).
+					SetUpdatedAt(func () time.Time {
+						strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
+						t, _ := time.Parse(time.RFC3339, strTime)
+						return t
+					}()).
 					ExecX(context.Background())
 	return "0000", "Success"
 }

@@ -27,7 +27,12 @@ func (repo customerRepository) CreateCustomer(customer mCustomer.Customer) (*ent
 					SetLastName(customer.LastName).
 					SetTitleName(customer.TitleName).
 					SetMobileNumber(customer.MobileNumber).
-					SetCreatedAt(time.Now().UTC().Add(time.Hour * 7)).
+					SetCreatedAt(func () time.Time {
+						strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
+						t, _ := time.Parse(time.RFC3339, strTime)
+						// loc, _ := time.LoadLocation("Asia/Bangkok")
+						return t
+					}()).
 					Save(context.Background())
 	if err != nil {
 		log.Println(err)

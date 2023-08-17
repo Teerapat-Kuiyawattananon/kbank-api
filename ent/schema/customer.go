@@ -28,7 +28,7 @@ func (Customer) Fields() []ent.Field {
 // Edges of the Customer.
 func (Customer) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("bill_details", BillDetail.Type),
+		// edge.To("bill_details", BillDetail.Type),
 		// edge.From("bill_detail", BillDetail.Type).
 		// 	Ref("customer").
 		// 	Unique().

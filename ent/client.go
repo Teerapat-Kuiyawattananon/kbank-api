@@ -11,9 +11,8 @@ import (
 	"kapi/ent/migrate"
 
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
-	"kapi/ent/store"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -28,12 +27,10 @@ type Client struct {
 	Schema *migrate.Schema
 	// Bill is the client for interacting with the Bill builders.
 	Bill *BillClient
-	// BillDetail is the client for interacting with the BillDetail builders.
-	BillDetail *BillDetailClient
+	// Biller_account is the client for interacting with the Biller_account builders.
+	Biller_account *BillerAccountClient
 	// Customer is the client for interacting with the Customer builders.
 	Customer *CustomerClient
-	// Store is the client for interacting with the Store builders.
-	Store *StoreClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -48,9 +45,8 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Bill = NewBillClient(c.config)
-	c.BillDetail = NewBillDetailClient(c.config)
+	c.Biller_account = NewBillerAccountClient(c.config)
 	c.Customer = NewCustomerClient(c.config)
-	c.Store = NewStoreClient(c.config)
 }
 
 type (
@@ -131,12 +127,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:        ctx,
-		config:     cfg,
-		Bill:       NewBillClient(cfg),
-		BillDetail: NewBillDetailClient(cfg),
-		Customer:   NewCustomerClient(cfg),
-		Store:      NewStoreClient(cfg),
+		ctx:            ctx,
+		config:         cfg,
+		Bill:           NewBillClient(cfg),
+		Biller_account: NewBillerAccountClient(cfg),
+		Customer:       NewCustomerClient(cfg),
 	}, nil
 }
 
@@ -154,12 +149,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:        ctx,
-		config:     cfg,
-		Bill:       NewBillClient(cfg),
-		BillDetail: NewBillDetailClient(cfg),
-		Customer:   NewCustomerClient(cfg),
-		Store:      NewStoreClient(cfg),
+		ctx:            ctx,
+		config:         cfg,
+		Bill:           NewBillClient(cfg),
+		Biller_account: NewBillerAccountClient(cfg),
+		Customer:       NewCustomerClient(cfg),
 	}, nil
 }
 
@@ -189,18 +183,16 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Bill.Use(hooks...)
-	c.BillDetail.Use(hooks...)
+	c.Biller_account.Use(hooks...)
 	c.Customer.Use(hooks...)
-	c.Store.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Bill.Intercept(interceptors...)
-	c.BillDetail.Intercept(interceptors...)
+	c.Biller_account.Intercept(interceptors...)
 	c.Customer.Intercept(interceptors...)
-	c.Store.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -208,12 +200,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *BillMutation:
 		return c.Bill.mutate(ctx, m)
-	case *BillDetailMutation:
-		return c.BillDetail.mutate(ctx, m)
+	case *BillerAccountMutation:
+		return c.Biller_account.mutate(ctx, m)
 	case *CustomerMutation:
 		return c.Customer.mutate(ctx, m)
-	case *StoreMutation:
-		return c.Store.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -312,15 +302,15 @@ func (c *BillClient) GetX(ctx context.Context, id int) *Bill {
 	return obj
 }
 
-// QueryStore queries the store edge of a Bill.
-func (c *BillClient) QueryStore(b *Bill) *StoreQuery {
-	query := (&StoreClient{config: c.config}).Query()
+// QueryBillerAccount queries the biller_account edge of a Bill.
+func (c *BillClient) QueryBillerAccount(b *Bill) *BillerAccountQuery {
+	query := (&BillerAccountClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := b.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(store.Table, store.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.StoreTable, bill.StoreColumn),
+			sqlgraph.To(biller_account.Table, biller_account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.BillerAccountTable, bill.BillerAccountColumn),
 		)
 		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
 		return fromV, nil
@@ -328,31 +318,15 @@ func (c *BillClient) QueryStore(b *Bill) *StoreQuery {
 	return query
 }
 
-// QueryCustomers queries the customers edge of a Bill.
-func (c *BillClient) QueryCustomers(b *Bill) *CustomerQuery {
+// QueryCustomer queries the customer edge of a Bill.
+func (c *BillClient) QueryCustomer(b *Bill) *CustomerQuery {
 	query := (&CustomerClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := b.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(bill.Table, bill.FieldID, id),
 			sqlgraph.To(customer.Table, customer.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.CustomersTable, bill.CustomersColumn),
-		)
-		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryBillDetail queries the bill_detail edge of a Bill.
-func (c *BillClient) QueryBillDetail(b *Bill) *BillDetailQuery {
-	query := (&BillDetailClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := b.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, id),
-			sqlgraph.To(billdetail.Table, billdetail.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, bill.BillDetailTable, bill.BillDetailColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.CustomerTable, bill.CustomerColumn),
 		)
 		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
 		return fromV, nil
@@ -385,92 +359,92 @@ func (c *BillClient) mutate(ctx context.Context, m *BillMutation) (Value, error)
 	}
 }
 
-// BillDetailClient is a client for the BillDetail schema.
-type BillDetailClient struct {
+// BillerAccountClient is a client for the Biller_account schema.
+type BillerAccountClient struct {
 	config
 }
 
-// NewBillDetailClient returns a client for the BillDetail from the given config.
-func NewBillDetailClient(c config) *BillDetailClient {
-	return &BillDetailClient{config: c}
+// NewBillerAccountClient returns a client for the Biller_account from the given config.
+func NewBillerAccountClient(c config) *BillerAccountClient {
+	return &BillerAccountClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `billdetail.Hooks(f(g(h())))`.
-func (c *BillDetailClient) Use(hooks ...Hook) {
-	c.hooks.BillDetail = append(c.hooks.BillDetail, hooks...)
+// A call to `Use(f, g, h)` equals to `biller_account.Hooks(f(g(h())))`.
+func (c *BillerAccountClient) Use(hooks ...Hook) {
+	c.hooks.Biller_account = append(c.hooks.Biller_account, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `billdetail.Intercept(f(g(h())))`.
-func (c *BillDetailClient) Intercept(interceptors ...Interceptor) {
-	c.inters.BillDetail = append(c.inters.BillDetail, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `biller_account.Intercept(f(g(h())))`.
+func (c *BillerAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Biller_account = append(c.inters.Biller_account, interceptors...)
 }
 
-// Create returns a builder for creating a BillDetail entity.
-func (c *BillDetailClient) Create() *BillDetailCreate {
-	mutation := newBillDetailMutation(c.config, OpCreate)
-	return &BillDetailCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Biller_account entity.
+func (c *BillerAccountClient) Create() *BillerAccountCreate {
+	mutation := newBillerAccountMutation(c.config, OpCreate)
+	return &BillerAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of BillDetail entities.
-func (c *BillDetailClient) CreateBulk(builders ...*BillDetailCreate) *BillDetailCreateBulk {
-	return &BillDetailCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Biller_account entities.
+func (c *BillerAccountClient) CreateBulk(builders ...*BillerAccountCreate) *BillerAccountCreateBulk {
+	return &BillerAccountCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for BillDetail.
-func (c *BillDetailClient) Update() *BillDetailUpdate {
-	mutation := newBillDetailMutation(c.config, OpUpdate)
-	return &BillDetailUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Biller_account.
+func (c *BillerAccountClient) Update() *BillerAccountUpdate {
+	mutation := newBillerAccountMutation(c.config, OpUpdate)
+	return &BillerAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *BillDetailClient) UpdateOne(bd *BillDetail) *BillDetailUpdateOne {
-	mutation := newBillDetailMutation(c.config, OpUpdateOne, withBillDetail(bd))
-	return &BillDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *BillerAccountClient) UpdateOne(ba *Biller_account) *BillerAccountUpdateOne {
+	mutation := newBillerAccountMutation(c.config, OpUpdateOne, withBiller_account(ba))
+	return &BillerAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *BillDetailClient) UpdateOneID(id int) *BillDetailUpdateOne {
-	mutation := newBillDetailMutation(c.config, OpUpdateOne, withBillDetailID(id))
-	return &BillDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *BillerAccountClient) UpdateOneID(id int) *BillerAccountUpdateOne {
+	mutation := newBillerAccountMutation(c.config, OpUpdateOne, withBiller_accountID(id))
+	return &BillerAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for BillDetail.
-func (c *BillDetailClient) Delete() *BillDetailDelete {
-	mutation := newBillDetailMutation(c.config, OpDelete)
-	return &BillDetailDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Biller_account.
+func (c *BillerAccountClient) Delete() *BillerAccountDelete {
+	mutation := newBillerAccountMutation(c.config, OpDelete)
+	return &BillerAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *BillDetailClient) DeleteOne(bd *BillDetail) *BillDetailDeleteOne {
-	return c.DeleteOneID(bd.ID)
+func (c *BillerAccountClient) DeleteOne(ba *Biller_account) *BillerAccountDeleteOne {
+	return c.DeleteOneID(ba.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *BillDetailClient) DeleteOneID(id int) *BillDetailDeleteOne {
-	builder := c.Delete().Where(billdetail.ID(id))
+func (c *BillerAccountClient) DeleteOneID(id int) *BillerAccountDeleteOne {
+	builder := c.Delete().Where(biller_account.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &BillDetailDeleteOne{builder}
+	return &BillerAccountDeleteOne{builder}
 }
 
-// Query returns a query builder for BillDetail.
-func (c *BillDetailClient) Query() *BillDetailQuery {
-	return &BillDetailQuery{
+// Query returns a query builder for Biller_account.
+func (c *BillerAccountClient) Query() *BillerAccountQuery {
+	return &BillerAccountQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeBillDetail},
+		ctx:    &QueryContext{Type: TypeBillerAccount},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a BillDetail entity by its id.
-func (c *BillDetailClient) Get(ctx context.Context, id int) (*BillDetail, error) {
-	return c.Query().Where(billdetail.ID(id)).Only(ctx)
+// Get returns a Biller_account entity by its id.
+func (c *BillerAccountClient) Get(ctx context.Context, id int) (*Biller_account, error) {
+	return c.Query().Where(biller_account.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *BillDetailClient) GetX(ctx context.Context, id int) *BillDetail {
+func (c *BillerAccountClient) GetX(ctx context.Context, id int) *Biller_account {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -478,60 +452,44 @@ func (c *BillDetailClient) GetX(ctx context.Context, id int) *BillDetail {
 	return obj
 }
 
-// QueryBills queries the bills edge of a BillDetail.
-func (c *BillDetailClient) QueryBills(bd *BillDetail) *BillQuery {
+// QueryBills queries the bills edge of a Biller_account.
+func (c *BillerAccountClient) QueryBills(ba *Biller_account) *BillQuery {
 	query := (&BillClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := bd.ID
+		id := ba.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(billdetail.Table, billdetail.FieldID, id),
+			sqlgraph.From(biller_account.Table, biller_account.FieldID, id),
 			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, billdetail.BillsTable, billdetail.BillsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, biller_account.BillsTable, biller_account.BillsColumn),
 		)
-		fromV = sqlgraph.Neighbors(bd.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryCustomer queries the customer edge of a BillDetail.
-func (c *BillDetailClient) QueryCustomer(bd *BillDetail) *CustomerQuery {
-	query := (&CustomerClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := bd.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(billdetail.Table, billdetail.FieldID, id),
-			sqlgraph.To(customer.Table, customer.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, billdetail.CustomerTable, billdetail.CustomerColumn),
-		)
-		fromV = sqlgraph.Neighbors(bd.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(ba.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *BillDetailClient) Hooks() []Hook {
-	return c.hooks.BillDetail
+func (c *BillerAccountClient) Hooks() []Hook {
+	return c.hooks.Biller_account
 }
 
 // Interceptors returns the client interceptors.
-func (c *BillDetailClient) Interceptors() []Interceptor {
-	return c.inters.BillDetail
+func (c *BillerAccountClient) Interceptors() []Interceptor {
+	return c.inters.Biller_account
 }
 
-func (c *BillDetailClient) mutate(ctx context.Context, m *BillDetailMutation) (Value, error) {
+func (c *BillerAccountClient) mutate(ctx context.Context, m *BillerAccountMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&BillDetailCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&BillerAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&BillDetailUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&BillerAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&BillDetailUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&BillerAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&BillDetailDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&BillerAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown BillDetail mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown Biller_account mutation op: %q", m.Op())
 	}
 }
 
@@ -628,22 +586,6 @@ func (c *CustomerClient) GetX(ctx context.Context, id int) *Customer {
 	return obj
 }
 
-// QueryBillDetails queries the bill_details edge of a Customer.
-func (c *CustomerClient) QueryBillDetails(cu *Customer) *BillDetailQuery {
-	query := (&BillDetailClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := cu.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(customer.Table, customer.FieldID, id),
-			sqlgraph.To(billdetail.Table, billdetail.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, customer.BillDetailsTable, customer.BillDetailsColumn),
-		)
-		fromV = sqlgraph.Neighbors(cu.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryBills queries the bills edge of a Customer.
 func (c *CustomerClient) QueryBills(cu *Customer) *BillQuery {
 	query := (&BillClient{config: c.config}).Query()
@@ -685,146 +627,12 @@ func (c *CustomerClient) mutate(ctx context.Context, m *CustomerMutation) (Value
 	}
 }
 
-// StoreClient is a client for the Store schema.
-type StoreClient struct {
-	config
-}
-
-// NewStoreClient returns a client for the Store from the given config.
-func NewStoreClient(c config) *StoreClient {
-	return &StoreClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `store.Hooks(f(g(h())))`.
-func (c *StoreClient) Use(hooks ...Hook) {
-	c.hooks.Store = append(c.hooks.Store, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `store.Intercept(f(g(h())))`.
-func (c *StoreClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Store = append(c.inters.Store, interceptors...)
-}
-
-// Create returns a builder for creating a Store entity.
-func (c *StoreClient) Create() *StoreCreate {
-	mutation := newStoreMutation(c.config, OpCreate)
-	return &StoreCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Store entities.
-func (c *StoreClient) CreateBulk(builders ...*StoreCreate) *StoreCreateBulk {
-	return &StoreCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Store.
-func (c *StoreClient) Update() *StoreUpdate {
-	mutation := newStoreMutation(c.config, OpUpdate)
-	return &StoreUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *StoreClient) UpdateOne(s *Store) *StoreUpdateOne {
-	mutation := newStoreMutation(c.config, OpUpdateOne, withStore(s))
-	return &StoreUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *StoreClient) UpdateOneID(id int) *StoreUpdateOne {
-	mutation := newStoreMutation(c.config, OpUpdateOne, withStoreID(id))
-	return &StoreUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Store.
-func (c *StoreClient) Delete() *StoreDelete {
-	mutation := newStoreMutation(c.config, OpDelete)
-	return &StoreDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *StoreClient) DeleteOne(s *Store) *StoreDeleteOne {
-	return c.DeleteOneID(s.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *StoreClient) DeleteOneID(id int) *StoreDeleteOne {
-	builder := c.Delete().Where(store.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &StoreDeleteOne{builder}
-}
-
-// Query returns a query builder for Store.
-func (c *StoreClient) Query() *StoreQuery {
-	return &StoreQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeStore},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Store entity by its id.
-func (c *StoreClient) Get(ctx context.Context, id int) (*Store, error) {
-	return c.Query().Where(store.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *StoreClient) GetX(ctx context.Context, id int) *Store {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryBills queries the bills edge of a Store.
-func (c *StoreClient) QueryBills(s *Store) *BillQuery {
-	query := (&BillClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := s.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(store.Table, store.FieldID, id),
-			sqlgraph.To(bill.Table, bill.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, store.BillsTable, store.BillsColumn),
-		)
-		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *StoreClient) Hooks() []Hook {
-	return c.hooks.Store
-}
-
-// Interceptors returns the client interceptors.
-func (c *StoreClient) Interceptors() []Interceptor {
-	return c.inters.Store
-}
-
-func (c *StoreClient) mutate(ctx context.Context, m *StoreMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&StoreCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&StoreUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&StoreUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&StoreDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Store mutation op: %q", m.Op())
-	}
-}
-
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Bill, BillDetail, Customer, Store []ent.Hook
+		Bill, Biller_account, Customer []ent.Hook
 	}
 	inters struct {
-		Bill, BillDetail, Customer, Store []ent.Interceptor
+		Bill, Biller_account, Customer []ent.Interceptor
 	}
 )

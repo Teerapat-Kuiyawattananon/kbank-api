@@ -3,10 +3,10 @@
 package ent
 
 import (
-	"kapi/ent/billdetail"
+	"kapi/ent/bill"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
 	"kapi/ent/schema"
-	"kapi/ent/store"
 	"time"
 )
 
@@ -14,34 +14,48 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	billdetailFields := schema.BillDetail{}.Fields()
-	_ = billdetailFields
-	// billdetailDescChannelCode is the schema descriptor for channel_code field.
-	billdetailDescChannelCode := billdetailFields[1].Descriptor()
-	// billdetail.DefaultChannelCode holds the default value on creation for the channel_code field.
-	billdetail.DefaultChannelCode = billdetailDescChannelCode.Default.(string)
-	// billdetailDescSenderBankCode is the schema descriptor for sender_bank_code field.
-	billdetailDescSenderBankCode := billdetailFields[2].Descriptor()
-	// billdetail.DefaultSenderBankCode holds the default value on creation for the sender_bank_code field.
-	billdetail.DefaultSenderBankCode = billdetailDescSenderBankCode.Default.(string)
-	// billdetailDescStatus is the schema descriptor for status field.
-	billdetailDescStatus := billdetailFields[3].Descriptor()
-	// billdetail.StatusValidator is a validator for the "status" field. It is called by the builders before save.
-	billdetail.StatusValidator = billdetailDescStatus.Validators[0].(func(string) error)
-	// billdetailDescTranAmount is the schema descriptor for tran_amount field.
-	billdetailDescTranAmount := billdetailFields[5].Descriptor()
-	// billdetail.DefaultTranAmount holds the default value on creation for the tran_amount field.
-	billdetail.DefaultTranAmount = billdetailDescTranAmount.Default.(float64)
-	// billdetailDescCreatedAt is the schema descriptor for created_at field.
-	billdetailDescCreatedAt := billdetailFields[6].Descriptor()
-	// billdetail.DefaultCreatedAt holds the default value on creation for the created_at field.
-	billdetail.DefaultCreatedAt = billdetailDescCreatedAt.Default.(func() time.Time)
-	// billdetailDescUpdatedAt is the schema descriptor for updated_at field.
-	billdetailDescUpdatedAt := billdetailFields[7].Descriptor()
-	// billdetail.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	billdetail.DefaultUpdatedAt = billdetailDescUpdatedAt.Default.(func() time.Time)
-	// billdetail.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	billdetail.UpdateDefaultUpdatedAt = billdetailDescUpdatedAt.UpdateDefault.(func() time.Time)
+	billFields := schema.Bill{}.Fields()
+	_ = billFields
+	// billDescTransactionID is the schema descriptor for transaction_id field.
+	billDescTransactionID := billFields[4].Descriptor()
+	// bill.DefaultTransactionID holds the default value on creation for the transaction_id field.
+	bill.DefaultTransactionID = billDescTransactionID.Default.(string)
+	// billDescTranAmount is the schema descriptor for tran_amount field.
+	billDescTranAmount := billFields[5].Descriptor()
+	// bill.DefaultTranAmount holds the default value on creation for the tran_amount field.
+	bill.DefaultTranAmount = billDescTranAmount.Default.(float64)
+	// billDescChannelCode is the schema descriptor for channel_code field.
+	billDescChannelCode := billFields[6].Descriptor()
+	// bill.DefaultChannelCode holds the default value on creation for the channel_code field.
+	bill.DefaultChannelCode = billDescChannelCode.Default.(string)
+	// billDescSenderBankCode is the schema descriptor for sender_bank_code field.
+	billDescSenderBankCode := billFields[7].Descriptor()
+	// bill.DefaultSenderBankCode holds the default value on creation for the sender_bank_code field.
+	bill.DefaultSenderBankCode = billDescSenderBankCode.Default.(string)
+	// billDescStatus is the schema descriptor for status field.
+	billDescStatus := billFields[8].Descriptor()
+	// bill.StatusValidator is a validator for the "status" field. It is called by the builders before save.
+	bill.StatusValidator = billDescStatus.Validators[0].(func(string) error)
+	// billDescCreatedAt is the schema descriptor for created_at field.
+	billDescCreatedAt := billFields[9].Descriptor()
+	// bill.DefaultCreatedAt holds the default value on creation for the created_at field.
+	bill.DefaultCreatedAt = billDescCreatedAt.Default.(func() time.Time)
+	// billDescUpdatedAt is the schema descriptor for updated_at field.
+	billDescUpdatedAt := billFields[10].Descriptor()
+	// bill.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	bill.DefaultUpdatedAt = billDescUpdatedAt.Default.(func() time.Time)
+	// bill.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	bill.UpdateDefaultUpdatedAt = billDescUpdatedAt.UpdateDefault.(func() time.Time)
+	biller_accountFields := schema.Biller_account{}.Fields()
+	_ = biller_accountFields
+	// biller_accountDescName is the schema descriptor for name field.
+	biller_accountDescName := biller_accountFields[1].Descriptor()
+	// biller_account.DefaultName holds the default value on creation for the name field.
+	biller_account.DefaultName = biller_accountDescName.Default.(string)
+	// biller_accountDescServiceName is the schema descriptor for service_name field.
+	biller_accountDescServiceName := biller_accountFields[2].Descriptor()
+	// biller_account.DefaultServiceName holds the default value on creation for the service_name field.
+	biller_account.DefaultServiceName = biller_accountDescServiceName.Default.(string)
 	customerFields := schema.Customer{}.Fields()
 	_ = customerFields
 	// customerDescFirstName is the schema descriptor for first_name field.
@@ -64,14 +78,4 @@ func init() {
 	customerDescCreatedAt := customerFields[5].Descriptor()
 	// customer.DefaultCreatedAt holds the default value on creation for the created_at field.
 	customer.DefaultCreatedAt = customerDescCreatedAt.Default.(func() time.Time)
-	storeFields := schema.Store{}.Fields()
-	_ = storeFields
-	// storeDescAccountName is the schema descriptor for account_name field.
-	storeDescAccountName := storeFields[1].Descriptor()
-	// store.DefaultAccountName holds the default value on creation for the account_name field.
-	store.DefaultAccountName = storeDescAccountName.Default.(string)
-	// storeDescServiceName is the schema descriptor for service_name field.
-	storeDescServiceName := storeFields[2].Descriptor()
-	// store.DefaultServiceName holds the default value on creation for the service_name field.
-	store.DefaultServiceName = storeDescServiceName.Default.(string)
 }

@@ -9,11 +9,8 @@ import (
 // Bill is the predicate function for bill builders.
 type Bill func(*sql.Selector)
 
-// BillDetail is the predicate function for billdetail builders.
-type BillDetail func(*sql.Selector)
+// Biller_account is the predicate function for biller_account builders.
+type Biller_account func(*sql.Selector)
 
 // Customer is the predicate function for customer builders.
 type Customer func(*sql.Selector)
-
-// Store is the predicate function for store builders.
-type Store func(*sql.Selector)

@@ -34,7 +34,7 @@ func MockUpTestEX01() {
 	ctx := context.Background()
 
 	client, err := InitDatabase()
-	if (client.Store.Query().CountX(ctx) != 0) {
+	if (client.Biller_account.Query().CountX(ctx) != 0) {
 		return
 	}
 	if err != nil {
@@ -42,9 +42,9 @@ func MockUpTestEX01() {
 	}
 
 	//Create Store
-	store, err := client.Store.Create().
+	store, err := client.Biller_account.Create().
 						SetID(98499).
-						SetAccountName("ThaiTee").
+						SetName("ThaiTee").
 						SetServiceName("Abank").
 						Save(ctx)
 	if err != nil {
@@ -62,22 +62,13 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 
-	//Create billDetail
-	billDetail, err := client.BillDetail.Create().
-						SetID(1733084).
-						SetCustomerID(customer.ID).
-						SetTranAmount(120.00).
-						SetStatus("waiting").
-						Save(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	//Create bill
 	bill, err := client.Bill.Create().
 					SetBillerID(store.ID).
-					SetRef1(customer.ID).
-					SetRef2(billDetail.ID).
+					SetReference1(customer.ID).
+					SetReference2(1733084).
+					SetTranAmount(120.00).
+					SetStatus("waiting").
 					Save(ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -95,8 +86,8 @@ func MockUpTest() {
 	}
 
 	//Create Store
-	store, err := client.Store.Create().
-						SetAccountName("ThaiTee").
+	store, err := client.Biller_account.Create().
+						SetName("ThaiTee").
 						SetServiceName("Abank").
 						Save(ctx)
 	if err != nil {
@@ -104,30 +95,22 @@ func MockUpTest() {
 	}
 
 	//Create Customer
-	// customer, err := client.Customer.Create().
-	// 					SetFirstName("Teerapat").
-	// 					SetLastName("Ku").
-	// 					SetMobileNumber("0888888888").
-	// 					Save(ctx)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	//Create billDetail
-	billDetail, err := client.BillDetail.Create().
-						SetCustomerID(300000025751).
-						SetTranAmount(120.00).
-						SetStatus("waiting").
+	customer, err := client.Customer.Create().
+						SetFirstName("Thess").
+						SetLastName("Ku").
+						SetMobileNumber("0834488888").
 						Save(ctx)
 	if err != nil {
-		log.Fatal(err, billDetail)
+		log.Fatal(err)
 	}
 
 	//Create bill
 	bill, err := client.Bill.Create().
-					SetBillerID(98499).
-					SetRef1(300000025751).
-					SetRef2(1733084).
+					SetBillerID(store.ID).
+					SetReference1(customer.ID).
+					SetReference2(1733087).
+					SetTranAmount(120.00).
+					SetStatus("waiting").
 					Save(ctx)
 	if err != nil {
 		log.Fatal(err)

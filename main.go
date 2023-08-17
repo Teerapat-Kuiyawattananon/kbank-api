@@ -27,22 +27,22 @@ func main() {
 			"test" : "1",
 		})
 	})
-	
+
 	// Kbank API (bill-payment-service)
 	e.POST("/api/billpayment/lookup", h.HandlerLookup)
 	e.POST("/api/billpayment/payment", h.HandlerPayment)
 
 	// Store API
 	// -BILL
-	e.POST("/api/bills", h.HandlerCreateBillDetail)
-	e.GET("/api/bills", h.HandlerGetAllBillDetails)
+	e.POST("/api/bills", h.HandlerCreateBill)
+	e.GET("/api/bills", h.HandlerGetAllBills)
 	// -CUSTOMER
 	e.POST("/api/customers", h.HandlerCreateCustomer)
 	e.GET("/api/customers", h.HandlerGetCustomers)
 	e.GET("/api/customers/:id", h.HandlerGetCustomerByID)
 
-	// -STORE
-	e.POST("/api/stores",h.HandlerCreateStore)
-	e.GET("/api/stores", h.HandlerGetStores)
+	// -BILLER_ACCOUNT
+	e.POST("/api/billers",h.HandlerCreateBillerAccount)
+	e.GET("/api/billers", h.HandlerGetBillers)
 	e.Start(":" + os.Getenv("PORT"))
 }

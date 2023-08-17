@@ -1,7 +1,7 @@
 package model
 
-type Store struct {
+type BillAccount struct {
 	ID 			int		`json:"id"`
-	AccountName string	`json:"account_name"`
+	Name string			`json:"name"`
 	ServiceName string	`json:"service_name"`
 }

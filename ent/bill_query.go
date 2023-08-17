@@ -4,13 +4,11 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
 	"kapi/ent/predicate"
-	"kapi/ent/store"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
@@ -21,13 +19,12 @@ import (
 // BillQuery is the builder for querying Bill entities.
 type BillQuery struct {
 	config
-	ctx            *QueryContext
-	order          []bill.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.Bill
-	withStore      *StoreQuery
-	withCustomers  *CustomerQuery
-	withBillDetail *BillDetailQuery
+	ctx               *QueryContext
+	order             []bill.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.Bill
+	withBillerAccount *BillerAccountQuery
+	withCustomer      *CustomerQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -64,9 +61,9 @@ func (bq *BillQuery) Order(o ...bill.OrderOption) *BillQuery {
 	return bq
 }
 
-// QueryStore chains the current query on the "store" edge.
-func (bq *BillQuery) QueryStore() *StoreQuery {
-	query := (&StoreClient{config: bq.config}).Query()
+// QueryBillerAccount chains the current query on the "biller_account" edge.
+func (bq *BillQuery) QueryBillerAccount() *BillerAccountQuery {
+	query := (&BillerAccountClient{config: bq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -77,8 +74,8 @@ func (bq *BillQuery) QueryStore() *StoreQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(bill.Table, bill.FieldID, selector),
-			sqlgraph.To(store.Table, store.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.StoreTable, bill.StoreColumn),
+			sqlgraph.To(biller_account.Table, biller_account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.BillerAccountTable, bill.BillerAccountColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -86,8 +83,8 @@ func (bq *BillQuery) QueryStore() *StoreQuery {
 	return query
 }
 
-// QueryCustomers chains the current query on the "customers" edge.
-func (bq *BillQuery) QueryCustomers() *CustomerQuery {
+// QueryCustomer chains the current query on the "customer" edge.
+func (bq *BillQuery) QueryCustomer() *CustomerQuery {
 	query := (&CustomerClient{config: bq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := bq.prepareQuery(ctx); err != nil {
@@ -100,29 +97,7 @@ func (bq *BillQuery) QueryCustomers() *CustomerQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(bill.Table, bill.FieldID, selector),
 			sqlgraph.To(customer.Table, customer.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, bill.CustomersTable, bill.CustomersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryBillDetail chains the current query on the "bill_detail" edge.
-func (bq *BillQuery) QueryBillDetail() *BillDetailQuery {
-	query := (&BillDetailClient{config: bq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := bq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := bq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(bill.Table, bill.FieldID, selector),
-			sqlgraph.To(billdetail.Table, billdetail.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, bill.BillDetailTable, bill.BillDetailColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, bill.CustomerTable, bill.CustomerColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -317,50 +292,38 @@ func (bq *BillQuery) Clone() *BillQuery {
 		return nil
 	}
 	return &BillQuery{
-		config:         bq.config,
-		ctx:            bq.ctx.Clone(),
-		order:          append([]bill.OrderOption{}, bq.order...),
-		inters:         append([]Interceptor{}, bq.inters...),
-		predicates:     append([]predicate.Bill{}, bq.predicates...),
-		withStore:      bq.withStore.Clone(),
-		withCustomers:  bq.withCustomers.Clone(),
-		withBillDetail: bq.withBillDetail.Clone(),
+		config:            bq.config,
+		ctx:               bq.ctx.Clone(),
+		order:             append([]bill.OrderOption{}, bq.order...),
+		inters:            append([]Interceptor{}, bq.inters...),
+		predicates:        append([]predicate.Bill{}, bq.predicates...),
+		withBillerAccount: bq.withBillerAccount.Clone(),
+		withCustomer:      bq.withCustomer.Clone(),
 		// clone intermediate query.
 		sql:  bq.sql.Clone(),
 		path: bq.path,
 	}
 }
 
-// WithStore tells the query-builder to eager-load the nodes that are connected to
-// the "store" edge. The optional arguments are used to configure the query builder of the edge.
-func (bq *BillQuery) WithStore(opts ...func(*StoreQuery)) *BillQuery {
-	query := (&StoreClient{config: bq.config}).Query()
+// WithBillerAccount tells the query-builder to eager-load the nodes that are connected to
+// the "biller_account" edge. The optional arguments are used to configure the query builder of the edge.
+func (bq *BillQuery) WithBillerAccount(opts ...func(*BillerAccountQuery)) *BillQuery {
+	query := (&BillerAccountClient{config: bq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	bq.withStore = query
+	bq.withBillerAccount = query
 	return bq
 }
 
-// WithCustomers tells the query-builder to eager-load the nodes that are connected to
-// the "customers" edge. The optional arguments are used to configure the query builder of the edge.
-func (bq *BillQuery) WithCustomers(opts ...func(*CustomerQuery)) *BillQuery {
+// WithCustomer tells the query-builder to eager-load the nodes that are connected to
+// the "customer" edge. The optional arguments are used to configure the query builder of the edge.
+func (bq *BillQuery) WithCustomer(opts ...func(*CustomerQuery)) *BillQuery {
 	query := (&CustomerClient{config: bq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	bq.withCustomers = query
-	return bq
-}
-
-// WithBillDetail tells the query-builder to eager-load the nodes that are connected to
-// the "bill_detail" edge. The optional arguments are used to configure the query builder of the edge.
-func (bq *BillQuery) WithBillDetail(opts ...func(*BillDetailQuery)) *BillQuery {
-	query := (&BillDetailClient{config: bq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	bq.withBillDetail = query
+	bq.withCustomer = query
 	return bq
 }
 
@@ -442,10 +405,9 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 	var (
 		nodes       = []*Bill{}
 		_spec       = bq.querySpec()
-		loadedTypes = [3]bool{
-			bq.withStore != nil,
-			bq.withCustomers != nil,
-			bq.withBillDetail != nil,
+		loadedTypes = [2]bool{
+			bq.withBillerAccount != nil,
+			bq.withCustomer != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -466,28 +428,22 @@ func (bq *BillQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Bill, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := bq.withStore; query != nil {
-		if err := bq.loadStore(ctx, query, nodes, nil,
-			func(n *Bill, e *Store) { n.Edges.Store = e }); err != nil {
+	if query := bq.withBillerAccount; query != nil {
+		if err := bq.loadBillerAccount(ctx, query, nodes, nil,
+			func(n *Bill, e *Biller_account) { n.Edges.BillerAccount = e }); err != nil {
 			return nil, err
 		}
 	}
-	if query := bq.withCustomers; query != nil {
-		if err := bq.loadCustomers(ctx, query, nodes, nil,
-			func(n *Bill, e *Customer) { n.Edges.Customers = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := bq.withBillDetail; query != nil {
-		if err := bq.loadBillDetail(ctx, query, nodes, nil,
-			func(n *Bill, e *BillDetail) { n.Edges.BillDetail = e }); err != nil {
+	if query := bq.withCustomer; query != nil {
+		if err := bq.loadCustomer(ctx, query, nodes, nil,
+			func(n *Bill, e *Customer) { n.Edges.Customer = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (bq *BillQuery) loadStore(ctx context.Context, query *StoreQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *Store)) error {
+func (bq *BillQuery) loadBillerAccount(ctx context.Context, query *BillerAccountQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *Biller_account)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Bill)
 	for i := range nodes {
@@ -500,7 +456,7 @@ func (bq *BillQuery) loadStore(ctx context.Context, query *StoreQuery, nodes []*
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(store.IDIn(ids...))
+	query.Where(biller_account.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -516,11 +472,11 @@ func (bq *BillQuery) loadStore(ctx context.Context, query *StoreQuery, nodes []*
 	}
 	return nil
 }
-func (bq *BillQuery) loadCustomers(ctx context.Context, query *CustomerQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *Customer)) error {
+func (bq *BillQuery) loadCustomer(ctx context.Context, query *CustomerQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *Customer)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Bill)
 	for i := range nodes {
-		fk := nodes[i].Ref1
+		fk := nodes[i].Reference1
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -537,39 +493,11 @@ func (bq *BillQuery) loadCustomers(ctx context.Context, query *CustomerQuery, no
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "ref_1" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "reference_1" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
-	}
-	return nil
-}
-func (bq *BillQuery) loadBillDetail(ctx context.Context, query *BillDetailQuery, nodes []*Bill, init func(*Bill), assign func(*Bill, *BillDetail)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Bill)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-	}
-	query.withFKs = true
-	query.Where(predicate.BillDetail(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(bill.BillDetailColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.bill_bill_detail
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "bill_bill_detail" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "bill_bill_detail" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }
@@ -599,11 +527,11 @@ func (bq *BillQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
-		if bq.withStore != nil {
+		if bq.withBillerAccount != nil {
 			_spec.Node.AddColumnOnce(bill.FieldBillerID)
 		}
-		if bq.withCustomers != nil {
-			_spec.Node.AddColumnOnce(bill.FieldRef1)
+		if bq.withCustomer != nil {
+			_spec.Node.AddColumnOnce(bill.FieldReference1)
 		}
 	}
 	if ps := bq.predicates; len(ps) > 0 {

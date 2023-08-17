@@ -84,14 +84,18 @@ func HandlerGetCustomerByID(c echo.Context) error {
 	if err != nil {
 		log.Println(err)
 	}
-
-	customer = model.Customer{
-		ID: entCus.ID,
-		FirstName:    entCus.FirstName,
-		LastName:     entCus.LastName,
-		TitleName:    entCus.TitleName,
-		MobileNumber: entCus.MobileNumber,
-		CreatedAt:    entCus.CreatedAt,
+	if (entCus == nil) {
+		return c.NoContent(http.StatusOK)
+	}
+	if (entCus != nil) {
+		customer = model.Customer{
+			ID: entCus.ID,
+			FirstName:    entCus.FirstName,
+			LastName:     entCus.LastName,
+			TitleName:    entCus.TitleName,
+			MobileNumber: entCus.MobileNumber,
+			CreatedAt:    entCus.CreatedAt,
+		}
 	}
 
 	return c.JSON(http.StatusOK, customer)

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	model "kapi/model"
 	db "kapi/progresql"
 	repo "kapi/repository"
@@ -62,6 +63,7 @@ func HandlerLookup(c echo.Context) error {
 		inquiryResponse.TypeofReceiver = "C"
 		inquiryResponse.PromptPayTransactionId = inquiryRequest.PromptPayReferenceNumber
 	}
+	defer saveTransactionId(inquiryRequest)
 
 	return c.JSON(http.StatusOK, inquiryResponse)
 }
@@ -83,7 +85,7 @@ func checkRef1Ref2(input model.InquiryRequest) (string, string) {
 		return "0001", "Invalid Payment reference number"
 	}
 	check := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
-	if (check == model.Bill{}) {
+	if (check == nil) {
 		log.Println("false")
 		return "9001", "Unauthorized"
 	}
@@ -96,13 +98,14 @@ func checkStatus(input model.InquiryRequest) (string, string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	billDetailRepo := repo.NewBillDetailRepository(clientDB)
+	billRepo := repo.NewBillRepository(clientDB)
 
 	// strint to int
+	ref1_id, _ := strconv.Atoi(input.Reference1)
 	ref2_id, _ := strconv.Atoi(input.Reference2)
-	bill := billDetailRepo.GetBillDetailByRef2(ref2_id)
+	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
 
-	if (bill.Status == "paid") {
+	if (bill.Status == "already_paid") {
 		return "0002", "Already paid"
 	}
 	if (bill.Status == "unavailable") {
@@ -116,9 +119,12 @@ func checkTranAmount(input model.InquiryRequest) (string, string){
 	if err != nil {
 		log.Fatal(err)
 	}
-	billDetailRepo := repo.NewBillDetailRepository(clientDB)
+	billRepo := repo.NewBillRepository(clientDB)
+
+	// strint to int
+	ref1_id, _ := strconv.Atoi(input.Reference1)
 	ref2_id, _ := strconv.Atoi(input.Reference2)
-	bill := billDetailRepo.GetBillDetailByRef2(ref2_id)
+	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
 	tranAmount, err := strconv.ParseFloat(input.TranAmount, 64)
 	if err != nil {
 		return "0004", "Invalid payment amount"
@@ -129,4 +135,32 @@ func checkTranAmount(input model.InquiryRequest) (string, string){
 	}
 	
 	return "", ""
+}
+
+func saveTransactionId(input model.InquiryRequest) error {
+	clientDB, err := db.InitDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+	billRepo := repo.NewBillRepository(clientDB)
+
+	// strint to int
+	ref1_id, _ := strconv.Atoi(input.Reference1)
+	ref2_id, _ := strconv.Atoi(input.Reference2)
+	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
+	
+	// save TransactionId
+	err = bill.Update().
+				SetTransactionID(input.TransitionId).
+				SetUpdatedAt(func () time.Time {
+					strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
+					t, _ := time.Parse(time.RFC3339, strTime)
+					return t
+				}()).
+				Exec(context.Background())
+	if err != nil {
+		return err
+	}
+	
+	return nil
 }
