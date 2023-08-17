@@ -1,9 +1,7 @@
 package handler
 
 import (
-	// mStore "kapi/model/store"
 	model "kapi/model"
-	db "kapi/progresql"
 	repo "kapi/repository"
 	"log"
 	"net/http"
@@ -17,11 +15,6 @@ var input model.Bill
 func HandlerCreateBill(c echo.Context) error {
 	var bill model.Bill
 	if err := c.Bind(&input); err != nil {
-		log.Fatal(err)
-	}
-
-	clientDB, err := db.InitDatabase()
-	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -52,10 +45,6 @@ func HandlerCreateBill(c echo.Context) error {
 
 func HandlerGetAllBills(c echo.Context) error {
 	var bills []model.Bill
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	bill := repo.NewBillRepository(clientDB)
 	entBills, err := bill.GetAllBills()
@@ -90,11 +79,6 @@ func HandlerUpdateBill(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err, id)
-	}
-
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	billRepo := repo.NewBillRepository(clientDB)

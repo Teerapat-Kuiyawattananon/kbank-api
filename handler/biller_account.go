@@ -2,7 +2,6 @@ package handler
 
 import (
 	model "kapi/model"
-	db "kapi/progresql"
 	repo "kapi/repository"
 	"log"
 	"net/http"
@@ -15,15 +14,10 @@ func HandlerCreateBillerAccount(c echo.Context) error {
 	if err := c.Bind(&billAccountInput) ; err != nil {
 		log.Fatal(err)
 	}
-
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 	
 	billerAccountRepo := repo.NewBillerAccountRepository(clientDB)
 
-	billerAccount, err := billerAccountRepo.CreateStore(billAccountInput)
+	billerAccount, err := billerAccountRepo.CreateBillerAccount(billAccountInput)
 	if err != nil {
 		log.Println(err)
 	}
@@ -39,14 +33,10 @@ func HandlerCreateBillerAccount(c echo.Context) error {
 
 func HandlerGetBillers(c echo.Context) error {
 	var stores []model.BillAccount
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 	
 	billerAccountRepo := repo.NewBillerAccountRepository(clientDB)
 
-	entBillerAccount, err := billerAccountRepo.GetStores()
+	entBillerAccount, err := billerAccountRepo.GetBillers()
 	if err != nil {
 		log.Panicln(err)
 	}

@@ -20,8 +20,8 @@ func NewBillerAccountRepository(DB *ent.Client) billerAccountRepository {
 	}
 }
 
-func (repo billerAccountRepository) CreateStore(input model.BillAccount) (*ent.Biller_account, error) {
-	store, err := repo.clientDB.Biller_account.Create().
+func (repo billerAccountRepository) CreateBillerAccount(input model.BillAccount) (*ent.Biller_account, error) {
+	billerAccount, err := repo.clientDB.Biller_account.Create().
 					SetName(input.Name).
 					SetServiceName(input.ServiceName).
 					Save(context.Background())
@@ -29,11 +29,11 @@ func (repo billerAccountRepository) CreateStore(input model.BillAccount) (*ent.B
 		log.Println(err)
 	}
 
-	log.Printf("Created Store id: %d success", store.ID)
-	return store, nil
+	log.Printf("Created Biller id: %d success", billerAccount.ID)
+	return billerAccount, nil
 }
 
-func (repo billerAccountRepository) GetStoreByID(id int) (*ent.Biller_account, error) {
+func (repo billerAccountRepository) GetBillerByID(id int) (*ent.Biller_account, error) {
 	billerAccount, err := repo.clientDB.Biller_account.Query().
 					Where(biller_account.ID(id)).
 					Only(context.Background())
@@ -44,7 +44,7 @@ func (repo billerAccountRepository) GetStoreByID(id int) (*ent.Biller_account, e
 	return billerAccount, nil
 }
 
-func (repo billerAccountRepository) GetStores() ([]*ent.Biller_account, error) {
+func (repo billerAccountRepository) GetBillers() ([]*ent.Biller_account, error) {
 	billerAccounts, err := repo.clientDB.Biller_account.Query().
 					All(context.Background())
 	if err != nil {

@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	model "kapi/model"
-	db "kapi/progresql"
 	repo "kapi/repository"
 	"time"
 
@@ -43,11 +42,6 @@ func HandlerPayment(c echo.Context) error {
 }
 
 func paymentConfirm(input model.PaymentRequest) (string, string) {
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	billRepo := repo.NewBillRepository(clientDB)
 
 	// string to int

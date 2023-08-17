@@ -2,7 +2,6 @@ package handler
 
 import (
 	model "kapi/model"
-	db "kapi/progresql"
 	repo "kapi/repository"
 	"log"
 	"net/http"
@@ -11,15 +10,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var customerInput model.Customer
+var (
+	customerInput model.Customer
+)
 
 func HandlerCreateCustomer(c echo.Context) error {
 	if err := c.Bind(&customerInput); err != nil {
-		log.Fatal(err)
-	}
-
-	clientDB, err := db.InitDatabase()
-	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -42,10 +38,6 @@ func HandlerCreateCustomer(c echo.Context) error {
 
 func HandlerGetCustomers(c echo.Context) error {
 	var customers []model.Customer
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	cusRepo := repo.NewCustomerRepository(clientDB)
 	entCustomers, err := cusRepo.GetCustomers()
@@ -69,10 +61,6 @@ func HandlerGetCustomers(c echo.Context) error {
 
 func HandlerGetCustomerByID(c echo.Context) error {
 	var customer model.Customer
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	cusRepo := repo.NewCustomerRepository(clientDB)
 	id, err := strconv.Atoi(c.Param("id"))

@@ -18,6 +18,7 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Start")
+	defer h.CloseHandler()
 	db.MockUpTestEX01()
 	e := echo.New()
 

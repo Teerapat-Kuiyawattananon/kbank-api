@@ -3,11 +3,9 @@ package handler
 import (
 	"context"
 	model "kapi/model"
-	db "kapi/progresql"
 	repo "kapi/repository"
 	"strconv"
 
-	// db "kapi/progresql"
 	"log"
 	"net/http"
 	"time"
@@ -18,8 +16,8 @@ import (
 var (
 	inquiryRequest model.InquiryRequest
 	inquiryResponse model.InquiryResponse
-
 )
+
 
 func HandlerLookup(c echo.Context) error {
 	if err := c.Bind(&inquiryRequest) ; err != nil {
@@ -36,7 +34,6 @@ func HandlerLookup(c echo.Context) error {
 		BillerType: inquiryRequest.BillerType,
 		BillerId: inquiryRequest.BillerId,
 		TerminalNo: inquiryRequest.TerminalNo,
-		// PromptPayTransactionId: inquiryRequest.PromptPayReferenceNumber,
 		Reference1: inquiryRequest.Reference1,
 		Reference2: inquiryRequest.Reference2,
 		AdditionalFieldResponse: model.InquiryAdditionalFieldResponse{
@@ -69,10 +66,6 @@ func HandlerLookup(c echo.Context) error {
 }
 
 func checkRef1Ref2(input model.InquiryRequest) (string, string) {
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 	billRepo := repo.NewBillRepository(clientDB)
 
 	// strint to int
@@ -94,10 +87,6 @@ func checkRef1Ref2(input model.InquiryRequest) (string, string) {
 }
 
 func checkStatus(input model.InquiryRequest) (string, string) {
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 	billRepo := repo.NewBillRepository(clientDB)
 
 	// strint to int
@@ -115,10 +104,6 @@ func checkStatus(input model.InquiryRequest) (string, string) {
 }
 
 func checkTranAmount(input model.InquiryRequest) (string, string){
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 	billRepo := repo.NewBillRepository(clientDB)
 
 	// strint to int
@@ -138,10 +123,6 @@ func checkTranAmount(input model.InquiryRequest) (string, string){
 }
 
 func saveTransactionId(input model.InquiryRequest) error {
-	clientDB, err := db.InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
 	billRepo := repo.NewBillRepository(clientDB)
 
 	// strint to int
@@ -150,7 +131,7 @@ func saveTransactionId(input model.InquiryRequest) error {
 	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
 	
 	// save TransactionId
-	err = bill.Update().
+	err := bill.Update().
 				SetTransactionID(input.TransitionId).
 				SetUpdatedAt(func () time.Time {
 					strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
