@@ -96,7 +96,7 @@ func checkRef1Ref2(input model.InquiryRequest) (string, string) {
 func checkStatus(input model.InquiryRequest) (string, string) {
 	billRepo := repo.NewBillRepository(clientDB)
 
-	// strint to int
+	// Convert string to int
 	ref1_id, _ := strconv.Atoi(input.Reference1)
 	ref2_id, _ := strconv.Atoi(input.Reference2)
 	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
@@ -113,7 +113,7 @@ func checkStatus(input model.InquiryRequest) (string, string) {
 func checkTranAmount(input model.InquiryRequest) (string, string){
 	billRepo := repo.NewBillRepository(clientDB)
 
-	// strint to int
+	// Convert string to int
 	ref1_id, _ := strconv.Atoi(input.Reference1)
 	ref2_id, _ := strconv.Atoi(input.Reference2)
 	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
@@ -132,12 +132,12 @@ func checkTranAmount(input model.InquiryRequest) (string, string){
 func saveTransactionId(input model.InquiryRequest) error {
 	billRepo := repo.NewBillRepository(clientDB)
 
-	// strint to int
+	// Convert string to int
 	ref1_id, _ := strconv.Atoi(input.Reference1)
 	ref2_id, _ := strconv.Atoi(input.Reference2)
 	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
 	
-	// save TransactionId
+	// Save transaction id.
 	err := bill.Update().
 				SetTransactionID(input.TransitionId).
 				SetUpdatedAt(func () time.Time {

@@ -20,25 +20,25 @@ type InquiryRequest struct {
 }
 
 type InquiryAdditionalFieldRequest struct {
-	PayerFee			string	`json:"payerFee"`
-	BillerFee			string	`json:"billerFee"`
-	TransgerWithTax		string	`json:"transferWithTax"`
-	FromProxyValue		string	`json:"fromProxyValue"`
-	FromProxyType		string	`json:"fromProxyType"`
-	SenderTaxID			string	`json:"senderTaxID"`
-	SenderAcctName		string	`json:"senderAcctName"`
-	VatRates			string	`json:"vatRates"`
-	Vat 				string	`json:"vat"`
-	TypeofTaxIncome		string	`json:"typeofTaxIncome"`
-	WithholdingTaxRates	string	`json:"withholdingTaxRates"`
-	WithholdingTax 		string	`json:"withholdingTax"`
-	WithholdingTaxConditions string `json:"withholdingTaxConditions"`
-	SettlementDate		string	`json:"settlementDate"`
-	PromptPayFlag		string	`json:"promptPayFlag"`
-	TypeofSender		string	`json:"typeofSender"`
-	DueDate				string	`json:"dueDate"`
-	RtpReference		string	`json:"rtpReference"`
-	RqAppId				string	`json:"rqAppId"`
+	PayerFee					string	`json:"payerFee"`
+	BillerFee					string	`json:"billerFee"`
+	TransgerWithTax				string	`json:"transferWithTax"`
+	FromProxyValue				string	`json:"fromProxyValue"`
+	FromProxyType				string	`json:"fromProxyType"`
+	SenderTaxID					string	`json:"senderTaxID"`
+	SenderAcctName				string	`json:"senderAcctName"`
+	VatRates					string	`json:"vatRates"`
+	Vat 						string	`json:"vat"`
+	TypeofTaxIncome				string	`json:"typeofTaxIncome"`
+	WithholdingTaxRates			string	`json:"withholdingTaxRates"`
+	WithholdingTax 				string	`json:"withholdingTax"`
+	WithholdingTaxConditions 	string 	`json:"withholdingTaxConditions"`
+	SettlementDate				string	`json:"settlementDate"`
+	PromptPayFlag				string	`json:"promptPayFlag"`
+	TypeofSender				string	`json:"typeofSender"`
+	DueDate						string	`json:"dueDate"`
+	RtpReference				string	`json:"rtpReference"`
+	RqAppId						string	`json:"rqAppId"`
 }	
 
 type InquiryResponse struct {

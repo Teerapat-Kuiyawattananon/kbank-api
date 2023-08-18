@@ -21,6 +21,7 @@ var (
 // @Produce 	json
 // @Param body 	body model.Customer true "JSON request body for payment request"
 // @Success 	201 {array} model.Customer "Success"
+// @Failure     400 {string} string "Create Customer failed"
 // @Router 		/api/customers [post]
 func HandlerCreateCustomer(c echo.Context) error {
 	if err := c.Bind(&customerInput); err != nil {
@@ -31,7 +32,9 @@ func HandlerCreateCustomer(c echo.Context) error {
 
 	cus, err := cusRepo.CreateCustomer(customerInput)
 	if err != nil {
-		log.Fatal(err)
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"Error message" : "Create Customer failed",
+		})
 	}
 	customer := model.Customer{
 		ID:           cus.ID,
@@ -50,6 +53,7 @@ func HandlerCreateCustomer(c echo.Context) error {
 // @Accept 		*/*
 // @Produce 	json
 // @Success 	200 {array} model.Customer "Success"
+// @Failure	 	500 {string} string "Customer not found"
 // @Router 		/api/customers [get]
 func HandlerGetCustomers(c echo.Context) error {
 	var customers []model.Customer
@@ -57,7 +61,9 @@ func HandlerGetCustomers(c echo.Context) error {
 	cusRepo := repo.NewCustomerRepository(clientDB)
 	entCustomers, err := cusRepo.GetCustomers()
 	if err != nil {
-		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"Error message" : "Customer not found",
+		})
 	}
 
 	for _, customer := range entCustomers {
@@ -81,6 +87,8 @@ func HandlerGetCustomers(c echo.Context) error {
 // @Produce 	json
 // @Param body 	body model.Customer true "JSON request body for payment request"
 // @Success 	200 {array} model.Customer "Success"
+// @Failure     400 {string} string "Customer by ID failed"
+// @Failure	 	500 {string} string "Customer by ID not found"
 // @Router 		/api/customers/:id [get]
 func HandlerGetCustomerByID(c echo.Context) error {
 	var customer model.Customer
@@ -88,12 +96,16 @@ func HandlerGetCustomerByID(c echo.Context) error {
 	cusRepo := repo.NewCustomerRepository(clientDB)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err)
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"Error message" : "Customer by ID failed",
+		})
 	}
 
 	entCus, err := cusRepo.GetCustomerByID(id)
 	if err != nil {
-		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"Error message" : "Customer by ID not found",
+		})
 	}
 	if (entCus == nil) {
 		return c.NoContent(http.StatusOK)

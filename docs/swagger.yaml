@@ -297,8 +297,15 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
   description: This is Bill Payment API Server From KBank-API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
   title: Bill Payment API
   version: "1.0"
 paths:
@@ -306,7 +313,7 @@ paths:
     get:
       consumes:
       - '*/*'
-      description: Show all biller_account.
+      description: Show all biller_account, it's for store.
       produces:
       - application/json
       responses:
@@ -316,6 +323,14 @@ paths:
             items:
               $ref: '#/definitions/model.BillAccount'
             type: array
+        "400":
+          description: Create Biller_account failed
+          schema:
+            type: string
+        "500":
+          description: Biller_account not found
+          schema:
+            type: string
       summary: Show all biller_account.
       tags:
       - Billers
@@ -339,6 +354,10 @@ paths:
             items:
               $ref: '#/definitions/model.BillAccount'
             type: array
+        "400":
+          description: Create Biller_account failed
+          schema:
+            type: string
       summary: Create new biller_account.
       tags:
       - Billers
@@ -404,6 +423,10 @@ paths:
             items:
               $ref: '#/definitions/model.Bill'
             type: array
+        "500":
+          description: Bill not found
+          schema:
+            type: string
       summary: Show all bill.
       tags:
       - Bills
@@ -427,6 +450,12 @@ paths:
             items:
               $ref: '#/definitions/model.Bill'
             type: array
+        "400":
+          description: Create Bill failed
+          schema:
+            items:
+              type: string
+            type: array
       summary: Create new bill.
       tags:
       - Bills
@@ -444,6 +473,10 @@ paths:
             items:
               $ref: '#/definitions/model.Bill'
             type: array
+        "400":
+          description: Update Bill failed
+          schema:
+            type: string
       summary: Update bill by use ID.
       tags:
       - Bills
@@ -461,6 +494,10 @@ paths:
             items:
               $ref: '#/definitions/model.Customer'
             type: array
+        "500":
+          description: Customer not found
+          schema:
+            type: string
       summary: Show all customer.
       tags:
       - Customers
@@ -484,6 +521,10 @@ paths:
             items:
               $ref: '#/definitions/model.Customer'
             type: array
+        "400":
+          description: Create Customer failed
+          schema:
+            type: string
       summary: Create new customer.
       tags:
       - Customers
@@ -508,6 +549,14 @@ paths:
             items:
               $ref: '#/definitions/model.Customer'
             type: array
+        "400":
+          description: Customer by ID failed
+          schema:
+            type: string
+        "500":
+          description: Customer by ID not found
+          schema:
+            type: string
       summary: Show customer by ID.
       tags:
       - Customers

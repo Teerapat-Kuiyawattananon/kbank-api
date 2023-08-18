@@ -10,7 +10,16 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -18,7 +27,7 @@ const docTemplate = `{
     "paths": {
         "/api/billers": {
             "get": {
-                "description": "Show all biller_account.",
+                "description": "Show all biller_account, it's for store.",
                 "consumes": [
                     "*/*"
                 ],
@@ -37,6 +46,18 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.BillAccount"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Create Biller_account failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Biller_account not found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -72,6 +93,12 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.BillAccount"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Create Biller_account failed",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -173,6 +200,12 @@ const docTemplate = `{
                                 "$ref": "#/definitions/model.Bill"
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Bill not found",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             },
@@ -208,6 +241,15 @@ const docTemplate = `{
                                 "$ref": "#/definitions/model.Bill"
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Create Bill failed",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
@@ -234,6 +276,12 @@ const docTemplate = `{
                                 "$ref": "#/definitions/model.Bill"
                             }
                         }
+                    },
+                    "400": {
+                        "description": "Update Bill failed",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
@@ -259,6 +307,12 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.Customer"
                             }
+                        }
+                    },
+                    "500": {
+                        "description": "Customer not found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -294,6 +348,12 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.Customer"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Create Customer failed",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -331,6 +391,18 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.Customer"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Customer by ID failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Customer by ID not found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }

@@ -30,7 +30,6 @@ func (repo customerRepository) CreateCustomer(customer mCustomer.Customer) (*ent
 					SetCreatedAt(func () time.Time {
 						strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
 						t, _ := time.Parse(time.RFC3339, strTime)
-						// loc, _ := time.LoadLocation("Asia/Bangkok")
 						return t
 					}()).
 					Save(context.Background())

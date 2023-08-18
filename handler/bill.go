@@ -19,6 +19,7 @@ var input model.Bill
 // @Produce 	json
 // @Param body 	body model.Bill true "JSON request body for payment request"
 // @Success 	201 {array} model.Bill "Success"
+// @Failure 	400 {array} string "Create Bill failed"
 // @Router 		/api/bills [post]
 func HandlerCreateBill(c echo.Context) error {
 	var bill model.Bill
@@ -57,6 +58,7 @@ func HandlerCreateBill(c echo.Context) error {
 // @Accept 		*/*
 // @Produce 	json
 // @Success 	200 {array} model.Bill "Success"
+// @Failure 	500 {string} string "Bill not found"
 // @Router 		/api/bills [get]
 func HandlerGetAllBills(c echo.Context) error {
 	var bills []model.Bill
@@ -64,7 +66,9 @@ func HandlerGetAllBills(c echo.Context) error {
 	bill := repo.NewBillRepository(clientDB)
 	entBills, err := bill.GetAllBills()
 	if err != nil {
-		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"Error message" : "Bill not found",
+		})
 	}
 
 	for _, bill := range entBills {
@@ -92,6 +96,8 @@ func HandlerGetAllBills(c echo.Context) error {
 // @Accept 		*/*
 // @Produce 	json
 // @Success 	200 {array} model.Bill "Success"
+// @Failure		400 {string} string "ID Failed"
+// @Failure 	400 {string} string "Update Bill failed"
 // @Router 		/api/bills/:id [put]
 func HandlerUpdateBill(c echo.Context) error {
 	var bill model.Bill
@@ -100,14 +106,16 @@ func HandlerUpdateBill(c echo.Context) error {
 	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		log.Println(err, id)
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"Error message" : "ID Failed",
+		})
 	}
 
 	billRepo := repo.NewBillRepository(clientDB)
 	entBill, err := billRepo.UpdateBill(input, id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{
-			"Error message" : "Create Bill failed",
+			"Error message" : "Update Bill failed",
 		})
 	}
 

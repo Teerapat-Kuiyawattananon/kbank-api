@@ -50,7 +50,7 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 
-	//Create Store
+	//Create Store.
 	store, err := client.Biller_account.Create().
 		SetID(98499).
 		SetName("ThaiTee").
@@ -60,7 +60,7 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 
-	//Create Customer
+	//Create Customer.
 	customer, err := client.Customer.Create().
 		SetID(300000025751).
 		SetFirstName("Teerapat").
@@ -71,53 +71,11 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 
-	//Create bill
+	//Create bill.
 	bill, err := client.Bill.Create().
 		SetBillerID(store.ID).
 		SetReference1(customer.ID).
 		SetReference2(1733084).
-		SetTranAmount(120.00).
-		SetStatus("waiting").
-		Save(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Created Bill id:%d Success", bill.ID)
-
-}
-
-func MockUpTest() {
-	ctx := context.Background()
-
-	client, err := InitDatabase()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	//Create Store
-	store, err := client.Biller_account.Create().
-		SetName("ThaiTee").
-		SetServiceName("Abank").
-		Save(ctx)
-	if err != nil {
-		log.Fatal(err, store)
-	}
-
-	//Create Customer
-	customer, err := client.Customer.Create().
-		SetFirstName("Thess").
-		SetLastName("Ku").
-		SetMobileNumber("0834488888").
-		Save(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	//Create bill
-	bill, err := client.Bill.Create().
-		SetBillerID(store.ID).
-		SetReference1(customer.ID).
-		SetReference2(1733087).
 		SetTranAmount(120.00).
 		SetStatus("waiting").
 		Save(ctx)

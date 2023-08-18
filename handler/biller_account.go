@@ -18,6 +18,7 @@ var billAccountInput model.BillAccount
 // @Produce 	json
 // @Param body 	body model.BillAccount true "JSON request body for payment request"
 // @Success 	201 {array} model.BillAccount "Success"
+// @Failure 	400 {string} string "Create Biller_account failed"
 // @Router 		/api/billers [post]
 func HandlerCreateBillerAccount(c echo.Context) error {
 	if err := c.Bind(&billAccountInput) ; err != nil {
@@ -28,7 +29,9 @@ func HandlerCreateBillerAccount(c echo.Context) error {
 
 	billerAccount, err := billerAccountRepo.CreateBillerAccount(billAccountInput)
 	if err != nil {
-		log.Println(err)
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"Error message" : "Create Biller_account failed",
+		})
 	}
 
 	billerAccountRes := model.BillAccount{
@@ -41,11 +44,13 @@ func HandlerCreateBillerAccount(c echo.Context) error {
 }
 
 // @Summary 	Show all biller_account.
-// @Description Show all biller_account.
+// @Description Show all biller_account, it's for store.
 // @Tags 		Billers
 // @Accept 		*/*
 // @Produce 	json
 // @Success 	200 {array} model.BillAccount "Success"
+// @Failure 	400 {string} string "Create Biller_account failed"
+// @Failure     500 {string} string "Biller_account not found"
 // @Router 		/api/billers [get]
 func HandlerGetBillers(c echo.Context) error {
 	var stores []model.BillAccount
@@ -54,7 +59,9 @@ func HandlerGetBillers(c echo.Context) error {
 
 	entBillerAccount, err := billerAccountRepo.GetBillers()
 	if err != nil {
-		log.Panicln(err)
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"Error message" : "Biller_account not found",
+		})
 	}
 
 	for _, biller := range entBillerAccount {

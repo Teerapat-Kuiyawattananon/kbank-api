@@ -82,14 +82,6 @@ func (repo billRepository) UpdateBill(input model.Bill, id int) (*ent.Bill, erro
 	if err != nil {
 		log.Println(err)
 	}
-	// defer func () {
-	// 	billRes = bill.Update().SetUpdatedAt(func () time.Time {
-	// 					strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-	// 					t, _ := time.Parse(time.RFC3339, strTime)
-	// 					return t
-	// 				}()).
-	// 				SaveX(context.Background())
-	// }()
 	if (input.BillerId != 0) {
 		err = bill.Update().SetBillerID(input.BillerId).Exec(context.Background())
 		if err != nil {

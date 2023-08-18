@@ -53,7 +53,7 @@ func HandlerPayment(c echo.Context) error {
 func paymentConfirm(input model.PaymentRequest) (string, string) {
 	billRepo := repo.NewBillRepository(clientDB)
 
-	// string to int
+	// Convert string to int.
 	ref1_id, err := strconv.Atoi(input.Reference1)
 	if err != nil {
 		return "0001", "Invalid Payment reference number"
@@ -67,10 +67,6 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 		return "0004", "Invalid payment amount"
 	}
 	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
-	// if (bill.Status == "waiting") {
-	// 	bill.Update().SetStatus("paid").ExecX(context.Background())
-	// 	return "0000", "Success"
-	// }
 	defer func () {
 		bill.Update().SetTransactionID(paymentRequest.TransactionId).
 				SetUpdatedAt(func () time.Time {
@@ -94,12 +90,8 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 	if (bill.Status == "already_paid") {
 		return "0002", "Already paid"
 	}
-	// defer func () {
-	// 	log.Println("defer")
-	// 	bill.Update().SetTransactionID("paymentRequest.TransactionId").ExecX(context.Background())
-	// }()
-	
-	// Waiting for payment
+
+	// Waiting for payment.
 	bill.Update().SetStatus("already_paid").
 					SetChannelCode(input.ChannelCode).
 					SetSenderBankCode(input.SenderBankCode).

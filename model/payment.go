@@ -20,29 +20,29 @@ type PaymentRequest struct {
 }
 
 type PaymentAdditionalFieldRequest struct {
-	CustomerFee			string	`json:"customerFee"`
-	PartnerFee			string	`json:"partnerFee"`
-	SponsorBankFee		string	`json:"sponsorBankFee"`
-	TransgerWithTax		string	`json:"transferWithTax"`
-	FromProxyValue		string	`json:"fromProxyValue"`
-	FromProxyType		string	`json:"fromProxyType"`
-	SenderReferenceNo	string	`json:"senderReferenceNo"`
-	SenderTaxID			string	`json:"senderTaxID"`
-	SenderAcctName		string	`json:"senderAcctName"`
-	ReceiverTaxID		string	`json:"receiverTaxID"`
-	VatRates			string	`json:"vatRates"`
-	Vat 				string	`json:"vat"`
-	TypeofTaxIncome		string	`json:"typeofTaxIncome"`
-	WithholdingTaxRates	string	`json:"withholdingTaxRates"`
-	WithholdingTax 		string	`json:"withholdingTax"`
-	WithholdingTaxConditions string `json:"withholdingTaxConditions"`
-	SettlementDate		string	`json:"settlementDate"`
-	PromptPayFlag		string	`json:"promptPayFlag"`
-	TypeofSender		string	`json:"typeofSender"`
-	TypeofReceriver		string	`json:"typeofReceiver"`
-	DueDate				string	`json:"dueDate"`
-	RtpReference		string	`json:"rtpReference"`
-	RqAppId				string	`json:"rqAppId"`
+	CustomerFee					string	`json:"customerFee"`
+	PartnerFee					string	`json:"partnerFee"`
+	SponsorBankFee				string	`json:"sponsorBankFee"`
+	TransgerWithTax				string	`json:"transferWithTax"`
+	FromProxyValue				string	`json:"fromProxyValue"`
+	FromProxyType				string	`json:"fromProxyType"`
+	SenderReferenceNo			string	`json:"senderReferenceNo"`
+	SenderTaxID					string	`json:"senderTaxID"`
+	SenderAcctName				string	`json:"senderAcctName"`
+	ReceiverTaxID				string	`json:"receiverTaxID"`
+	VatRates					string	`json:"vatRates"`
+	Vat 						string	`json:"vat"`
+	TypeofTaxIncome				string	`json:"typeofTaxIncome"`
+	WithholdingTaxRates			string	`json:"withholdingTaxRates"`
+	WithholdingTax 				string	`json:"withholdingTax"`
+	WithholdingTaxConditions 	string `json:"withholdingTaxConditions"`
+	SettlementDate				string	`json:"settlementDate"`
+	PromptPayFlag				string	`json:"promptPayFlag"`
+	TypeofSender				string	`json:"typeofSender"`
+	TypeofReceriver				string	`json:"typeofReceiver"`
+	DueDate						string	`json:"dueDate"`
+	RtpReference				string	`json:"rtpReference"`
+	RqAppId						string	`json:"rqAppId"`
 }
 
 type PaymentResponse struct {
