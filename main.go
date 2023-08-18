@@ -8,11 +8,25 @@ import (
 
 	h "kapi/handler"
 	db "kapi/progresql"
+	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+
+	_ "kapi/docs"
 )
 
+// @title Bill Payment API
+// @version 1.0
+// @description This is Bill Payment API Server From KBank-API.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	if err := godotenv.Load(".env") ; err != nil {
 		log.Fatal(err)
@@ -21,6 +35,8 @@ func main() {
 	defer h.CloseHandler()
 	db.MockUpTestEX01()
 	e := echo.New()
+
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.GET("/api/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, echo.Map{

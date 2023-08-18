@@ -12,6 +12,14 @@ import (
 
 var input model.Bill
 
+// @Summary 	Create new bill.
+// @Description Create new bill detail.
+// @Tags 		Bills
+// @Accept 		*/*
+// @Produce 	json
+// @Param body 	body model.Bill true "JSON request body for payment request"
+// @Success 	201 {array} model.Bill "Success"
+// @Router 		/api/bills [post]
 func HandlerCreateBill(c echo.Context) error {
 	var bill model.Bill
 	if err := c.Bind(&input); err != nil {
@@ -43,6 +51,13 @@ func HandlerCreateBill(c echo.Context) error {
 	return c.JSON(http.StatusOK, bill)
 }
 
+// @Summary 	Show all bill.
+// @Description show all bill in system.
+// @Tags 		Bills
+// @Accept 		*/*
+// @Produce 	json
+// @Success 	200 {array} model.Bill "Success"
+// @Router 		/api/bills [get]
 func HandlerGetAllBills(c echo.Context) error {
 	var bills []model.Bill
 
@@ -71,6 +86,13 @@ func HandlerGetAllBills(c echo.Context) error {
 	return c.JSON(http.StatusOK, bills)
 }
 
+// @Summary 	Update bill by use ID.
+// @Description Update bill by use ID.
+// @Tags 		Bills
+// @Accept 		*/*
+// @Produce 	json
+// @Success 	200 {array} model.Bill "Success"
+// @Router 		/api/bills/:id [put]
 func HandlerUpdateBill(c echo.Context) error {
 	var bill model.Bill
 	if err := c.Bind(&input); err != nil {

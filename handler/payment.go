@@ -17,6 +17,15 @@ var (
 	paymentRequest model.PaymentRequest
 	paymentResponse model.PaymentResponse
 )
+
+// @Summary 	Show payment response.
+// @Description Show payment response after payment process.
+// @Tags 		Payment
+// @Accept 		*/*
+// @Produce 	json
+// @Param body 	body model.PaymentRequest true "JSON request body for payment request"
+// @Success 	200 {array} model.PaymentResponse "Success"
+// @Router 		/api/billpayment/payment [post]
 func HandlerPayment(c echo.Context) error {
 	if err := c.Bind(&paymentRequest) ; err != nil {
 		log.Fatal(err)

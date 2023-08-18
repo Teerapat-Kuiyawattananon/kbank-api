@@ -1,0 +1,514 @@
+definitions:
+  model.Bill:
+    properties:
+      billerId:
+        type: integer
+      channelCode:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      reference1:
+        type: integer
+      reference2:
+        type: integer
+      senderBankCode:
+        type: string
+      status:
+        type: string
+      tranAmount:
+        type: number
+      trasactionId:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.BillAccount:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      service_name:
+        type: string
+    type: object
+  model.Customer:
+    properties:
+      createdAt:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      mobileNumber:
+        type: string
+      titleName:
+        type: string
+    type: object
+  model.InquiryAdditionalFieldRequest:
+    properties:
+      billerFee:
+        type: string
+      dueDate:
+        type: string
+      fromProxyType:
+        type: string
+      fromProxyValue:
+        type: string
+      payerFee:
+        type: string
+      promptPayFlag:
+        type: string
+      rqAppId:
+        type: string
+      rtpReference:
+        type: string
+      senderAcctName:
+        type: string
+      senderTaxID:
+        type: string
+      settlementDate:
+        type: string
+      transferWithTax:
+        type: string
+      typeofSender:
+        type: string
+      typeofTaxIncome:
+        type: string
+      vat:
+        type: string
+      vatRates:
+        type: string
+      withholdingTax:
+        type: string
+      withholdingTaxConditions:
+        type: string
+      withholdingTaxRates:
+        type: string
+    type: object
+  model.InquiryAdditionalFieldResponse:
+    properties:
+      dueDate:
+        type: string
+      payerFee:
+        type: string
+      receiverTaxID:
+        type: string
+      rsAppId:
+        type: string
+      rtpReference:
+        type: string
+      settlementDate:
+        type: string
+      toBillerAccountName:
+        type: string
+      toBillerServiceName:
+        type: string
+    type: object
+  model.InquiryRequest:
+    properties:
+      additional:
+        $ref: '#/definitions/model.InquiryAdditionalFieldRequest'
+      apiKey:
+        type: string
+      billerId:
+        type: string
+      billerType:
+        type: string
+      channelCode:
+        type: string
+      functionName:
+        type: string
+      language:
+        type: string
+      promptPayReferenceNumber:
+        type: string
+      reference1:
+        type: string
+      reference2:
+        type: string
+      reference3:
+        type: string
+      senderBankCode:
+        type: string
+      terminalNo:
+        type: string
+      tranAmount:
+        type: string
+      transactionDateTime:
+        type: string
+      transactionId:
+        type: string
+    type: object
+  model.InquiryResponse:
+    properties:
+      additional:
+        $ref: '#/definitions/model.InquiryAdditionalFieldResponse'
+      billerId:
+        type: string
+      billerTransactionId:
+        type: string
+      billerType:
+        type: string
+      functionName:
+        type: string
+      info1:
+        type: string
+      info2:
+        type: string
+      info3:
+        type: string
+      promptPayTransactionId:
+        type: string
+      reference1:
+        type: string
+      reference2:
+        type: string
+      reference3:
+        type: string
+      responseCode:
+        type: string
+      responseDescription:
+        type: string
+      terminalNo:
+        type: string
+      tranAmount:
+        type: string
+      transactionDateTime:
+        type: string
+      transactionId:
+        type: string
+      typeofReceiver:
+        type: string
+    type: object
+  model.PaymentAdditionalFieldRequest:
+    properties:
+      customerFee:
+        type: string
+      dueDate:
+        type: string
+      fromProxyType:
+        type: string
+      fromProxyValue:
+        type: string
+      partnerFee:
+        type: string
+      promptPayFlag:
+        type: string
+      receiverTaxID:
+        type: string
+      rqAppId:
+        type: string
+      rtpReference:
+        type: string
+      senderAcctName:
+        type: string
+      senderReferenceNo:
+        type: string
+      senderTaxID:
+        type: string
+      settlementDate:
+        type: string
+      sponsorBankFee:
+        type: string
+      transferWithTax:
+        type: string
+      typeofReceiver:
+        type: string
+      typeofSender:
+        type: string
+      typeofTaxIncome:
+        type: string
+      vat:
+        type: string
+      vatRates:
+        type: string
+      withholdingTax:
+        type: string
+      withholdingTaxConditions:
+        type: string
+      withholdingTaxRates:
+        type: string
+    type: object
+  model.PaymentAdditionalFieldResponse:
+    properties:
+      rsAppId:
+        type: string
+      settlementDate:
+        type: string
+    type: object
+  model.PaymentRequest:
+    properties:
+      additional:
+        $ref: '#/definitions/model.PaymentAdditionalFieldRequest'
+      apiKey:
+        type: string
+      billerId:
+        type: string
+      billerType:
+        type: string
+      channelCode:
+        type: string
+      functionName:
+        type: string
+      isRetry:
+        type: string
+      promptPayReferenceNumber:
+        type: string
+      reference1:
+        type: string
+      reference2:
+        type: string
+      reference3:
+        type: string
+      senderBankCode:
+        type: string
+      terminalNo:
+        type: string
+      tranAmount:
+        type: string
+      transactionDateTime:
+        type: string
+      transactionId:
+        type: string
+    type: object
+  model.PaymentResponse:
+    properties:
+      additional:
+        $ref: '#/definitions/model.PaymentAdditionalFieldResponse'
+      billerTransactionId:
+        type: string
+      functionName:
+        type: string
+      promptPayTransactionId:
+        type: string
+      responseCode:
+        type: string
+      responseDateTime:
+        type: string
+      responseDescription:
+        type: string
+      terminalNo:
+        type: string
+      transactionId:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is Bill Payment API Server From KBank-API.
+  title: Bill Payment API
+  version: "1.0"
+paths:
+  /api/billers:
+    get:
+      consumes:
+      - '*/*'
+      description: Show all biller_account.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.BillAccount'
+            type: array
+      summary: Show all biller_account.
+      tags:
+      - Billers
+    post:
+      consumes:
+      - '*/*'
+      description: Create new biller_account, it's for store.
+      parameters:
+      - description: JSON request body for payment request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.BillAccount'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.BillAccount'
+            type: array
+      summary: Create new biller_account.
+      tags:
+      - Billers
+  /api/billpayment/lookup:
+    post:
+      consumes:
+      - '*/*'
+      description: Show inquiry response from inquiry request.
+      parameters:
+      - description: JSON request body for inquiry request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.InquiryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.InquiryResponse'
+            type: array
+      summary: Show inquiry response.
+      tags:
+      - Inquiry
+  /api/billpayment/payment:
+    post:
+      consumes:
+      - '*/*'
+      description: Show payment response after payment process.
+      parameters:
+      - description: JSON request body for payment request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.PaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.PaymentResponse'
+            type: array
+      summary: Show payment response.
+      tags:
+      - Payment
+  /api/bills:
+    get:
+      consumes:
+      - '*/*'
+      description: show all bill in system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.Bill'
+            type: array
+      summary: Show all bill.
+      tags:
+      - Bills
+    post:
+      consumes:
+      - '*/*'
+      description: Create new bill detail.
+      parameters:
+      - description: JSON request body for payment request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Bill'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.Bill'
+            type: array
+      summary: Create new bill.
+      tags:
+      - Bills
+  /api/bills/:id:
+    put:
+      consumes:
+      - '*/*'
+      description: Update bill by use ID.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.Bill'
+            type: array
+      summary: Update bill by use ID.
+      tags:
+      - Bills
+  /api/customers:
+    get:
+      consumes:
+      - '*/*'
+      description: Show all customer in system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.Customer'
+            type: array
+      summary: Show all customer.
+      tags:
+      - Customers
+    post:
+      consumes:
+      - '*/*'
+      description: Create new customer that use bill.
+      parameters:
+      - description: JSON request body for payment request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Customer'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.Customer'
+            type: array
+      summary: Create new customer.
+      tags:
+      - Customers
+  /api/customers/:id:
+    get:
+      consumes:
+      - '*/*'
+      description: Show customer by ID in system.
+      parameters:
+      - description: JSON request body for payment request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Customer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.Customer'
+            type: array
+      summary: Show customer by ID.
+      tags:
+      - Customers
+swagger: "2.0"

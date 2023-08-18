@@ -1,0 +1,784 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is Bill Payment API Server From KBank-API.",
+        "title": "Bill Payment API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/billers": {
+            "get": {
+                "description": "Show all biller_account.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Billers"
+                ],
+                "summary": "Show all biller_account.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BillAccount"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new biller_account, it's for store.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Billers"
+                ],
+                "summary": "Create new biller_account.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.BillAccount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.BillAccount"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/billpayment/lookup": {
+            "post": {
+                "description": "Show inquiry response from inquiry request.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inquiry"
+                ],
+                "summary": "Show inquiry response.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for inquiry request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.InquiryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.InquiryResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/billpayment/payment": {
+            "post": {
+                "description": "Show payment response after payment process.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Show payment response.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PaymentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PaymentResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bills": {
+            "get": {
+                "description": "show all bill in system.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bills"
+                ],
+                "summary": "Show all bill.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Bill"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new bill detail.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bills"
+                ],
+                "summary": "Create new bill.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Bill"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Bill"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bills/:id": {
+            "put": {
+                "description": "Update bill by use ID.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bills"
+                ],
+                "summary": "Update bill by use ID.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Bill"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers": {
+            "get": {
+                "description": "Show all customer in system.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Show all customer.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Customer"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new customer that use bill.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Create new customer.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Customer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/:id": {
+            "get": {
+                "description": "Show customer by ID in system.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Show customer by ID.",
+                "parameters": [
+                    {
+                        "description": "JSON request body for payment request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Customer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Customer"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Bill": {
+            "type": "object",
+            "properties": {
+                "billerId": {
+                    "type": "integer"
+                },
+                "channelCode": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reference1": {
+                    "type": "integer"
+                },
+                "reference2": {
+                    "type": "integer"
+                },
+                "senderBankCode": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tranAmount": {
+                    "type": "number"
+                },
+                "trasactionId": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.BillAccount": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "service_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Customer": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "mobileNumber": {
+                    "type": "string"
+                },
+                "titleName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.InquiryAdditionalFieldRequest": {
+            "type": "object",
+            "properties": {
+                "billerFee": {
+                    "type": "string"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "fromProxyType": {
+                    "type": "string"
+                },
+                "fromProxyValue": {
+                    "type": "string"
+                },
+                "payerFee": {
+                    "type": "string"
+                },
+                "promptPayFlag": {
+                    "type": "string"
+                },
+                "rqAppId": {
+                    "type": "string"
+                },
+                "rtpReference": {
+                    "type": "string"
+                },
+                "senderAcctName": {
+                    "type": "string"
+                },
+                "senderTaxID": {
+                    "type": "string"
+                },
+                "settlementDate": {
+                    "type": "string"
+                },
+                "transferWithTax": {
+                    "type": "string"
+                },
+                "typeofSender": {
+                    "type": "string"
+                },
+                "typeofTaxIncome": {
+                    "type": "string"
+                },
+                "vat": {
+                    "type": "string"
+                },
+                "vatRates": {
+                    "type": "string"
+                },
+                "withholdingTax": {
+                    "type": "string"
+                },
+                "withholdingTaxConditions": {
+                    "type": "string"
+                },
+                "withholdingTaxRates": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.InquiryAdditionalFieldResponse": {
+            "type": "object",
+            "properties": {
+                "dueDate": {
+                    "type": "string"
+                },
+                "payerFee": {
+                    "type": "string"
+                },
+                "receiverTaxID": {
+                    "type": "string"
+                },
+                "rsAppId": {
+                    "type": "string"
+                },
+                "rtpReference": {
+                    "type": "string"
+                },
+                "settlementDate": {
+                    "type": "string"
+                },
+                "toBillerAccountName": {
+                    "type": "string"
+                },
+                "toBillerServiceName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.InquiryRequest": {
+            "type": "object",
+            "properties": {
+                "additional": {
+                    "$ref": "#/definitions/model.InquiryAdditionalFieldRequest"
+                },
+                "apiKey": {
+                    "type": "string"
+                },
+                "billerId": {
+                    "type": "string"
+                },
+                "billerType": {
+                    "type": "string"
+                },
+                "channelCode": {
+                    "type": "string"
+                },
+                "functionName": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "promptPayReferenceNumber": {
+                    "type": "string"
+                },
+                "reference1": {
+                    "type": "string"
+                },
+                "reference2": {
+                    "type": "string"
+                },
+                "reference3": {
+                    "type": "string"
+                },
+                "senderBankCode": {
+                    "type": "string"
+                },
+                "terminalNo": {
+                    "type": "string"
+                },
+                "tranAmount": {
+                    "type": "string"
+                },
+                "transactionDateTime": {
+                    "type": "string"
+                },
+                "transactionId": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.InquiryResponse": {
+            "type": "object",
+            "properties": {
+                "additional": {
+                    "$ref": "#/definitions/model.InquiryAdditionalFieldResponse"
+                },
+                "billerId": {
+                    "type": "string"
+                },
+                "billerTransactionId": {
+                    "type": "string"
+                },
+                "billerType": {
+                    "type": "string"
+                },
+                "functionName": {
+                    "type": "string"
+                },
+                "info1": {
+                    "type": "string"
+                },
+                "info2": {
+                    "type": "string"
+                },
+                "info3": {
+                    "type": "string"
+                },
+                "promptPayTransactionId": {
+                    "type": "string"
+                },
+                "reference1": {
+                    "type": "string"
+                },
+                "reference2": {
+                    "type": "string"
+                },
+                "reference3": {
+                    "type": "string"
+                },
+                "responseCode": {
+                    "type": "string"
+                },
+                "responseDescription": {
+                    "type": "string"
+                },
+                "terminalNo": {
+                    "type": "string"
+                },
+                "tranAmount": {
+                    "type": "string"
+                },
+                "transactionDateTime": {
+                    "type": "string"
+                },
+                "transactionId": {
+                    "type": "string"
+                },
+                "typeofReceiver": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PaymentAdditionalFieldRequest": {
+            "type": "object",
+            "properties": {
+                "customerFee": {
+                    "type": "string"
+                },
+                "dueDate": {
+                    "type": "string"
+                },
+                "fromProxyType": {
+                    "type": "string"
+                },
+                "fromProxyValue": {
+                    "type": "string"
+                },
+                "partnerFee": {
+                    "type": "string"
+                },
+                "promptPayFlag": {
+                    "type": "string"
+                },
+                "receiverTaxID": {
+                    "type": "string"
+                },
+                "rqAppId": {
+                    "type": "string"
+                },
+                "rtpReference": {
+                    "type": "string"
+                },
+                "senderAcctName": {
+                    "type": "string"
+                },
+                "senderReferenceNo": {
+                    "type": "string"
+                },
+                "senderTaxID": {
+                    "type": "string"
+                },
+                "settlementDate": {
+                    "type": "string"
+                },
+                "sponsorBankFee": {
+                    "type": "string"
+                },
+                "transferWithTax": {
+                    "type": "string"
+                },
+                "typeofReceiver": {
+                    "type": "string"
+                },
+                "typeofSender": {
+                    "type": "string"
+                },
+                "typeofTaxIncome": {
+                    "type": "string"
+                },
+                "vat": {
+                    "type": "string"
+                },
+                "vatRates": {
+                    "type": "string"
+                },
+                "withholdingTax": {
+                    "type": "string"
+                },
+                "withholdingTaxConditions": {
+                    "type": "string"
+                },
+                "withholdingTaxRates": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PaymentAdditionalFieldResponse": {
+            "type": "object",
+            "properties": {
+                "rsAppId": {
+                    "type": "string"
+                },
+                "settlementDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PaymentRequest": {
+            "type": "object",
+            "properties": {
+                "additional": {
+                    "$ref": "#/definitions/model.PaymentAdditionalFieldRequest"
+                },
+                "apiKey": {
+                    "type": "string"
+                },
+                "billerId": {
+                    "type": "string"
+                },
+                "billerType": {
+                    "type": "string"
+                },
+                "channelCode": {
+                    "type": "string"
+                },
+                "functionName": {
+                    "type": "string"
+                },
+                "isRetry": {
+                    "type": "string"
+                },
+                "promptPayReferenceNumber": {
+                    "type": "string"
+                },
+                "reference1": {
+                    "type": "string"
+                },
+                "reference2": {
+                    "type": "string"
+                },
+                "reference3": {
+                    "type": "string"
+                },
+                "senderBankCode": {
+                    "type": "string"
+                },
+                "terminalNo": {
+                    "type": "string"
+                },
+                "tranAmount": {
+                    "type": "string"
+                },
+                "transactionDateTime": {
+                    "type": "string"
+                },
+                "transactionId": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PaymentResponse": {
+            "type": "object",
+            "properties": {
+                "additional": {
+                    "$ref": "#/definitions/model.PaymentAdditionalFieldResponse"
+                },
+                "billerTransactionId": {
+                    "type": "string"
+                },
+                "functionName": {
+                    "type": "string"
+                },
+                "promptPayTransactionId": {
+                    "type": "string"
+                },
+                "responseCode": {
+                    "type": "string"
+                },
+                "responseDateTime": {
+                    "type": "string"
+                },
+                "responseDescription": {
+                    "type": "string"
+                },
+                "terminalNo": {
+                    "type": "string"
+                },
+                "transactionId": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
