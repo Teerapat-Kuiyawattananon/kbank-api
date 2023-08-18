@@ -2,7 +2,6 @@
 KBank-API Project using the Kasikorn Bank's bill payment API including Inquiry & Payment, to act as a middleman to enable payments between clients and stores. Use 
 Inquiry for check bill details before making a payment and Payment for confirm payment.
 
-
 ## How To Run 
 
 1. Clone the repository:
@@ -33,5 +32,4 @@ curl localhost:8080/swagger/doc.json
 ```
 http://localhost:8080/swagger/index.html
 ```
-
-
+## 

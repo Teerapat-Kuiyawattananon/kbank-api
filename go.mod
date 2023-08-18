@@ -23,6 +23,7 @@ require (
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
@@ -41,6 +42,7 @@ require (
 	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.8.1-0.20230428195545-5283a0178901 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

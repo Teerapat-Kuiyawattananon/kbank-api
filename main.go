@@ -12,6 +12,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 
 	_ "kapi/docs"
 )
@@ -30,10 +31,7 @@ import (
 
 // @host localhost:8080
 // @BasePath /
-// @schemes http
-
-//go:generate swag init -g docs\docs.go
-
+// @schemes http http 
 func main() {
 	if err := godotenv.Load(".env") ; err != nil {
 		log.Fatal(err)
@@ -41,6 +39,11 @@ func main() {
 	fmt.Println("Start")
 	db.MockUpTestEX01()
 	e := echo.New()
+
+	   // Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
