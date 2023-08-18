@@ -16,6 +16,7 @@ type Customer struct {
 // Fields of the Customer.
 func (Customer) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id"),
 		field.String("first_name").Default("Unknown"),
 		field.String("last_name").Default(""),
 		field.String("title_name").Default(""),
@@ -27,7 +28,7 @@ func (Customer) Fields() []ent.Field {
 // Edges of the Customer.
 func (Customer) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("bill_details", BillDetail.Type),
+		// edge.To("bill_details", BillDetail.Type),
 		// edge.From("bill_detail", BillDetail.Type).
 		// 	Ref("customer").
 		// 	Unique().

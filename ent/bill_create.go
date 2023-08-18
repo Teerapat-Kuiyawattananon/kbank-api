@@ -4,11 +4,12 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
+	"kapi/ent/biller_account"
 	"kapi/ent/customer"
-	"kapi/ent/store"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -35,89 +36,166 @@ func (bc *BillCreate) SetNillableBillerID(i *int) *BillCreate {
 	return bc
 }
 
-// SetRef1 sets the "ref_1" field.
-func (bc *BillCreate) SetRef1(i int) *BillCreate {
-	bc.mutation.SetRef1(i)
+// SetReference1 sets the "reference_1" field.
+func (bc *BillCreate) SetReference1(i int) *BillCreate {
+	bc.mutation.SetReference1(i)
 	return bc
 }
 
-// SetNillableRef1 sets the "ref_1" field if the given value is not nil.
-func (bc *BillCreate) SetNillableRef1(i *int) *BillCreate {
+// SetNillableReference1 sets the "reference_1" field if the given value is not nil.
+func (bc *BillCreate) SetNillableReference1(i *int) *BillCreate {
 	if i != nil {
-		bc.SetRef1(*i)
+		bc.SetReference1(*i)
 	}
 	return bc
 }
 
-// SetRef2 sets the "ref_2" field.
-func (bc *BillCreate) SetRef2(i int) *BillCreate {
-	bc.mutation.SetRef2(i)
+// SetReference2 sets the "reference_2" field.
+func (bc *BillCreate) SetReference2(i int) *BillCreate {
+	bc.mutation.SetReference2(i)
 	return bc
 }
 
-// SetNillableRef2 sets the "ref_2" field if the given value is not nil.
-func (bc *BillCreate) SetNillableRef2(i *int) *BillCreate {
+// SetNillableReference2 sets the "reference_2" field if the given value is not nil.
+func (bc *BillCreate) SetNillableReference2(i *int) *BillCreate {
 	if i != nil {
-		bc.SetRef2(*i)
+		bc.SetReference2(*i)
 	}
 	return bc
 }
 
-// SetStoreID sets the "store" edge to the Store entity by ID.
-func (bc *BillCreate) SetStoreID(id int) *BillCreate {
-	bc.mutation.SetStoreID(id)
+// SetTransactionID sets the "transaction_id" field.
+func (bc *BillCreate) SetTransactionID(s string) *BillCreate {
+	bc.mutation.SetTransactionID(s)
 	return bc
 }
 
-// SetNillableStoreID sets the "store" edge to the Store entity by ID if the given value is not nil.
-func (bc *BillCreate) SetNillableStoreID(id *int) *BillCreate {
+// SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
+func (bc *BillCreate) SetNillableTransactionID(s *string) *BillCreate {
+	if s != nil {
+		bc.SetTransactionID(*s)
+	}
+	return bc
+}
+
+// SetTranAmount sets the "tran_amount" field.
+func (bc *BillCreate) SetTranAmount(f float64) *BillCreate {
+	bc.mutation.SetTranAmount(f)
+	return bc
+}
+
+// SetNillableTranAmount sets the "tran_amount" field if the given value is not nil.
+func (bc *BillCreate) SetNillableTranAmount(f *float64) *BillCreate {
+	if f != nil {
+		bc.SetTranAmount(*f)
+	}
+	return bc
+}
+
+// SetChannelCode sets the "channel_code" field.
+func (bc *BillCreate) SetChannelCode(s string) *BillCreate {
+	bc.mutation.SetChannelCode(s)
+	return bc
+}
+
+// SetNillableChannelCode sets the "channel_code" field if the given value is not nil.
+func (bc *BillCreate) SetNillableChannelCode(s *string) *BillCreate {
+	if s != nil {
+		bc.SetChannelCode(*s)
+	}
+	return bc
+}
+
+// SetSenderBankCode sets the "sender_bank_code" field.
+func (bc *BillCreate) SetSenderBankCode(s string) *BillCreate {
+	bc.mutation.SetSenderBankCode(s)
+	return bc
+}
+
+// SetNillableSenderBankCode sets the "sender_bank_code" field if the given value is not nil.
+func (bc *BillCreate) SetNillableSenderBankCode(s *string) *BillCreate {
+	if s != nil {
+		bc.SetSenderBankCode(*s)
+	}
+	return bc
+}
+
+// SetStatus sets the "status" field.
+func (bc *BillCreate) SetStatus(s string) *BillCreate {
+	bc.mutation.SetStatus(s)
+	return bc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (bc *BillCreate) SetCreatedAt(t time.Time) *BillCreate {
+	bc.mutation.SetCreatedAt(t)
+	return bc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (bc *BillCreate) SetNillableCreatedAt(t *time.Time) *BillCreate {
+	if t != nil {
+		bc.SetCreatedAt(*t)
+	}
+	return bc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (bc *BillCreate) SetUpdatedAt(t time.Time) *BillCreate {
+	bc.mutation.SetUpdatedAt(t)
+	return bc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (bc *BillCreate) SetNillableUpdatedAt(t *time.Time) *BillCreate {
+	if t != nil {
+		bc.SetUpdatedAt(*t)
+	}
+	return bc
+}
+
+// SetID sets the "id" field.
+func (bc *BillCreate) SetID(i int) *BillCreate {
+	bc.mutation.SetID(i)
+	return bc
+}
+
+// SetBillerAccountID sets the "biller_account" edge to the Biller_account entity by ID.
+func (bc *BillCreate) SetBillerAccountID(id int) *BillCreate {
+	bc.mutation.SetBillerAccountID(id)
+	return bc
+}
+
+// SetNillableBillerAccountID sets the "biller_account" edge to the Biller_account entity by ID if the given value is not nil.
+func (bc *BillCreate) SetNillableBillerAccountID(id *int) *BillCreate {
 	if id != nil {
-		bc = bc.SetStoreID(*id)
+		bc = bc.SetBillerAccountID(*id)
 	}
 	return bc
 }
 
-// SetStore sets the "store" edge to the Store entity.
-func (bc *BillCreate) SetStore(s *Store) *BillCreate {
-	return bc.SetStoreID(s.ID)
+// SetBillerAccount sets the "biller_account" edge to the Biller_account entity.
+func (bc *BillCreate) SetBillerAccount(b *Biller_account) *BillCreate {
+	return bc.SetBillerAccountID(b.ID)
 }
 
-// SetCustomersID sets the "customers" edge to the Customer entity by ID.
-func (bc *BillCreate) SetCustomersID(id int) *BillCreate {
-	bc.mutation.SetCustomersID(id)
+// SetCustomerID sets the "customer" edge to the Customer entity by ID.
+func (bc *BillCreate) SetCustomerID(id int) *BillCreate {
+	bc.mutation.SetCustomerID(id)
 	return bc
 }
 
-// SetNillableCustomersID sets the "customers" edge to the Customer entity by ID if the given value is not nil.
-func (bc *BillCreate) SetNillableCustomersID(id *int) *BillCreate {
+// SetNillableCustomerID sets the "customer" edge to the Customer entity by ID if the given value is not nil.
+func (bc *BillCreate) SetNillableCustomerID(id *int) *BillCreate {
 	if id != nil {
-		bc = bc.SetCustomersID(*id)
+		bc = bc.SetCustomerID(*id)
 	}
 	return bc
 }
 
-// SetCustomers sets the "customers" edge to the Customer entity.
-func (bc *BillCreate) SetCustomers(c *Customer) *BillCreate {
-	return bc.SetCustomersID(c.ID)
-}
-
-// SetBillDetailID sets the "bill_detail" edge to the BillDetail entity by ID.
-func (bc *BillCreate) SetBillDetailID(id int) *BillCreate {
-	bc.mutation.SetBillDetailID(id)
-	return bc
-}
-
-// SetNillableBillDetailID sets the "bill_detail" edge to the BillDetail entity by ID if the given value is not nil.
-func (bc *BillCreate) SetNillableBillDetailID(id *int) *BillCreate {
-	if id != nil {
-		bc = bc.SetBillDetailID(*id)
-	}
-	return bc
-}
-
-// SetBillDetail sets the "bill_detail" edge to the BillDetail entity.
-func (bc *BillCreate) SetBillDetail(b *BillDetail) *BillCreate {
-	return bc.SetBillDetailID(b.ID)
+// SetCustomer sets the "customer" edge to the Customer entity.
+func (bc *BillCreate) SetCustomer(c *Customer) *BillCreate {
+	return bc.SetCustomerID(c.ID)
 }
 
 // Mutation returns the BillMutation object of the builder.
@@ -127,6 +205,7 @@ func (bc *BillCreate) Mutation() *BillMutation {
 
 // Save creates the Bill in the database.
 func (bc *BillCreate) Save(ctx context.Context) (*Bill, error) {
+	bc.defaults()
 	return withHooks(ctx, bc.sqlSave, bc.mutation, bc.hooks)
 }
 
@@ -152,8 +231,62 @@ func (bc *BillCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (bc *BillCreate) defaults() {
+	if _, ok := bc.mutation.TransactionID(); !ok {
+		v := bill.DefaultTransactionID
+		bc.mutation.SetTransactionID(v)
+	}
+	if _, ok := bc.mutation.TranAmount(); !ok {
+		v := bill.DefaultTranAmount
+		bc.mutation.SetTranAmount(v)
+	}
+	if _, ok := bc.mutation.ChannelCode(); !ok {
+		v := bill.DefaultChannelCode
+		bc.mutation.SetChannelCode(v)
+	}
+	if _, ok := bc.mutation.SenderBankCode(); !ok {
+		v := bill.DefaultSenderBankCode
+		bc.mutation.SetSenderBankCode(v)
+	}
+	if _, ok := bc.mutation.CreatedAt(); !ok {
+		v := bill.DefaultCreatedAt()
+		bc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := bc.mutation.UpdatedAt(); !ok {
+		v := bill.DefaultUpdatedAt()
+		bc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (bc *BillCreate) check() error {
+	if _, ok := bc.mutation.TransactionID(); !ok {
+		return &ValidationError{Name: "transaction_id", err: errors.New(`ent: missing required field "Bill.transaction_id"`)}
+	}
+	if _, ok := bc.mutation.TranAmount(); !ok {
+		return &ValidationError{Name: "tran_amount", err: errors.New(`ent: missing required field "Bill.tran_amount"`)}
+	}
+	if _, ok := bc.mutation.ChannelCode(); !ok {
+		return &ValidationError{Name: "channel_code", err: errors.New(`ent: missing required field "Bill.channel_code"`)}
+	}
+	if _, ok := bc.mutation.SenderBankCode(); !ok {
+		return &ValidationError{Name: "sender_bank_code", err: errors.New(`ent: missing required field "Bill.sender_bank_code"`)}
+	}
+	if _, ok := bc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Bill.status"`)}
+	}
+	if v, ok := bc.mutation.Status(); ok {
+		if err := bill.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "Bill.status": %w`, err)}
+		}
+	}
+	if _, ok := bc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Bill.created_at"`)}
+	}
+	if _, ok := bc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Bill.updated_at"`)}
+	}
 	return nil
 }
 
@@ -168,8 +301,10 @@ func (bc *BillCreate) sqlSave(ctx context.Context) (*Bill, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	bc.mutation.id = &_node.ID
 	bc.mutation.done = true
 	return _node, nil
@@ -180,19 +315,51 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 		_node = &Bill{config: bc.config}
 		_spec = sqlgraph.NewCreateSpec(bill.Table, sqlgraph.NewFieldSpec(bill.FieldID, field.TypeInt))
 	)
-	if value, ok := bc.mutation.Ref2(); ok {
-		_spec.SetField(bill.FieldRef2, field.TypeInt, value)
-		_node.Ref2 = value
+	if id, ok := bc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
 	}
-	if nodes := bc.mutation.StoreIDs(); len(nodes) > 0 {
+	if value, ok := bc.mutation.Reference2(); ok {
+		_spec.SetField(bill.FieldReference2, field.TypeInt, value)
+		_node.Reference2 = value
+	}
+	if value, ok := bc.mutation.TransactionID(); ok {
+		_spec.SetField(bill.FieldTransactionID, field.TypeString, value)
+		_node.TransactionID = value
+	}
+	if value, ok := bc.mutation.TranAmount(); ok {
+		_spec.SetField(bill.FieldTranAmount, field.TypeFloat64, value)
+		_node.TranAmount = value
+	}
+	if value, ok := bc.mutation.ChannelCode(); ok {
+		_spec.SetField(bill.FieldChannelCode, field.TypeString, value)
+		_node.ChannelCode = value
+	}
+	if value, ok := bc.mutation.SenderBankCode(); ok {
+		_spec.SetField(bill.FieldSenderBankCode, field.TypeString, value)
+		_node.SenderBankCode = value
+	}
+	if value, ok := bc.mutation.Status(); ok {
+		_spec.SetField(bill.FieldStatus, field.TypeString, value)
+		_node.Status = value
+	}
+	if value, ok := bc.mutation.CreatedAt(); ok {
+		_spec.SetField(bill.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := bc.mutation.UpdatedAt(); ok {
+		_spec.SetField(bill.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if nodes := bc.mutation.BillerAccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.StoreTable,
-			Columns: []string{bill.StoreColumn},
+			Table:   bill.BillerAccountTable,
+			Columns: []string{bill.BillerAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(store.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(biller_account.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -201,12 +368,12 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 		_node.BillerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := bc.mutation.CustomersIDs(); len(nodes) > 0 {
+	if nodes := bc.mutation.CustomerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   bill.CustomersTable,
-			Columns: []string{bill.CustomersColumn},
+			Table:   bill.CustomerTable,
+			Columns: []string{bill.CustomerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(customer.FieldID, field.TypeInt),
@@ -215,23 +382,7 @@ func (bc *BillCreate) createSpec() (*Bill, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.Ref1 = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := bc.mutation.BillDetailIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   bill.BillDetailTable,
-			Columns: []string{bill.BillDetailColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
+		_node.Reference1 = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -251,6 +402,7 @@ func (bcb *BillCreateBulk) Save(ctx context.Context) ([]*Bill, error) {
 	for i := range bcb.builders {
 		func(i int, root context.Context) {
 			builder := bcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*BillMutation)
 				if !ok {
@@ -277,7 +429,7 @@ func (bcb *BillCreateBulk) Save(ctx context.Context) ([]*Bill, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

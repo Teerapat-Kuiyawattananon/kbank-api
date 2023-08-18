@@ -35,28 +35,17 @@ type Customer struct {
 
 // CustomerEdges holds the relations/edges for other nodes in the graph.
 type CustomerEdges struct {
-	// BillDetails holds the value of the bill_details edge.
-	BillDetails []*BillDetail `json:"bill_details,omitempty"`
 	// Bills holds the value of the bills edge.
 	Bills []*Bill `json:"bills,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
-}
-
-// BillDetailsOrErr returns the BillDetails value or an error if the edge
-// was not loaded in eager-loading.
-func (e CustomerEdges) BillDetailsOrErr() ([]*BillDetail, error) {
-	if e.loadedTypes[0] {
-		return e.BillDetails, nil
-	}
-	return nil, &NotLoadedError{edge: "bill_details"}
+	loadedTypes [1]bool
 }
 
 // BillsOrErr returns the Bills value or an error if the edge
 // was not loaded in eager-loading.
 func (e CustomerEdges) BillsOrErr() ([]*Bill, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[0] {
 		return e.Bills, nil
 	}
 	return nil, &NotLoadedError{edge: "bills"}
@@ -135,11 +124,6 @@ func (c *Customer) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (c *Customer) Value(name string) (ent.Value, error) {
 	return c.selectValues.Get(name)
-}
-
-// QueryBillDetails queries the "bill_details" edge of the Customer entity.
-func (c *Customer) QueryBillDetails() *BillDetailQuery {
-	return NewCustomerClient(c.config).QueryBillDetails(c)
 }
 
 // QueryBills queries the "bills" edge of the Customer entity.

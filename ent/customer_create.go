@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
 	"kapi/ent/customer"
 	"time"
 
@@ -92,19 +91,10 @@ func (cc *CustomerCreate) SetNillableCreatedAt(t *time.Time) *CustomerCreate {
 	return cc
 }
 
-// AddBillDetailIDs adds the "bill_details" edge to the BillDetail entity by IDs.
-func (cc *CustomerCreate) AddBillDetailIDs(ids ...int) *CustomerCreate {
-	cc.mutation.AddBillDetailIDs(ids...)
+// SetID sets the "id" field.
+func (cc *CustomerCreate) SetID(i int) *CustomerCreate {
+	cc.mutation.SetID(i)
 	return cc
-}
-
-// AddBillDetails adds the "bill_details" edges to the BillDetail entity.
-func (cc *CustomerCreate) AddBillDetails(b ...*BillDetail) *CustomerCreate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return cc.AddBillDetailIDs(ids...)
 }
 
 // AddBillIDs adds the "bills" edge to the Bill entity by IDs.
@@ -210,8 +200,10 @@ func (cc *CustomerCreate) sqlSave(ctx context.Context) (*Customer, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	cc.mutation.id = &_node.ID
 	cc.mutation.done = true
 	return _node, nil
@@ -222,6 +214,10 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 		_node = &Customer{config: cc.config}
 		_spec = sqlgraph.NewCreateSpec(customer.Table, sqlgraph.NewFieldSpec(customer.FieldID, field.TypeInt))
 	)
+	if id, ok := cc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := cc.mutation.FirstName(); ok {
 		_spec.SetField(customer.FieldFirstName, field.TypeString, value)
 		_node.FirstName = value
@@ -241,22 +237,6 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 	if value, ok := cc.mutation.CreatedAt(); ok {
 		_spec.SetField(customer.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
-	}
-	if nodes := cc.mutation.BillDetailsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   customer.BillDetailsTable,
-			Columns: []string{customer.BillDetailsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := cc.mutation.BillsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -318,7 +298,7 @@ func (ccb *CustomerCreateBulk) Save(ctx context.Context) ([]*Customer, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

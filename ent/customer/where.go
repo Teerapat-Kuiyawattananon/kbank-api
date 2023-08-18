@@ -380,29 +380,6 @@ func CreatedAtLTE(v time.Time) predicate.Customer {
 	return predicate.Customer(sql.FieldLTE(FieldCreatedAt, v))
 }
 
-// HasBillDetails applies the HasEdge predicate on the "bill_details" edge.
-func HasBillDetails() predicate.Customer {
-	return predicate.Customer(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, BillDetailsTable, BillDetailsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasBillDetailsWith applies the HasEdge predicate on the "bill_details" edge with a given conditions (other predicates).
-func HasBillDetailsWith(preds ...predicate.BillDetail) predicate.Customer {
-	return predicate.Customer(func(s *sql.Selector) {
-		step := newBillDetailsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasBills applies the HasEdge predicate on the "bills" edge.
 func HasBills() predicate.Customer {
 	return predicate.Customer(func(s *sql.Selector) {

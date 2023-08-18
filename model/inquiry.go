@@ -1,4 +1,4 @@
-package inquiry
+package model
 
 type InquiryRequest struct {
 	FunctionName 				string	`json:"functionName"`
@@ -16,10 +16,10 @@ type InquiryRequest struct {
 	Reference3					string	`json:"reference3"`
 	Language					string	`json:"language"`
 	ApiKey						string	`json:"apiKey"`
-	AdditionalFieldRequest		AdditionalFieldRequest	`json:"additional"`
+	AdditionalFieldRequest		InquiryAdditionalFieldRequest	`json:"additional"`
 }
 
-type AdditionalFieldRequest struct {
+type InquiryAdditionalFieldRequest struct {
 	PayerFee			string	`json:"payerFee"`
 	BillerFee			string	`json:"billerFee"`
 	TransgerWithTax		string	`json:"transferWithTax"`
@@ -60,10 +60,10 @@ type InquiryResponse struct {
 	Info1						string	`json:"info1"`
 	Info2						string	`json:"info2"`
 	Info3						string	`json:"info3"`
-	AdditionalFieldResponse		AdditionalFieldResponse `json:"additional"`
+	AdditionalFieldResponse		InquiryAdditionalFieldResponse `json:"additional"`
 }
 
-type AdditionalFieldResponse struct {
+type InquiryAdditionalFieldResponse struct {
 	ToBillerAccountName	string	`json:"toBillerAccountName"`
 	ToBillerServiceName	string	`json:"toBillerServiceName"`
 	PayerFee			string	`json:"payerFee"`

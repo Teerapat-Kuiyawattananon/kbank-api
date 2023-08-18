@@ -3,6 +3,8 @@
 package bill
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -14,47 +16,59 @@ const (
 	FieldID = "id"
 	// FieldBillerID holds the string denoting the biller_id field in the database.
 	FieldBillerID = "biller_id"
-	// FieldRef1 holds the string denoting the ref_1 field in the database.
-	FieldRef1 = "ref_1"
-	// FieldRef2 holds the string denoting the ref_2 field in the database.
-	FieldRef2 = "ref_2"
-	// EdgeStore holds the string denoting the store edge name in mutations.
-	EdgeStore = "store"
-	// EdgeCustomers holds the string denoting the customers edge name in mutations.
-	EdgeCustomers = "customers"
-	// EdgeBillDetail holds the string denoting the bill_detail edge name in mutations.
-	EdgeBillDetail = "bill_detail"
+	// FieldReference1 holds the string denoting the reference_1 field in the database.
+	FieldReference1 = "reference_1"
+	// FieldReference2 holds the string denoting the reference_2 field in the database.
+	FieldReference2 = "reference_2"
+	// FieldTransactionID holds the string denoting the transaction_id field in the database.
+	FieldTransactionID = "transaction_id"
+	// FieldTranAmount holds the string denoting the tran_amount field in the database.
+	FieldTranAmount = "tran_amount"
+	// FieldChannelCode holds the string denoting the channel_code field in the database.
+	FieldChannelCode = "channel_code"
+	// FieldSenderBankCode holds the string denoting the sender_bank_code field in the database.
+	FieldSenderBankCode = "sender_bank_code"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// EdgeBillerAccount holds the string denoting the biller_account edge name in mutations.
+	EdgeBillerAccount = "biller_account"
+	// EdgeCustomer holds the string denoting the customer edge name in mutations.
+	EdgeCustomer = "customer"
 	// Table holds the table name of the bill in the database.
 	Table = "bills"
-	// StoreTable is the table that holds the store relation/edge.
-	StoreTable = "bills"
-	// StoreInverseTable is the table name for the Store entity.
-	// It exists in this package in order to avoid circular dependency with the "store" package.
-	StoreInverseTable = "stores"
-	// StoreColumn is the table column denoting the store relation/edge.
-	StoreColumn = "biller_id"
-	// CustomersTable is the table that holds the customers relation/edge.
-	CustomersTable = "bills"
-	// CustomersInverseTable is the table name for the Customer entity.
+	// BillerAccountTable is the table that holds the biller_account relation/edge.
+	BillerAccountTable = "bills"
+	// BillerAccountInverseTable is the table name for the Biller_account entity.
+	// It exists in this package in order to avoid circular dependency with the "biller_account" package.
+	BillerAccountInverseTable = "biller_accounts"
+	// BillerAccountColumn is the table column denoting the biller_account relation/edge.
+	BillerAccountColumn = "biller_id"
+	// CustomerTable is the table that holds the customer relation/edge.
+	CustomerTable = "bills"
+	// CustomerInverseTable is the table name for the Customer entity.
 	// It exists in this package in order to avoid circular dependency with the "customer" package.
-	CustomersInverseTable = "customers"
-	// CustomersColumn is the table column denoting the customers relation/edge.
-	CustomersColumn = "ref_1"
-	// BillDetailTable is the table that holds the bill_detail relation/edge.
-	BillDetailTable = "bill_details"
-	// BillDetailInverseTable is the table name for the BillDetail entity.
-	// It exists in this package in order to avoid circular dependency with the "billdetail" package.
-	BillDetailInverseTable = "bill_details"
-	// BillDetailColumn is the table column denoting the bill_detail relation/edge.
-	BillDetailColumn = "bill_bill_detail"
+	CustomerInverseTable = "customers"
+	// CustomerColumn is the table column denoting the customer relation/edge.
+	CustomerColumn = "reference_1"
 )
 
 // Columns holds all SQL columns for bill fields.
 var Columns = []string{
 	FieldID,
 	FieldBillerID,
-	FieldRef1,
-	FieldRef2,
+	FieldReference1,
+	FieldReference2,
+	FieldTransactionID,
+	FieldTranAmount,
+	FieldChannelCode,
+	FieldSenderBankCode,
+	FieldStatus,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -66,6 +80,25 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultTransactionID holds the default value on creation for the "transaction_id" field.
+	DefaultTransactionID string
+	// DefaultTranAmount holds the default value on creation for the "tran_amount" field.
+	DefaultTranAmount float64
+	// DefaultChannelCode holds the default value on creation for the "channel_code" field.
+	DefaultChannelCode string
+	// DefaultSenderBankCode holds the default value on creation for the "sender_bank_code" field.
+	DefaultSenderBankCode string
+	// StatusValidator is a validator for the "status" field. It is called by the builders before save.
+	StatusValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+)
 
 // OrderOption defines the ordering options for the Bill queries.
 type OrderOption func(*sql.Selector)
@@ -80,54 +113,75 @@ func ByBillerID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBillerID, opts...).ToFunc()
 }
 
-// ByRef1 orders the results by the ref_1 field.
-func ByRef1(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRef1, opts...).ToFunc()
+// ByReference1 orders the results by the reference_1 field.
+func ByReference1(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReference1, opts...).ToFunc()
 }
 
-// ByRef2 orders the results by the ref_2 field.
-func ByRef2(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRef2, opts...).ToFunc()
+// ByReference2 orders the results by the reference_2 field.
+func ByReference2(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReference2, opts...).ToFunc()
 }
 
-// ByStoreField orders the results by store field.
-func ByStoreField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByTransactionID orders the results by the transaction_id field.
+func ByTransactionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTransactionID, opts...).ToFunc()
+}
+
+// ByTranAmount orders the results by the tran_amount field.
+func ByTranAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTranAmount, opts...).ToFunc()
+}
+
+// ByChannelCode orders the results by the channel_code field.
+func ByChannelCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldChannelCode, opts...).ToFunc()
+}
+
+// BySenderBankCode orders the results by the sender_bank_code field.
+func BySenderBankCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSenderBankCode, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByBillerAccountField orders the results by biller_account field.
+func ByBillerAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newStoreStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newBillerAccountStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByCustomersField orders the results by customers field.
-func ByCustomersField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByCustomerField orders the results by customer field.
+func ByCustomerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newCustomersStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newCustomerStep(), sql.OrderByField(field, opts...))
 	}
 }
-
-// ByBillDetailField orders the results by bill_detail field.
-func ByBillDetailField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newBillDetailStep(), sql.OrderByField(field, opts...))
-	}
-}
-func newStoreStep() *sqlgraph.Step {
+func newBillerAccountStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(StoreInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, StoreTable, StoreColumn),
+		sqlgraph.To(BillerAccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, BillerAccountTable, BillerAccountColumn),
 	)
 }
-func newCustomersStep() *sqlgraph.Step {
+func newCustomerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(CustomersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, CustomersTable, CustomersColumn),
-	)
-}
-func newBillDetailStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(BillDetailInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, BillDetailTable, BillDetailColumn),
+		sqlgraph.To(CustomerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, CustomerTable, CustomerColumn),
 	)
 }

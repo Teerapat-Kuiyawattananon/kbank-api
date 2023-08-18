@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"kapi/ent/bill"
-	"kapi/ent/billdetail"
 	"kapi/ent/customer"
 	"kapi/ent/predicate"
 	"time"
@@ -100,21 +99,6 @@ func (cu *CustomerUpdate) SetNillableCreatedAt(t *time.Time) *CustomerUpdate {
 	return cu
 }
 
-// AddBillDetailIDs adds the "bill_details" edge to the BillDetail entity by IDs.
-func (cu *CustomerUpdate) AddBillDetailIDs(ids ...int) *CustomerUpdate {
-	cu.mutation.AddBillDetailIDs(ids...)
-	return cu
-}
-
-// AddBillDetails adds the "bill_details" edges to the BillDetail entity.
-func (cu *CustomerUpdate) AddBillDetails(b ...*BillDetail) *CustomerUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return cu.AddBillDetailIDs(ids...)
-}
-
 // AddBillIDs adds the "bills" edge to the Bill entity by IDs.
 func (cu *CustomerUpdate) AddBillIDs(ids ...int) *CustomerUpdate {
 	cu.mutation.AddBillIDs(ids...)
@@ -133,27 +117,6 @@ func (cu *CustomerUpdate) AddBills(b ...*Bill) *CustomerUpdate {
 // Mutation returns the CustomerMutation object of the builder.
 func (cu *CustomerUpdate) Mutation() *CustomerMutation {
 	return cu.mutation
-}
-
-// ClearBillDetails clears all "bill_details" edges to the BillDetail entity.
-func (cu *CustomerUpdate) ClearBillDetails() *CustomerUpdate {
-	cu.mutation.ClearBillDetails()
-	return cu
-}
-
-// RemoveBillDetailIDs removes the "bill_details" edge to BillDetail entities by IDs.
-func (cu *CustomerUpdate) RemoveBillDetailIDs(ids ...int) *CustomerUpdate {
-	cu.mutation.RemoveBillDetailIDs(ids...)
-	return cu
-}
-
-// RemoveBillDetails removes "bill_details" edges to BillDetail entities.
-func (cu *CustomerUpdate) RemoveBillDetails(b ...*BillDetail) *CustomerUpdate {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return cu.RemoveBillDetailIDs(ids...)
 }
 
 // ClearBills clears all "bills" edges to the Bill entity.
@@ -227,51 +190,6 @@ func (cu *CustomerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := cu.mutation.CreatedAt(); ok {
 		_spec.SetField(customer.FieldCreatedAt, field.TypeTime, value)
-	}
-	if cu.mutation.BillDetailsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   customer.BillDetailsTable,
-			Columns: []string{customer.BillDetailsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cu.mutation.RemovedBillDetailsIDs(); len(nodes) > 0 && !cu.mutation.BillDetailsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   customer.BillDetailsTable,
-			Columns: []string{customer.BillDetailsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cu.mutation.BillDetailsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   customer.BillDetailsTable,
-			Columns: []string{customer.BillDetailsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if cu.mutation.BillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -408,21 +326,6 @@ func (cuo *CustomerUpdateOne) SetNillableCreatedAt(t *time.Time) *CustomerUpdate
 	return cuo
 }
 
-// AddBillDetailIDs adds the "bill_details" edge to the BillDetail entity by IDs.
-func (cuo *CustomerUpdateOne) AddBillDetailIDs(ids ...int) *CustomerUpdateOne {
-	cuo.mutation.AddBillDetailIDs(ids...)
-	return cuo
-}
-
-// AddBillDetails adds the "bill_details" edges to the BillDetail entity.
-func (cuo *CustomerUpdateOne) AddBillDetails(b ...*BillDetail) *CustomerUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return cuo.AddBillDetailIDs(ids...)
-}
-
 // AddBillIDs adds the "bills" edge to the Bill entity by IDs.
 func (cuo *CustomerUpdateOne) AddBillIDs(ids ...int) *CustomerUpdateOne {
 	cuo.mutation.AddBillIDs(ids...)
@@ -441,27 +344,6 @@ func (cuo *CustomerUpdateOne) AddBills(b ...*Bill) *CustomerUpdateOne {
 // Mutation returns the CustomerMutation object of the builder.
 func (cuo *CustomerUpdateOne) Mutation() *CustomerMutation {
 	return cuo.mutation
-}
-
-// ClearBillDetails clears all "bill_details" edges to the BillDetail entity.
-func (cuo *CustomerUpdateOne) ClearBillDetails() *CustomerUpdateOne {
-	cuo.mutation.ClearBillDetails()
-	return cuo
-}
-
-// RemoveBillDetailIDs removes the "bill_details" edge to BillDetail entities by IDs.
-func (cuo *CustomerUpdateOne) RemoveBillDetailIDs(ids ...int) *CustomerUpdateOne {
-	cuo.mutation.RemoveBillDetailIDs(ids...)
-	return cuo
-}
-
-// RemoveBillDetails removes "bill_details" edges to BillDetail entities.
-func (cuo *CustomerUpdateOne) RemoveBillDetails(b ...*BillDetail) *CustomerUpdateOne {
-	ids := make([]int, len(b))
-	for i := range b {
-		ids[i] = b[i].ID
-	}
-	return cuo.RemoveBillDetailIDs(ids...)
 }
 
 // ClearBills clears all "bills" edges to the Bill entity.
@@ -565,51 +447,6 @@ func (cuo *CustomerUpdateOne) sqlSave(ctx context.Context) (_node *Customer, err
 	}
 	if value, ok := cuo.mutation.CreatedAt(); ok {
 		_spec.SetField(customer.FieldCreatedAt, field.TypeTime, value)
-	}
-	if cuo.mutation.BillDetailsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   customer.BillDetailsTable,
-			Columns: []string{customer.BillDetailsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cuo.mutation.RemovedBillDetailsIDs(); len(nodes) > 0 && !cuo.mutation.BillDetailsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   customer.BillDetailsTable,
-			Columns: []string{customer.BillDetailsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cuo.mutation.BillDetailsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   customer.BillDetailsTable,
-			Columns: []string{customer.BillDetailsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(billdetail.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if cuo.mutation.BillsCleared() {
 		edge := &sqlgraph.EdgeSpec{
