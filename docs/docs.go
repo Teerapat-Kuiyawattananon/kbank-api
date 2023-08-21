@@ -290,13 +290,29 @@ const docTemplate = `{
                     "Bills"
                 ],
                 "summary": "Show bill by date.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start_date for search bill by date, format YYYY-MM-DD",
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End_date for search bill by date, format YYYY-MM-DD",
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.DateParams"
+                                "$ref": "#/definitions/model.Bill"
                             }
                         }
                     },
@@ -504,17 +520,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "titleName": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.DateParams": {
-            "type": "object",
-            "properties": {
-                "endDate": {
-                    "type": "string"
-                },
-                "startDate": {
                     "type": "string"
                 }
             }

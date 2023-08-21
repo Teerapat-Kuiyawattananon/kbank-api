@@ -48,13 +48,6 @@ definitions:
       titleName:
         type: string
     type: object
-  model.DateParams:
-    properties:
-      endDate:
-        type: string
-      startDate:
-        type: string
-    type: object
   model.InquiryAdditionalFieldRequest:
     properties:
       billerFee:
@@ -482,6 +475,17 @@ paths:
       consumes:
       - '*/*'
       description: Show bill by use query string `start_date` and `end_date`.
+      parameters:
+      - description: Start_date for search bill by date, format YYYY-MM-DD
+        in: query
+        name: start_date
+        required: true
+        type: string
+      - description: End_date for search bill by date, format YYYY-MM-DD
+        in: query
+        name: end_date
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -489,7 +493,7 @@ paths:
           description: Success
           schema:
             items:
-              $ref: '#/definitions/model.DateParams'
+              $ref: '#/definitions/model.Bill'
             type: array
         "400":
           description: Bill not found

@@ -143,7 +143,9 @@ func HandlerUpdateBill(c echo.Context) error {
 // @Tags 		Bills
 // @Accept 		*/*
 // @Produce 	json
-// @Success 	200 {array} model.DateParams "Success"
+// @Param 		start_date query string true "Start_date for search bill by date, format YYYY-MM-DD"
+// @Param 		end_date query string true "End_date for search bill by date, format YYYY-MM-DD"
+// @Success 	200 {array} model.Bill "Success"
 // @Failure		400 {string} string "Bill not found"
 // @Router 		/api/bills/search [get]
 func HandlerGetBillByDate(c echo.Context) error {
