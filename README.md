@@ -2,6 +2,17 @@
 KBank-API Project using the Kasikorn Bank's bill payment API including Inquiry & Payment, to act as a middleman to enable payments between clients and stores. Use 
 Inquiry for check bill details before making a payment and Payment for confirm payment.
 
+### Table of contents
+
+- [ How To Run ](#how-to-run)
+- [ ER Diagram ](#er-diagram)
+- [ API Service ](#api-service)
+    - [ Routes ](#routes)
+    - [ KBank API (bill-payment-service) ](#kbank-api-bill-payment-service)
+    - [ Backend API (database) ](#backend-api-database)
+- [ Conference ](#conference)
+
+<a name="how-to-run"></a>
 ## How To Run 
 
 1. Clone the repository:
@@ -33,12 +44,17 @@ curl localhost:8080/swagger/doc.json
 http://localhost:8080/swagger/index.html
 ```
 
+<a name="er-diagram"></a>
 ## ER Diagram
 Database ER diagram for this project
 - [ER_Diagram](https://dbdocs.io/nattapon.mee/Bill-Payment?view=relationships)
 
+<a name="api-service"></a>
 ## API Service
+
+<a name="routes"></a>
 ### Routes
+#### Bill-Payment
 - POST `http://localhost:8080/api/billpayment/lookup`
 - POST `http://localhost:8080/api/billpayment/payment`
 - GET  `localhost:8080/api/billers`
@@ -49,8 +65,8 @@ Database ER diagram for this project
 - GET `localhost:8080/api/bills`
 - POST `localhost:8080/api/bills`
 - PUT `localhost:8080/api/bills/:id`
-- GET `localhost:8080/api/bills/search?start_date=yyyy-mm-dd&end_date=yyyy-mm-dd`
 
+<a name="kbank-api"></a>
 ### KBank API (bill-payment-service)
 #### Inquiry Lookup
 - METHOD POST `http://localhost:8080/api/billpayment/lookup`
@@ -71,9 +87,7 @@ Database ER diagram for this project
   "language": "EN",
   "apiKey": "SecureKey123"
 }
-
 ```
-
 #### Response
 - status : `200 OK`
 - BODY
@@ -109,7 +123,6 @@ Database ER diagram for this project
     }
 }
 ```
-
 #### Payment Confirm
 - METHOD POST `http://localhost:8080/api/billpayment/payment`
 - BODY
@@ -130,7 +143,6 @@ Database ER diagram for this project
   "language": "EN",
   "apiKey": "SecureKey123"
 }
-
 ```
 #### Response
 - status : `200 OK`
@@ -152,10 +164,12 @@ Database ER diagram for this project
 }
 ```
 *** After you payment confirm that bill will update status to already_paid
+
+<a name="backend-api-database"></a>
 ### Backend API (Database)
 #### Biller_account
 - METHOD GET `localhost:8080/api/billers`
-##### Response
+#### Response
 ```json
 [
     {
@@ -181,10 +195,9 @@ Database ER diagram for this project
     "service_name": "SBB"
 }
 ```
-
 #### Customer
 - METHOD GET `localhost:8080/api/customers`
-##### Response
+#### Response
 ```json
 [
     {
@@ -206,7 +219,7 @@ Database ER diagram for this project
 ]
 ```
 - METHOD GET `localhost:8080/api/customers/:id`
-##### Response
+#### Response
 ```json
 {
     "id": 1,
@@ -227,7 +240,7 @@ Database ER diagram for this project
     "mobileNumber" : "0999999999"
 }
 ```
-##### Response
+#### Response
 ```json
 {
     "id": 2,
@@ -238,10 +251,9 @@ Database ER diagram for this project
     "createdAt": "2023-08-17T21:53:56+07:00"
 }
 ```
-
 #### Bill
 - METHOD GET `localhost:8080/api/bills`
-##### Response
+#### Response
 ```json
 [
     {
@@ -283,7 +295,7 @@ Database ER diagram for this project
     "tranAmount": 150
 }
 ```
-##### Response
+#### Response
 ```json
 {
     "id": 1,
@@ -310,7 +322,7 @@ Database ER diagram for this project
     "tranAmount": 220
 }
 ```
-##### Response
+#### Response
 ```json
 {
     "id": 1,
@@ -326,35 +338,5 @@ Database ER diagram for this project
     "updatedAt": "2023-08-18T16:36:23+07:00"
 }
 ```
-
-- METHOD GET `localhost:8080/api/bills/search?start_date=2023-08-16&end_date=2023-08-17`
-##### Response
-```json
-[
-    {
-        "id": 1,
-        "billerId": 98499,
-        "reference1": 300000025751,
-        "reference2": 1733084,
-        "trasactionId": "98099310720200530183382100",
-        "channelCode": "MOB",
-        "senderBankCode": "Kbank",
-        "status": "already_paid",
-        "tranAmount": 120,
-        "createdAt": "2023-08-16T15:06:05Z",
-        "updatedAt": "2023-08-17T15:39:57Z"
-    },
-    {
-        "id": 2,
-        "billerId": 98499,
-        "reference1": 1,
-        "reference2": 17003,
-        "trasactionId": "98099310720200530183382100",
-        "channelCode": "MOB",
-        "senderBankCode": "Kbank",
-        "status": "already_paid",
-        "tranAmount": 210,
-        "createdAt": "2023-08-17T13:12:19Z",
-        "updatedAt": "2023-08-17T13:15:19Z"
-    }
-]
+## Conference
+- [KBank API (Bill-Payment)](https://apiportal.kasikornbank.com/product/public/All/Bill%20Payment/Introduction/%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%99%E0%B8%95%E0%B9%89%E0%B8%99%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%87%E0%B8%B2%E0%B8%99)
