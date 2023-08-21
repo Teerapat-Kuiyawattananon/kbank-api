@@ -140,11 +140,6 @@ func saveTransactionId(input model.InquiryRequest) error {
 	// Save transaction id.
 	err := bill.Update().
 				SetTransactionID(input.TransitionId).
-				SetUpdatedAt(func () time.Time {
-					strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-					t, _ := time.Parse(time.RFC3339, strTime)
-					return t
-				}()).
 				Exec(context.Background())
 	if err != nil {
 		return err

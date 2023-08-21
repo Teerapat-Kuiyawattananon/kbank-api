@@ -28,16 +28,6 @@ func (repo billRepository) CreateBill(input model.Bill) (*ent.Bill, error) {
 		SetTranAmount(input.TranAmount).
 		SetChannelCode(input.ChannelCode).
 		SetSenderBankCode(input.SenderBankCode).
-		SetCreatedAt(func () time.Time {
-			strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-			t, _ := time.Parse(time.RFC3339, strTime)
-			return t
-		}()).
-		SetUpdatedAt(func () time.Time {
-			strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-			t, _ := time.Parse(time.RFC3339, strTime)
-			return t
-		}()).
 		SetStatus(input.Status).
 		Save(context.Background())
 	if err != nil {

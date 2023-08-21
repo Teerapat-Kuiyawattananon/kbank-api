@@ -69,11 +69,11 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 	bill := billRepo.GetBillByRef1Ref2(ref1_id, ref2_id)
 	defer func () {
 		bill.Update().SetTransactionID(paymentRequest.TransactionId).
-				SetUpdatedAt(func () time.Time {
-					strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-					t, _ := time.Parse(time.RFC3339, strTime)
-					return t
-				}()).
+				// SetUpdatedAt(func () time.Time {
+				// 	strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
+				// 	t, _ := time.Parse(time.RFC3339, strTime)
+				// 	return t
+				// }()).
 				ExecX(context.Background())
 	}()
 
@@ -95,11 +95,6 @@ func paymentConfirm(input model.PaymentRequest) (string, string) {
 	bill.Update().SetStatus("already_paid").
 					SetChannelCode(input.ChannelCode).
 					SetSenderBankCode(input.SenderBankCode).
-					SetUpdatedAt(func () time.Time {
-						strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-						t, _ := time.Parse(time.RFC3339, strTime)
-						return t
-					}()).
 					ExecX(context.Background())
 	return "0000", "Success"
 }

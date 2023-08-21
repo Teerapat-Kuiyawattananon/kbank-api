@@ -5,7 +5,6 @@ import (
 	"kapi/ent"
 	"kapi/ent/customer"
 	"log"
-	"time"
 
 	mCustomer "kapi/model"
 )
@@ -27,11 +26,6 @@ func (repo customerRepository) CreateCustomer(customer mCustomer.Customer) (*ent
 					SetLastName(customer.LastName).
 					SetTitleName(customer.TitleName).
 					SetMobileNumber(customer.MobileNumber).
-					SetCreatedAt(func () time.Time {
-						strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-						t, _ := time.Parse(time.RFC3339, strTime)
-						return t
-					}()).
 					Save(context.Background())
 	if err != nil {
 		log.Println(err)
