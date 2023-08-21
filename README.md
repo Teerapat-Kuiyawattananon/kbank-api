@@ -49,6 +49,7 @@ Database ER diagram for this project
 - GET `localhost:8080/api/bills`
 - POST `localhost:8080/api/bills`
 - PUT `localhost:8080/api/bills/:id`
+- GET `localhost:8080/api/bills/search?start_date=yyyy-mm-dd&end_date=yyyy-mm-dd`
 
 ### KBank API (bill-payment-service)
 #### Inquiry Lookup
@@ -325,3 +326,35 @@ Database ER diagram for this project
     "updatedAt": "2023-08-18T16:36:23+07:00"
 }
 ```
+
+- METHOD GET `localhost:8080/api/bills/search?start_date=2023-08-16&end_date=2023-08-17`
+##### Response
+```json
+[
+    {
+        "id": 1,
+        "billerId": 98499,
+        "reference1": 300000025751,
+        "reference2": 1733084,
+        "trasactionId": "98099310720200530183382100",
+        "channelCode": "MOB",
+        "senderBankCode": "Kbank",
+        "status": "already_paid",
+        "tranAmount": 120,
+        "createdAt": "2023-08-16T15:06:05Z",
+        "updatedAt": "2023-08-17T15:39:57Z"
+    },
+    {
+        "id": 2,
+        "billerId": 98499,
+        "reference1": 1,
+        "reference2": 17003,
+        "trasactionId": "98099310720200530183382100",
+        "channelCode": "MOB",
+        "senderBankCode": "Kbank",
+        "status": "already_paid",
+        "tranAmount": 210,
+        "createdAt": "2023-08-17T13:12:19Z",
+        "updatedAt": "2023-08-17T13:15:19Z"
+    }
+]

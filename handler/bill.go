@@ -166,13 +166,30 @@ func HandlerGetBillByDate(c echo.Context) error {
 
 	billRepo := repo.NewBillRepository(clientDB)
 	entBills, err := billRepo.GetBillByDate(params)
-	if err != nil {
+	if err != nil || len(entBills) == 0 {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"Error message" : "Bill not found",
 		})
 	}
 
-	return c.JSON(http.StatusOK, entBills)
+	var bills []model.Bill
+	for _, bill := range entBills {
+		bills = append(bills, model.Bill{
+			ID:             bill.ID,
+			BillerId:       bill.BillerID,
+			Reference1:     bill.Reference1,
+			Reference2:     bill.Reference2,
+			TransactionID:  bill.TransactionID,
+			ChannelCode:    bill.ChannelCode,
+			SenderBankCode: bill.SenderBankCode,
+			Status:         bill.Status,
+			TranAmount:     bill.TranAmount,
+			CreatedAt:      bill.CreatedAt,
+			UpdatedAt:      bill.UpdatedAt,
+		})
+	}
+
+	return c.JSON(http.StatusOK, bills)
 }
 
 func convertStringtoTime(date string) (time.Time, error) {

@@ -54,7 +54,7 @@ func main() {
 	e.POST("/api/bills", h.HandlerCreateBill)
 	e.GET("/api/bills", h.HandlerGetAllBills)
 	e.PUT("/api/bills/:id", h.HandlerUpdateBill)
-	// e.GET("/api/bills", h.HandlerGetBillByDate)
+	e.GET("/api/bills/search", h.HandlerGetBillByDate)
 
 	// -CUSTOMER
 	e.POST("/api/customers", h.HandlerCreateCustomer)

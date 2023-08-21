@@ -5,7 +5,6 @@ import (
 	"kapi/ent"
 	"kapi/ent/bill"
 	"log"
-	"time"
 
 	model "kapi/model"
 )
@@ -121,20 +120,13 @@ func (repo billRepository) UpdateBill(input model.Bill, id int) (*ent.Bill, erro
 		}
 	}
 
-	billRes = bill.Update().SetUpdatedAt(func () time.Time {
-		strTime := time.Now().Add(time.Hour * 7).Format(time.RFC3339)
-		t, _ := time.Parse(time.RFC3339, strTime)
-		return t
-	}()).
-	SaveX(context.Background())
-
 	return billRes, nil
 }
 
 func (repo billRepository) GetBillByDate (date model.DateParams) ([]*ent.Bill, error) {
 
 	bills, err := repo.clientDB.Bill.Query().
-					Where(bill.CreatedAtGTE(date.StartDate), bill.CreatedAtLTE(date.EndDate)).
+					Where(bill.UpdatedAtGTE(date.StartDate), bill.UpdatedAtLTE(date.EndDate)).
 					All(context.Background())
 	if err != nil {
 		log.Println(err)
