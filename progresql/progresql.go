@@ -17,7 +17,7 @@ func InitDatabase() (*ent.Client, error) {
 
 	ctx := context.Background()
 
-	// init Database
+	// Init database.
 	clientDB, err := ent.Open("postgres", os.Getenv("PSQL_DB_CONNECT"))
 	if err != nil {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
@@ -50,7 +50,7 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 
-	//Create Store.
+	// Create Store.
 	store, err := client.Biller_account.Create().
 		SetID(98499).
 		SetName("ThaiTee").
@@ -60,7 +60,7 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 
-	//Create Customer.
+	// Create Customer.
 	customer, err := client.Customer.Create().
 		SetID(300000025751).
 		SetFirstName("Teerapat").
@@ -71,7 +71,7 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 
-	//Create bill.
+	// Create Bill.
 	bill, err := client.Bill.Create().
 		SetBillerID(store.ID).
 		SetReference1(customer.ID).
@@ -83,5 +83,4 @@ func MockUpTestEX01() {
 		log.Fatal(err)
 	}
 	log.Printf("Created Bill id:%d Success", bill.ID)
-
 }

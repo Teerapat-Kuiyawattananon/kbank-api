@@ -15,3 +15,8 @@ type Bill struct {
 	CreatedAt 		time.Time	`json:"createdAt"`
 	UpdatedAt 		time.Time	`json:"updatedAt"`
 }
+
+type DateParams struct {
+	StartDate time.Time `query:"start_date" time_format:"2006-01-02"`
+	EndDate   time.Time `query:"end_date" time_format:"2006-01-02"`
+}

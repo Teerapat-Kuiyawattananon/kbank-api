@@ -130,3 +130,15 @@ func (repo billRepository) UpdateBill(input model.Bill, id int) (*ent.Bill, erro
 
 	return billRes, nil
 }
+
+func (repo billRepository) GetBillByDate (date model.DateParams) ([]*ent.Bill, error) {
+
+	bills, err := repo.clientDB.Bill.Query().
+					Where(bill.CreatedAtGTE(date.StartDate), bill.CreatedAtLTE(date.EndDate)).
+					All(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+
+	return bills, nil
+}

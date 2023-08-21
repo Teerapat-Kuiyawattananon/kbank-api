@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	model "kapi/model"
 	repo "kapi/repository"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -134,4 +136,45 @@ func HandlerUpdateBill(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, bill)
+}
+
+func HandlerGetBillByDate(c echo.Context) error {
+	var params model.DateParams
+	startDateStr := c.QueryParam("start_date")
+	endDateStr := c.QueryParam("end_date")
+
+	// Convert string to time
+	startDate, err := convertStringtoTime(startDateStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"Error message" : "Start date is invalid",
+		})
+	}
+
+	endDate, err := convertStringtoTime(endDateStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"Error message" : "End date is invalid",
+		})
+	}
+
+	params.StartDate = startDate
+	params.EndDate = endDate
+
+	fmt.Println("Start Date:", startDate)
+	fmt.Println("End Date:", endDate)
+
+	billRepo := repo.NewBillRepository(clientDB)
+	entBills, err := billRepo.GetBillByDate(params)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"Error message" : "Bill not found",
+		})
+	}
+
+	return c.JSON(http.StatusOK, entBills)
+}
+
+func convertStringtoTime(date string) (time.Time, error) {
+	return time.Parse("2006-01-02", date)
 }
