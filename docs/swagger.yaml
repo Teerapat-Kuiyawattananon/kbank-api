@@ -48,6 +48,13 @@ definitions:
       titleName:
         type: string
     type: object
+  model.DateParams:
+    properties:
+      endDate:
+        type: string
+      startDate:
+        type: string
+    type: object
   model.InquiryAdditionalFieldRequest:
     properties:
       billerFee:
@@ -297,17 +304,7 @@ definitions:
         type: string
     type: object
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: This is Bill Payment API Server From KBank-API.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Bill Payment API
-  version: "1.0"
+  contact: {}
 paths:
   /api/billers:
     get:
@@ -463,7 +460,7 @@ paths:
     put:
       consumes:
       - '*/*'
-      description: Update bill by use ID.
+      description: Update bill by ID.
       produces:
       - application/json
       responses:
@@ -477,7 +474,28 @@ paths:
           description: Update Bill failed
           schema:
             type: string
-      summary: Update bill by use ID.
+      summary: Update bill by ID.
+      tags:
+      - Bills
+  /api/bills/search:
+    get:
+      consumes:
+      - '*/*'
+      description: Show bill by use query string `start_date` and `end_date`.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            items:
+              $ref: '#/definitions/model.DateParams'
+            type: array
+        "400":
+          description: Bill not found
+          schema:
+            type: string
+      summary: Show bill by date.
       tags:
       - Bills
   /api/customers:

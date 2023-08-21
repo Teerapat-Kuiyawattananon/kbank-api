@@ -92,8 +92,8 @@ func HandlerGetAllBills(c echo.Context) error {
 	return c.JSON(http.StatusOK, bills)
 }
 
-// @Summary 	Update bill by use ID.
-// @Description Update bill by use ID.
+// @Summary 	Update bill by ID.
+// @Description Update bill by ID.
 // @Tags 		Bills
 // @Accept 		*/*
 // @Produce 	json
@@ -138,6 +138,14 @@ func HandlerUpdateBill(c echo.Context) error {
 	return c.JSON(http.StatusOK, bill)
 }
 
+// @Summary 	Show bill by date.
+// @Description Show bill by use query string `start_date` and `end_date`.
+// @Tags 		Bills
+// @Accept 		*/*
+// @Produce 	json
+// @Success 	200 {array} model.DateParams "Success"
+// @Failure		400 {string} string "Bill not found"
+// @Router 		/api/bills/search [get]
 func HandlerGetBillByDate(c echo.Context) error {
 	var params model.DateParams
 	startDateStr := c.QueryParam("start_date")

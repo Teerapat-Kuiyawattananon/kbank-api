@@ -10,16 +10,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -256,7 +247,7 @@ const docTemplate = `{
         },
         "/api/bills/:id": {
             "put": {
-                "description": "Update bill by use ID.",
+                "description": "Update bill by ID.",
                 "consumes": [
                     "*/*"
                 ],
@@ -266,7 +257,7 @@ const docTemplate = `{
                 "tags": [
                     "Bills"
                 ],
-                "summary": "Update bill by use ID.",
+                "summary": "Update bill by ID.",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -279,6 +270,38 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Update Bill failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bills/search": {
+            "get": {
+                "description": "Show bill by use query string ` + "`" + `start_date` + "`" + ` and ` + "`" + `end_date` + "`" + `.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bills"
+                ],
+                "summary": "Show bill by date.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.DateParams"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bill not found",
                         "schema": {
                             "type": "string"
                         }
@@ -481,6 +504,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "titleName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DateParams": {
+            "type": "object",
+            "properties": {
+                "endDate": {
+                    "type": "string"
+                },
+                "startDate": {
                     "type": "string"
                 }
             }
@@ -866,12 +900,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
+	Version:          "",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Bill Payment API",
-	Description:      "This is Bill Payment API Server From KBank-API.",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

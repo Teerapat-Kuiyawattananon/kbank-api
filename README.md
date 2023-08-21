@@ -34,7 +34,7 @@ or
 air 
 ```
 
-4. Call Swagger api:
+4. Call Swagger API:
 ```
 curl localhost:8080/swagger/doc.json
 ```
@@ -57,14 +57,18 @@ Database ER diagram for this project
 #### Bill-Payment
 - POST `http://localhost:8080/api/billpayment/lookup`
 - POST `http://localhost:8080/api/billpayment/payment`
-- GET  `localhost:8080/api/billers`
-- POST `localhost:8080/api/billers`
-- GET `localhost:8080/api/customers`
-- GET `localhost:8080/api/customers/:id`
-- POST `localhost:8080/api/customers`
-- GET `localhost:8080/api/bills`
-- POST `localhost:8080/api/bills`
-- PUT `localhost:8080/api/bills/:id`
+#### Billers
+- GET  `http://localhost:8080/api/billers`
+- POST `http://localhost:8080/api/billers`
+#### Customers
+- GET `http://localhost:8080/api/customers`
+- GET `http://localhost:8080/api/customers/:id`
+- POST `http://localhost:8080/api/customers`
+#### Bills
+- GET `http://localhost:8080/api/bills`
+- GET `http://localhost:8080/api/bills/search`
+- PUT `http://localhost:8080/api/bills/:id`
+- POST `http://localhost:8080/api/bills`
 
 <a name="kbank-api"></a>
 ### KBank API (bill-payment-service)

@@ -123,7 +123,7 @@ func (repo billRepository) UpdateBill(input model.Bill, id int) (*ent.Bill, erro
 	return billRes, nil
 }
 
-func (repo billRepository) GetBillByDate (date model.DateParams) ([]*ent.Bill, error) {
+func (repo billRepository) GetBillByDate(date model.DateParams) ([]*ent.Bill, error) {
 
 	bills, err := repo.clientDB.Bill.Query().
 					Where(bill.UpdatedAtGTE(date.StartDate), bill.UpdatedAtLTE(date.EndDate)).

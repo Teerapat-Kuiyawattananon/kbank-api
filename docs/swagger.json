@@ -1,19 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is Bill Payment API Server From KBank-API.",
-        "title": "Bill Payment API",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "1.0"
+        "contact": {}
     },
     "paths": {
         "/api/billers": {
@@ -247,7 +235,7 @@
         },
         "/api/bills/:id": {
             "put": {
-                "description": "Update bill by use ID.",
+                "description": "Update bill by ID.",
                 "consumes": [
                     "*/*"
                 ],
@@ -257,7 +245,7 @@
                 "tags": [
                     "Bills"
                 ],
-                "summary": "Update bill by use ID.",
+                "summary": "Update bill by ID.",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -270,6 +258,38 @@
                     },
                     "400": {
                         "description": "Update Bill failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bills/search": {
+            "get": {
+                "description": "Show bill by use query string `start_date` and `end_date`.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bills"
+                ],
+                "summary": "Show bill by date.",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.DateParams"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bill not found",
                         "schema": {
                             "type": "string"
                         }
@@ -472,6 +492,17 @@
                     "type": "string"
                 },
                 "titleName": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DateParams": {
+            "type": "object",
+            "properties": {
+                "endDate": {
+                    "type": "string"
+                },
+                "startDate": {
                     "type": "string"
                 }
             }
