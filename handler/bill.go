@@ -98,7 +98,6 @@ func HandlerGetAllBills(c echo.Context) error {
 // @Accept 		*/*
 // @Produce 	json
 // @Success 	200 {array} model.Bill "Success"
-// @Failure		400 {string} string "ID Failed"
 // @Failure 	400 {string} string "Update Bill failed"
 // @Router 		/api/bills/:id [put]
 func HandlerUpdateBill(c echo.Context) error {

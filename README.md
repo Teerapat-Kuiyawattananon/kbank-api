@@ -66,7 +66,7 @@ Database ER diagram for this project
 - POST `http://localhost:8080/api/customers`
 #### Bills
 - GET `http://localhost:8080/api/bills`
-- GET `http://localhost:8080/api/bills/search`
+- GET `http://localhost:8080/api/bills/search?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
 - PUT `http://localhost:8080/api/bills/:id`
 - POST `http://localhost:8080/api/bills`
 
@@ -342,5 +342,38 @@ Database ER diagram for this project
     "updatedAt": "2023-08-18T16:36:23+07:00"
 }
 ```
+- METHOD GET `localhost:8080/api/bills/search?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
+#### Response
+````json
+[
+    {
+        "id": 1,
+        "billerId": 98499,
+        "reference1": 300000025751,
+        "reference2": 1733084,
+        "trasactionId": "98099310720200530183382100",
+        "channelCode": "MOB",
+        "senderBankCode": "Kbank",
+        "status": "already_paid",
+        "tranAmount": 120,
+        "createdAt": "2023-08-16T15:06:05Z",
+        "updatedAt": "2023-08-17T15:39:57Z"
+    },
+    {
+        "id": 2,
+        "billerId": 98499,
+        "reference1": 1,
+        "reference2": 17003,
+        "trasactionId": "98099310720200530183382100",
+        "channelCode": "MOB",
+        "senderBankCode": "Kbank",
+        "status": "already_paid",
+        "tranAmount": 210,
+        "createdAt": "2023-08-17T13:12:19Z",
+        "updatedAt": "2023-08-17T13:15:19Z"
+    }
+]
+````
+
 ## Conference
 - [KBank API (Bill-Payment)](https://apiportal.kasikornbank.com/product/public/All/Bill%20Payment/Introduction/%E0%B9%80%E0%B8%A3%E0%B8%B4%E0%B9%88%E0%B8%99%E0%B8%95%E0%B9%89%E0%B8%99%E0%B9%83%E0%B8%8A%E0%B9%89%E0%B8%87%E0%B8%B2%E0%B8%99)
