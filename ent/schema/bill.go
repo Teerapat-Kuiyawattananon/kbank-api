@@ -50,8 +50,5 @@ func (Bill) Edges() []ent.Edge {
 			Ref("bills").
 			Field("reference_1").
 			Unique(),
-
-		// edge.To("bill_detail", BillDetail.Type).
-		// 	Unique(),
 	}
 }
