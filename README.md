@@ -172,7 +172,7 @@ Database ER diagram for this project
 <a name="backend-api-database"></a>
 ### Backend API (Database)
 #### Biller_account
-- METHOD GET `localhost:8080/api/billers`
+- METHOD GET `http://localhost:8080/api/billers`
 #### Response
 ```json
 [
@@ -183,7 +183,7 @@ Database ER diagram for this project
     }
 ]
 ```
-- METHOD POST `localhost:8080/api/billers`
+- METHOD POST `http://localhost:8080/api/billers`
 - BODY
 ```json
 {
@@ -200,7 +200,7 @@ Database ER diagram for this project
 }
 ```
 #### Customer
-- METHOD GET `localhost:8080/api/customers`
+- METHOD GET `http://localhost:8080/api/customers`
 #### Response
 ```json
 [
@@ -222,7 +222,7 @@ Database ER diagram for this project
     }
 ]
 ```
-- METHOD GET `localhost:8080/api/customers/:id`
+- METHOD GET `http://localhost:8080/api/customers/:id`
 #### Response
 ```json
 {
@@ -234,7 +234,7 @@ Database ER diagram for this project
     "createdAt": "2023-08-16T22:23:28.643741Z"
 }
 ```
-- METHOD POST `localhost:8080/api/customers`
+- METHOD POST `http://localhost:8080/api/customers`
 - BODY
 ```json
 {
@@ -256,7 +256,7 @@ Database ER diagram for this project
 }
 ```
 #### Bill
-- METHOD GET `localhost:8080/api/bills`
+- METHOD GET `http://localhost:8080/api/bills`
 #### Response
 ```json
 [
@@ -288,7 +288,7 @@ Database ER diagram for this project
     }
 ]
 ```
-- METHOD POST `localhost:8080/api/bills`
+- METHOD POST `http://localhost:8080/api/bills`
 - BODY
 ```json
 {
@@ -315,7 +315,7 @@ Database ER diagram for this project
     "updatedAt": "2023-08-18T16:35:04+07:00"
 }
 ```
-- METHOD PUT `localhost:8080/api/bills/:id`
+- METHOD PUT `http://localhost:8080/api/bills/:id`
 - BODY
 ```json
 {
@@ -342,7 +342,7 @@ Database ER diagram for this project
     "updatedAt": "2023-08-18T16:36:23+07:00"
 }
 ```
-- METHOD GET `localhost:8080/api/bills/search?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
+- METHOD GET `http://localhost:8080/api/bills/search?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD`
 #### Response
 ````json
 [
